@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - app.js paso 24: cache busting unificado */
+/* Oraciones V3 LAB - app.js paso 23: limpieza bloque v59B obsoleto */
 
 /* ===== PWA / INSTALACIÓN ===== */
   function buildInitialState(){const prayerId=uid(),noteId=uid();return {"section":"prayers","currentPrayerId":prayerId,"currentNoteId":noteId,"prayers":[{"id":prayerId,"title":"🌅 ✝️ Oración diaria completa","content":seedPrayer,"updatedAt":Date.now(),"favorite":true}],"notes":[{"id":noteId,"title":"📝 Mi primera nota","content":seedNote,"updatedAt":Date.now(),"favorite":false}],"trashPrayers":[],"trashNotes":[],"guides":[],"trashGuides":[],"currentGuideId":null,"verses":[],"trashVerses":[],"currentVerseId":null}}
