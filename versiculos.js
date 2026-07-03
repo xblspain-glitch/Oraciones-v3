@@ -71,7 +71,7 @@ function cleanAllVerseBreaks(){
 
 function exportVersesOnly(){
   normalizeVerses();
-  const payload={type:"verses",exportedAt:new Date().toISOString(),verses:state.verses,trashVerses:state.trashVerses||[]};
+  const payload={type:"verses",exportedAt:new Date().toISOString(),verses:state.verses,trashVerses:state.trashVerses||[],verseCategories:state.verseCategories||[]};
   const text=JSON.stringify(payload,null,2);
   document.getElementById("backupText").value=text;
   downloadBlob("versiculos_app.json", new Blob([text],{type:"application/json;charset=utf-8"}));
@@ -82,6 +82,7 @@ function applyVersesImport(parsed){
   if(!confirm("¿Importar versículos sin tocar oraciones, notas ni guía?")) return false;
   state.verses=parsed.verses;
   state.trashVerses=Array.isArray(parsed.trashVerses)?parsed.trashVerses:[];
+  if(Array.isArray(parsed.verseCategories)) state.verseCategories=parsed.verseCategories;
   normalizeVerses();
   saveState();
   section="verses";state.section="verses";

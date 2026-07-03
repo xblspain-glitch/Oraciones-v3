@@ -2872,16 +2872,23 @@ function applyImportedData(parsed){
     "currentNoteId":parsed.currentNoteId||(parsed.notes[0]&&parsed.notes[0].id)||null,
     "currentGuideId":parsed.currentGuideId||(Array.isArray(parsed.guides)&&parsed.guides[0]&&parsed.guides[0].id)||null,
     "currentVerseId":parsed.currentVerseId||(Array.isArray(parsed.verses)&&parsed.verses[0]&&parsed.verses[0].id)||null,
+    "currentParableId":parsed.currentParableId||(Array.isArray(parsed.parables)&&parsed.parables[0]&&parsed.parables[0].id)||null,
     "prayers":parsed.prayers,
     "notes":parsed.notes,
     "guides":Array.isArray(parsed.guides)?parsed.guides:[],
     "verses":Array.isArray(parsed.verses)?parsed.verses:[],
+    "parables":Array.isArray(parsed.parables)?parsed.parables:[],
+    "verseCategories":Array.isArray(parsed.verseCategories)?parsed.verseCategories:[],
     "trashPrayers":Array.isArray(parsed.trashPrayers)?parsed.trashPrayers:[],
     "trashNotes":Array.isArray(parsed.trashNotes)?parsed.trashNotes:[],
     "trashGuides":Array.isArray(parsed.trashGuides)?parsed.trashGuides:[],
-    "trashVerses":Array.isArray(parsed.trashVerses)?parsed.trashVerses:[]
+    "trashVerses":Array.isArray(parsed.trashVerses)?parsed.trashVerses:[],
+    "trashParables":Array.isArray(parsed.trashParables)?parsed.trashParables:[]
   };
   normalizeGuides();
+  if(typeof normalizeVerses==="function") normalizeVerses();
+  if(typeof ensureVerseCategories==="function") ensureVerseCategories();
+  if(typeof ensureParablesState==="function") ensureParablesState();
   saveState();
   section=state.section;
   syncTabs();
