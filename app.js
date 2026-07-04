@@ -7105,79 +7105,75 @@ setInterval(updateVersePositionCounter, 1000);
 
 /* V3 paso 16: parches visuales finales movidos a patches.js. */
 
-/* v3.1.2 - Arreglo: Volver desde Títulos regresa a la sección, no a Inicio */
+/* ===== V3.1.2 - Volver desde Títulos a su sección de origen ===== */
 (function(){
-  if(window.__v312TitlesBackToSectionFix) return;
-  window.__v312TitlesBackToSectionFix = true;
+  if(window.__v312TitlesBackToSection) return;
+  window.__v312TitlesBackToSection = true;
 
-  function isTitlesVisibleV312(){
+  var previousSmartBackV312 = window.smartBack || (typeof smartBack !== "undefined" ? smartBack : null);
+
+  function isTitlesViewVisibleV312(){
     try{
-      var titles = document.getElementById('titlesView');
-      return !!(titles && !titles.classList.contains('hidden'));
+      var titles = document.getElementById("titlesView");
+      return !!(titles && !titles.classList.contains("hidden"));
     }catch(e){
       return false;
     }
   }
 
-  function returnFromTitlesToSectionV312(){
+  function isMainTextSectionV312(s){
+    return s === "prayers" || s === "notes" || s === "guides" || s === "parables";
+  }
+
+  window.backFromTitlesToSectionV312 = function(){
     try{
+      var target = section || (state && state.section) || "prayers";
+      if(!isMainTextSectionV312(target)) target = "prayers";
+
+      section = target;
+      if(state) state.section = target;
+
+      var titles = document.getElementById("titlesView");
+      if(titles) titles.classList.add("hidden");
+
       document.body.classList.remove(
-        'home-active-v9019',
-        'titles-only',
-        'titles-fullscreen-v72',
-        'fullscreen-reading',
-        'hide-reading-ui',
-        'special-view-only',
-        'backup-only'
+        "titles-only",
+        "titles-fullscreen-v72",
+        "fullscreen-reading",
+        "hide-reading-ui",
+        "special-view-only",
+        "backup-only",
+        "sent-fullscreen-v76"
       );
 
-      var home = document.getElementById('homeView');
-      if(home) home.classList.add('hidden');
+      if(typeof saveState === "function") saveState();
+      if(typeof syncTabs === "function") syncTabs();
+      if(typeof renderList === "function") renderList();
+      if(typeof renderReader === "function") renderReader();
+      if(typeof openReader === "function") openReader();
 
-      if(typeof setActiveView === 'function') setActiveView('read');
-      if(typeof renderList === 'function') renderList();
-      if(typeof renderReader === 'function') renderReader();
-
-      var reader = document.getElementById('readerView');
-      var titles = document.getElementById('titlesView');
-      var editor = document.getElementById('editorView');
-      var backup = document.getElementById('backupView');
-      var trash = document.getElementById('trashView');
-      var cats = document.getElementById('verseCategoriesView');
-      var cal = document.getElementById('calendarView');
-
-      if(reader) reader.classList.remove('hidden');
-      if(titles) titles.classList.add('hidden');
-      if(editor) editor.classList.add('hidden');
-      if(backup) backup.classList.add('hidden');
-      if(trash) trash.classList.add('hidden');
-      if(cats) cats.classList.add('hidden');
-      if(cal) cal.classList.add('hidden');
-
-      if(window.innerWidth <= 860) document.body.classList.add('reading-mobile');
-      else document.body.classList.remove('reading-mobile');
-
-      try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ window.scrollTo(0,0); }
+      setTimeout(function(){
+        try{ window.scrollTo({top: 0, behavior: "auto"}); }catch(e){}
+      }, 0);
     }catch(e){
-      console.error('returnFromTitlesToSectionV312', e);
-    }
-  }
-
-  var oldSmartBackV312 = window.smartBack || (typeof smartBack !== 'undefined' ? smartBack : null);
-  if(typeof oldSmartBackV312 === 'function'){
-    window.smartBack = function(){
+      console.error("backFromTitlesToSectionV312", e);
       try{
-        var isNormalSection = (typeof section !== 'undefined') &&
-          (section === 'prayers' || section === 'notes' || section === 'guides' || section === 'parables');
+        if(typeof openReader === "function") openReader();
+      }catch(_e){}
+    }
+  };
 
-        if(isNormalSection && isTitlesVisibleV312()){
-          returnFromTitlesToSectionV312();
-          return;
-        }
-      }catch(e){}
+  window.smartBack = function(){
+    try{
+      if(isTitlesViewVisibleV312() && isMainTextSectionV312(section)){
+        return window.backFromTitlesToSectionV312();
+      }
+    }catch(e){}
 
-      return oldSmartBackV312.apply(this, arguments);
-    };
-    try{ smartBack = window.smartBack; }catch(e){}
-  }
+    if(typeof previousSmartBackV312 === "function"){
+      return previousSmartBackV312.apply(this, arguments);
+    }
+  };
+
+  try{ smartBack = window.smartBack; }catch(e){}
 })();
