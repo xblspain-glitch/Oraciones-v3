@@ -1682,14 +1682,48 @@ function openFavoritesView(){
   }
 }
 
-function toggleFavorite(){const item=currentItem();if(!item) return;item.favorite=!item.favorite;item.updatedAt=Date.now();saveState();renderList();renderReader();toast(item.favorite?"Marcado como favorito":"Quitado de favoritos")}
-function changeReaderSize(delta){readerSize+=delta;if(readerSize<20) readerSize=20;if(readerSize>34) readerSize=34;localStorage.setItem(SIZE_KEY, String(readerSize));renderReader()}
+function toggleFavorite(){
+  const item=currentItem();
+  if(!item) return;
 
-function padCalendar(n){return String(n).padStart(2,"0")}
-function calendarKey(d){return d.getFullYear()+"-"+padCalendar(d.getMonth()+1)+"-"+padCalendar(d.getDate())}
-function addCalendarDays(date,days){const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());d.setDate(d.getDate()+days);return d}
-function sameCalendarDay(a,b){return calendarKey(a)===calendarKey(b)}
-function formatCalendarDate(d){return d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+  item.favorite=!item.favorite;
+  item.updatedAt=Date.now();
+  saveState();
+  renderList();
+  renderReader();
+  toast(item.favorite?"Marcado como favorito":"Quitado de favoritos");
+}
+function changeReaderSize(delta){
+  readerSize+=delta;
+  if(readerSize<20) readerSize=20;
+  if(readerSize>34) readerSize=34;
+
+  localStorage.setItem(SIZE_KEY, String(readerSize));
+  renderReader();
+}
+
+function padCalendar(n){
+  return String(n).padStart(2,"0");
+}
+function calendarKey(d){
+  return d.getFullYear()+"-"+padCalendar(d.getMonth()+1)+"-"+padCalendar(d.getDate());
+}
+function addCalendarDays(date,days){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  d.setDate(d.getDate()+days);
+  return d;
+}
+function sameCalendarDay(a,b){
+  return calendarKey(a)===calendarKey(b);
+}
+function formatCalendarDate(d){
+  return d.toLocaleDateString("es-ES",{
+    weekday:"long",
+    day:"numeric",
+    month:"long",
+    year:"numeric"
+  });
+}
 function westernEaster(y){
   const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
   return new Date(y,month-1,day);
@@ -1709,7 +1743,9 @@ function orthodoxEaster(y){
 function addEvent(map,date,trad,title,desc){
   const k=calendarKey(date); if(!map[k])map[k]=[]; map[k].push({trad,title,desc});
 }
-function addFixed(map,y,m,d,trad,title,desc){addEvent(map,new Date(y,m-1,d),trad,title,desc)}
+function addFixed(map,y,m,d,trad,title,desc){
+  addEvent(map,new Date(y,m-1,d),trad,title,desc);
+}
 function buildChristianCalendarYear(y){
   const map={};
   const west=westernEaster(y), east=orthodoxEaster(y);
