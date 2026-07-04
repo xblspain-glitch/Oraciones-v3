@@ -1816,37 +1816,65 @@ function renderVerseReferenceList(catId){
   });
 }
 function openVerseFavorites(){
-  specialVerseMode=null;
-  section="verses";state.section="verses";saveState();syncTabs();
-  const box=document.getElementById("titlesList");if(!box)return;
+  specialVerseMode = null;
+  section = "verses";
+  state.section = "verses";
+  saveState();
+  syncTabs();
+
+  const box = document.getElementById("titlesList");
+  if(!box) return;
+
   document.getElementById("titlesView").classList.remove("hidden");
   document.getElementById("verseCategoriesView").classList.add("hidden");
   document.getElementById("readerView").classList.add("hidden");
-  const verses=state.verses.filter(v=>v.favorite);
-  box.innerHTML="";
-  if(!verses.length){box.innerHTML='<div class="empty">No hay versículos favoritos.</div>';return;}
-  verses.forEach((v,idx)=>{
-    const div=document.createElement("div");
-    div.className="title-row"+(state.currentVerseId===v.id?" active":"");
-    div.innerHTML='<div class="title-code">★</div><div class="title-name">'+escapeHtml((v.shared?'✓ ':'')+(v.reference||v.title||"Sin referencia"))+'</div>';
-    div.onclick=()=>{verseNavigationMode="verse";currentVerseCategory=catId;setCurrentId(v.id);renderList();renderReader();applyReaderFont();openReader();};
+
+  const verses = state.verses.filter(v => v.favorite);
+  box.innerHTML = "";
+
+  if(!verses.length){
+    box.innerHTML = '<div class="empty">No hay versículos favoritos.</div>';
+    return;
+  }
+
+  verses.forEach((v, idx) => {
+    const div = document.createElement("div");
+    div.className = "title-row" + (state.currentVerseId === v.id ? " active" : "");
+    div.innerHTML = '<div class="title-code">★</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
+    div.onclick = () => {
+      verseNavigationMode = "verse";
+      currentVerseCategory = catId;
+      setCurrentId(v.id);
+      renderList();
+      renderReader();
+      applyReaderFont();
+      openReader();
+    };
     box.appendChild(div);
   });
 }
 
 function renderTitles(){
-  const box=document.getElementById("titlesList");
+  const box = document.getElementById("titlesList");
   if(!box) return;
-  box.innerHTML="";
+
+  box.innerHTML = "";
+
   const titlesVisible = !document.getElementById("titlesView")?.classList.contains("hidden");
-  const q=(titlesVisible
+  const q = (titlesVisible
     ? (document.getElementById("titlesSearch")?.value || "")
     : (document.getElementById("search")?.value || "")
   ).trim().toLowerCase();
-  let items=getItems().map((item, idx)=>({...item,__idx:idx,__code:getDisplayCode(idx, section)}));
+
+  let items = getItems().map((item, idx) => ({
+    ...item,
+    __idx: idx,
+    __code: getDisplayCode(idx, section)
+  }));
+
   if(q){
-    items=items.filter(item=>{
-      const hay=[
+    items = items.filter(item => {
+      const hay = [
         item.__code,
         item.title,
         displayItemTitle(item),
@@ -1857,20 +1885,22 @@ function renderTitles(){
       return hay.includes(q);
     });
   }
-  const current=currentItem();
+
+  const current = currentItem();
   if(!items.length){
-    box.innerHTML='<div class="empty">No hay resultados.</div>';
+    box.innerHTML = '<div class="empty">No hay resultados.</div>';
     return;
   }
-  items.forEach(item=>{
-    const div=document.createElement("div");
-    div.className="title-row"+(current&&item.id===current.id?" active":"");
-    div.innerHTML='<div class="title-code">'+escapeHtml(item.__code)+'</div><div class="title-name">'+escapeHtml(displayItemTitle(item))+'</div>';
-    div.onclick=()=>{
-      if(section==="verses"){
-        specialVerseMode=null;
-        verseNavigationMode="titles";
-        currentVerseCategory=null;
+
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "title-row" + (current && item.id === current.id ? " active" : "");
+    div.innerHTML = '<div class="title-code">' + escapeHtml(item.__code) + '</div><div class="title-name">' + escapeHtml(displayItemTitle(item)) + '</div>';
+    div.onclick = () => {
+      if(section === "verses"){
+        specialVerseMode = null;
+        verseNavigationMode = "titles";
+        currentVerseCategory = null;
       }
       setCurrentId(item.id);
       renderList();
@@ -1883,54 +1913,73 @@ function renderTitles(){
 
 function clearNavModes(){
   try{
-    if(!document.getElementById("editorView") || document.getElementById("editorView").classList.contains("hidden")) document.body.classList.remove("editing-focus");
+    const editor = document.getElementById("editorView");
+    if(!editor || editor.classList.contains("hidden")){
+      document.body.classList.remove("editing-focus");
+    }
+
     document.body.classList.remove("titles-only");
     document.body.classList.remove("titles-fullscreen-v72");
     document.body.classList.remove("list-only");
     document.body.classList.remove("backup-only");
     document.body.classList.remove("special-view-only");
-    var cal=document.getElementById("calendarView"); if(cal) cal.classList.add("hidden");
+
+    const cal = document.getElementById("calendarView");
+    if(cal) cal.classList.add("hidden");
   }catch(e){}
 }
 
 function titlesPlaceholderV72(){
-  if(section==="prayers") return "Buscar oración o código (ej. O3)";
-  if(section==="notes") return "Buscar nota o código (ej. N2)";
-  if(section==="guides") return "Buscar guía o código (ej. G1)";
+  if(section === "prayers") return "Buscar oración o código (ej. O3)";
+  if(section === "notes") return "Buscar nota o código (ej. N2)";
+  if(section === "guides") return "Buscar guía o código (ej. G1)";
   return "Buscar versículo, referencia o palabra";
 }
 
 function openTitlesView(){
   setSearchVisibleV26(true);
-  if(section==="verses"){
-    specialVerseMode=null;
-    verseNavigationMode="titles";
-    currentVerseCategory=null;
+
+  if(section === "verses"){
+    specialVerseMode = null;
+    verseNavigationMode = "titles";
+    currentVerseCategory = null;
   }
+
   setActiveView("titles");
   clearNavModes();
-  document.body.classList.add("titles-only","titles-fullscreen-v72");
-  if(!document.getElementById("editorView").classList.contains("hidden")) saveCurrent(false,true);
+  document.body.classList.add("titles-only", "titles-fullscreen-v72");
+
+  if(!document.getElementById("editorView").classList.contains("hidden")){
+    saveCurrent(false, true);
+  }
+
   document.getElementById("titlesView").classList.remove("hidden");
   document.getElementById("readerView").classList.add("hidden");
   document.getElementById("editorView").classList.add("hidden");
   document.getElementById("backupView").classList.add("hidden");
   document.getElementById("trashView").classList.add("hidden");
-  var vc=document.getElementById("verseCategoriesView");if(vc)vc.classList.add("hidden");
-  var cal=document.getElementById("calendarView");if(cal)cal.classList.add("hidden");
-  document.body.classList.remove("reading-mobile","fullscreen-reading","hide-reading-ui");
-  const ts=document.getElementById("titlesSearch");
-  const mainSearch=document.getElementById("search");
+
+  const vc = document.getElementById("verseCategoriesView");
+  if(vc) vc.classList.add("hidden");
+
+  const cal = document.getElementById("calendarView");
+  if(cal) cal.classList.add("hidden");
+
+  document.body.classList.remove("reading-mobile", "fullscreen-reading", "hide-reading-ui");
+
+  const ts = document.getElementById("titlesSearch");
   if(ts){
-    ts.value="";
-    ts.placeholder=titlesPlaceholderV72();
+    ts.value = "";
+    ts.placeholder = titlesPlaceholderV72();
   }
+
   renderTitles();
+
   setTimeout(function(){
-    window.scrollTo({top:0,behavior:"auto"});
-    const list=document.getElementById("titlesList");
-    if(list) list.scrollTop=0;
-  },40);
+    window.scrollTo({top: 0, behavior: "auto"});
+    const list = document.getElementById("titlesList");
+    if(list) list.scrollTop = 0;
+  }, 40);
 }
 
 function openTrash(){
