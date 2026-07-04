@@ -1583,74 +1583,104 @@ function buildVerseShareText(item){
 }
 
 function ensureVerseCategories(){
- if(!state.verseCategories || !state.verseCategories.length){
-   state.verseCategories=VERSE_CATEGORIES.map(v=>({id:v.id,label:v.label}));
- }
+  if(!state.verseCategories || !state.verseCategories.length){
+    state.verseCategories=VERSE_CATEGORIES.map(v=>({id:v.id,label:v.label}));
+  }
 }
 
 function createVerseCategory(){
- ensureVerseCategories();
- const name=prompt("Nombre de la categoría:");
- if(!name) return;
- const emoji=prompt("Emoji o icono (ej: ✨ ❤️ 📖 🙏):","✨")||"✨";
- const id="cat_"+Date.now();
- state.verseCategories.push({id:id,label:(emoji+" "+name).trim()});
- saveState();
- renderVerseCategories();
- toast("Categoría creada");
+  ensureVerseCategories();
+
+  const name=prompt("Nombre de la categoría:");
+  if(!name) return;
+
+  const emoji=prompt("Emoji o icono (ej: ✨ ❤️ 📖 🙏):","✨")||"✨";
+  const id="cat_"+Date.now();
+
+  state.verseCategories.push({id:id,label:(emoji+" "+name).trim()});
+  saveState();
+  renderVerseCategories();
+  toast("Categoría creada");
 }
 
 function renameVerseCategory(){
- ensureVerseCategories();
- const labels=state.verseCategories.map((c,i)=>(i+1)+". "+c.label).join("\n");
- const choice=prompt("Renombrar categoría:\n\n"+labels+"\n\nNúmero:");
- if(!choice) return;
- const idx=parseInt(choice,10)-1;
- if(idx<0 || idx>=state.verseCategories.length) return;
- const nuevo=prompt("Nuevo nombre:",state.verseCategories[idx].label);
- if(!nuevo) return;
- state.verseCategories[idx].label=nuevo;
- saveState(); renderVerseCategories(); toast("Categoría renombrada");
+  ensureVerseCategories();
+
+  const labels=state.verseCategories.map((c,i)=>(i+1)+". "+c.label).join("\n");
+  const choice=prompt("Renombrar categoría:\n\n"+labels+"\n\nNúmero:");
+  if(!choice) return;
+
+  const idx=parseInt(choice,10)-1;
+  if(idx<0 || idx>=state.verseCategories.length) return;
+
+  const nuevo=prompt("Nuevo nombre:",state.verseCategories[idx].label);
+  if(!nuevo) return;
+
+  state.verseCategories[idx].label=nuevo;
+  saveState();
+  renderVerseCategories();
+  toast("Categoría renombrada");
 }
 
 function deleteVerseCategory(){
- ensureVerseCategories();
- const labels=state.verseCategories.map((c,i)=>(i+1)+". "+c.label).join("\n");
- const choice=prompt("Eliminar categoría:\n\n"+labels+"\n\nNúmero:");
- if(!choice) return;
- const idx=parseInt(choice,10)-1;
- if(idx<0 || idx>=state.verseCategories.length) return;
- const cat=state.verseCategories[idx];
- if(cat.id==="sin_categoria"){ alert("📖 Sin categoría es una categoría del sistema y no puede eliminarse."); return; }
- if(!confirm('Eliminar "'+cat.label+'"? Sus versículos pasarán a Sin categoría.')) return;
- state.verses.forEach(v=>{ if(v.category===cat.id) v.category='sin_categoria'; });
- state.verseCategories.splice(idx,1);
- const exists=state.verseCategories.find(c=>c.id==='sin_categoria');
- if(!exists) state.verseCategories.unshift({id:'sin_categoria',label:'📖 Sin categoría'});
- saveState(); renderVerseCategories(); toast("Categoría eliminada");
+  ensureVerseCategories();
+
+  const labels=state.verseCategories.map((c,i)=>(i+1)+". "+c.label).join("\n");
+  const choice=prompt("Eliminar categoría:\n\n"+labels+"\n\nNúmero:");
+  if(!choice) return;
+
+  const idx=parseInt(choice,10)-1;
+  if(idx<0 || idx>=state.verseCategories.length) return;
+
+  const cat=state.verseCategories[idx];
+  if(cat.id==="sin_categoria"){
+    alert("📖 Sin categoría es una categoría del sistema y no puede eliminarse.");
+    return;
+  }
+
+  if(!confirm('Eliminar "'+cat.label+'"? Sus versículos pasarán a Sin categoría.')) return;
+
+  state.verses.forEach(v=>{
+    if(v.category===cat.id) v.category='sin_categoria';
+  });
+  state.verseCategories.splice(idx,1);
+
+  const exists=state.verseCategories.find(c=>c.id==='sin_categoria');
+  if(!exists) state.verseCategories.unshift({id:'sin_categoria',label:'📖 Sin categoría'});
+
+  saveState();
+  renderVerseCategories();
+  toast("Categoría eliminada");
 }
 
 function moveVerseToCategory(){
- if(section!=="verses") return;
- const item=currentItem();
- if(!item || section!=="verses") return;
- ensureVerseCategories();
- const cats=state.verseCategories;
- const labels=cats.map((c,i)=>(i+1)+". "+c.label).join("\n");
- const choice=prompt("Mover a:\n\n"+labels+"\n\nEscribe el número");
- if(!choice) return;
- const idx=parseInt(choice,10)-1;
- if(idx<0 || idx>=cats.length) return;
- item.category=cats[idx].id;
- currentVerseCategory=item.category;
- saveState();
- if(verseNavigationMode==="category"){
-   renderVerseReferenceList(currentVerseCategory);
- }else{
-   renderList();
-   renderReader();
- }
- toast("Versículo movido");
+  if(section!=="verses") return;
+
+  const item=currentItem();
+  if(!item || section!=="verses") return;
+
+  ensureVerseCategories();
+
+  const cats=state.verseCategories;
+  const labels=cats.map((c,i)=>(i+1)+". "+c.label).join("\n");
+  const choice=prompt("Mover a:\n\n"+labels+"\n\nEscribe el número");
+  if(!choice) return;
+
+  const idx=parseInt(choice,10)-1;
+  if(idx<0 || idx>=cats.length) return;
+
+  item.category=cats[idx].id;
+  currentVerseCategory=item.category;
+  saveState();
+
+  if(verseNavigationMode==="category"){
+    renderVerseReferenceList(currentVerseCategory);
+  }else{
+    renderList();
+    renderReader();
+  }
+
+  toast("Versículo movido");
 }
 
 function renderVerseCategories(){
