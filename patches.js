@@ -310,3 +310,107 @@ body.dark .home-card-v9019.home-sky-night{
 `;
   document.head.appendChild(style);
 })();
+
+
+/* ===== V3.1.22 fondos más vivos y sin línea inferior ===== */
+(function(){
+  var ids = [
+    'v3-1-21-vivid-illustrated-backgrounds-css',
+    'v3-1-22-vivid-no-white-veil-css'
+  ];
+  ids.forEach(function(id){
+    var old = document.getElementById(id);
+    if(old) old.remove();
+  });
+
+  var style = document.createElement('style');
+  style.id = 'v3-1-22-vivid-no-white-veil-css';
+  style.textContent = `
+.home-card-v9019.home-sky-morning,
+body.dark .home-card-v9019.home-sky-morning{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.02) 45%, rgba(255,255,255,.08) 100%),
+    url("bg-morning.webp") center center / cover no-repeat!important;
+  border-color:rgba(151,210,238,.62)!important;
+  box-shadow:0 24px 58px rgba(72,153,214,.20),0 10px 28px rgba(247,197,86,.13),inset 0 1px 0 rgba(255,255,255,.72)!important;
+}
+.home-card-v9019.home-sky-day,
+body.dark .home-card-v9019.home-sky-day{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.015) 46%, rgba(255,255,255,.07) 100%),
+    url("bg-day.webp") center center / cover no-repeat!important;
+  border-color:rgba(151,210,238,.64)!important;
+  box-shadow:0 24px 58px rgba(72,153,214,.22),inset 0 1px 0 rgba(255,255,255,.72)!important;
+}
+.home-card-v9019.home-sky-sunset,
+body.dark .home-card-v9019.home-sky-sunset{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.015) 46%, rgba(255,255,255,.07) 100%),
+    url("bg-sunset.webp") center center / cover no-repeat!important;
+  border-color:rgba(246,184,126,.44)!important;
+  box-shadow:0 24px 58px rgba(226,124,76,.18),0 10px 26px rgba(72,153,214,.10),inset 0 1px 0 rgba(255,255,255,.70)!important;
+}
+.home-card-v9019.home-sky-night,
+body.dark .home-card-v9019.home-sky-night{
+  background:
+    linear-gradient(180deg, rgba(3,12,28,.18) 0%, rgba(3,14,32,.12) 42%, rgba(2,10,24,.24) 100%),
+    url("bg-night.webp") 56% center / cover no-repeat!important;
+  border-color:rgba(165,210,245,.38)!important;
+  box-shadow:0 26px 60px rgba(12,43,76,.30), inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+.home-card-v9019.home-sky-morning::before,
+.home-card-v9019.home-sky-morning::after,
+.home-card-v9019.home-sky-day::before,
+.home-card-v9019.home-sky-day::after,
+.home-card-v9019.home-sky-sunset::before,
+.home-card-v9019.home-sky-sunset::after,
+.home-card-v9019.home-sky-night::before,
+.home-card-v9019.home-sky-night::after{
+  display:none!important;
+}
+.home-card-v9019 .home-line-v9019{
+  display:none!important;
+}
+.home-card-v9019.home-sky-morning .home-kicker-v9019,
+.home-card-v9019.home-sky-morning .home-ref-v9019,
+.home-card-v9019.home-sky-day .home-kicker-v9019,
+.home-card-v9019.home-sky-day .home-ref-v9019,
+.home-card-v9019.home-sky-sunset .home-kicker-v9019,
+.home-card-v9019.home-sky-sunset .home-ref-v9019{
+  color:#075f95!important;
+  text-shadow:0 2px 14px rgba(255,255,255,.86),0 1px 0 rgba(255,255,255,.70)!important;
+}
+.home-card-v9019.home-sky-morning .home-text-v9019,
+.home-card-v9019.home-sky-day .home-text-v9019,
+.home-card-v9019.home-sky-sunset .home-text-v9019{
+  color:#142d40!important;
+  text-shadow:0 2px 13px rgba(255,255,255,.82),0 1px 0 rgba(255,255,255,.62)!important;
+}
+.home-card-v9019.home-sky-morning .home-date-v9019,
+.home-card-v9019.home-sky-day .home-date-v9019,
+.home-card-v9019.home-sky-sunset .home-date-v9019{
+  background:rgba(255,255,255,.48)!important;
+  border-color:rgba(255,255,255,.50)!important;
+  box-shadow:0 5px 16px rgba(42,96,145,.10)!important;
+}
+.home-card-v9019.home-sky-morning .home-phrase-v9019,
+.home-card-v9019.home-sky-day .home-phrase-v9019,
+.home-card-v9019.home-sky-sunset .home-phrase-v9019{
+  color:#244357!important;
+  text-shadow:0 1px 10px rgba(255,255,255,.76)!important;
+}
+.home-card-v9019.home-sky-night .home-kicker-v9019,
+.home-card-v9019.home-sky-night .home-ref-v9019,
+.home-card-v9019.home-sky-night .home-text-v9019,
+.home-card-v9019.home-sky-night .home-phrase-v9019{
+  color:#f4fbff!important;
+  text-shadow:0 2px 16px rgba(0,0,0,.36)!important;
+}
+.home-card-v9019.home-sky-night .home-date-v9019{
+  color:#d9efff!important;
+  background:rgba(255,255,255,.16)!important;
+  border-color:rgba(220,242,255,.30)!important;
+}
+`;
+  document.head.appendChild(style);
+})();
