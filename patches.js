@@ -209,3 +209,89 @@ body.dark .home-card-v9019.home-sky-sunset::before{
   style.textContent = css;
   document.head.appendChild(style);
 })();
+
+
+/* ===== V3.1.20 fondos ilustrados tarjeta diaria ===== */
+(function(){
+  var ids = [
+    'v3-1-19-illustrated-backgrounds-css'
+  ];
+  ids.forEach(function(id){
+    var old = document.getElementById(id);
+    if(old) old.remove();
+  });
+  var style = document.createElement('style');
+  style.id = 'v3-1-19-illustrated-backgrounds-css';
+  style.textContent = `
+.home-card-v9019.home-sky-morning,
+body.dark .home-card-v9019.home-sky-morning{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.66) 0%, rgba(255,255,255,.48) 42%, rgba(255,255,255,.60) 100%),
+    url("bg-morning.webp") center center / cover no-repeat!important;
+  border-color:rgba(151,210,238,.68)!important;
+  box-shadow:0 24px 58px rgba(72,153,214,.18),0 10px 28px rgba(247,197,86,.08),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.home-card-v9019.home-sky-day,
+body.dark .home-card-v9019.home-sky-day{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.62) 0%, rgba(255,255,255,.46) 44%, rgba(255,255,255,.58) 100%),
+    url("bg-day.webp") center center / cover no-repeat!important;
+  border-color:rgba(151,210,238,.70)!important;
+  box-shadow:0 24px 58px rgba(72,153,214,.18),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+.home-card-v9019.home-sky-sunset,
+body.dark .home-card-v9019.home-sky-sunset{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.52) 0%, rgba(255,255,255,.34) 44%, rgba(255,255,255,.48) 100%),
+    url("bg-sunset.webp") center center / cover no-repeat!important;
+  border-color:rgba(246,184,126,.46)!important;
+  box-shadow:0 24px 58px rgba(226,124,76,.14),0 10px 26px rgba(72,153,214,.08),inset 0 1px 0 rgba(255,255,255,.92)!important;
+}
+.home-card-v9019.home-sky-night,
+body.dark .home-card-v9019.home-sky-night{
+  background:
+    linear-gradient(180deg, rgba(4,18,38,.22) 0%, rgba(5,22,46,.18) 42%, rgba(3,15,30,.30) 100%),
+    url("bg-night.webp") 56% center / cover no-repeat!important;
+  border-color:rgba(165,210,245,.38)!important;
+  box-shadow:0 26px 60px rgba(12,43,76,.30), inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+.home-card-v9019.home-sky-morning::before,
+.home-card-v9019.home-sky-morning::after,
+.home-card-v9019.home-sky-day::before,
+.home-card-v9019.home-sky-day::after,
+.home-card-v9019.home-sky-sunset::before,
+.home-card-v9019.home-sky-sunset::after,
+.home-card-v9019.home-sky-night::before,
+.home-card-v9019.home-sky-night::after{
+  display:none!important;
+}
+.home-card-v9019.home-sky-morning .home-kicker-v9019,
+.home-card-v9019.home-sky-morning .home-ref-v9019,
+.home-card-v9019.home-sky-day .home-kicker-v9019,
+.home-card-v9019.home-sky-day .home-ref-v9019,
+.home-card-v9019.home-sky-sunset .home-kicker-v9019,
+.home-card-v9019.home-sky-sunset .home-ref-v9019{
+  color:#08689f!important;
+  text-shadow:0 2px 16px rgba(255,255,255,.70)!important;
+}
+.home-card-v9019.home-sky-morning .home-text-v9019,
+.home-card-v9019.home-sky-day .home-text-v9019,
+.home-card-v9019.home-sky-sunset .home-text-v9019{
+  color:#18364a!important;
+  text-shadow:0 1px 13px rgba(255,255,255,.58)!important;
+}
+.home-card-v9019.home-sky-night .home-kicker-v9019,
+.home-card-v9019.home-sky-night .home-ref-v9019,
+.home-card-v9019.home-sky-night .home-text-v9019,
+.home-card-v9019.home-sky-night .home-phrase-v9019{
+  color:#f4fbff!important;
+  text-shadow:0 2px 16px rgba(0,0,0,.36)!important;
+}
+.home-card-v9019.home-sky-night .home-date-v9019{
+  color:#d9efff!important;
+  background:rgba(255,255,255,.16)!important;
+  border-color:rgba(220,242,255,.30)!important;
+}
+`;
+  document.head.appendChild(style);
+})();
