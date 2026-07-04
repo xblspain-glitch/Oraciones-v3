@@ -529,3 +529,22 @@ body.dark .home-card-v9019.home-sky-day{
 `;
   document.head.appendChild(style);
 })();
+
+
+/* ===== V3.1.25 ajuste final: frase inferior blanca solo en fondo Día =====
+   Cambio mínimo y reversible. No modifica imágenes ni estructura. */
+(function(){
+  var old = document.getElementById('v3-1-25-daily-day-white-phrase-css');
+  if(old) old.remove();
+
+  var style = document.createElement('style');
+  style.id = 'v3-1-25-daily-day-white-phrase-css';
+  style.textContent = `
+.home-card-v9019.home-sky-day .home-phrase-v9019,
+body.dark .home-card-v9019.home-sky-day .home-phrase-v9019{
+  color:#ffffff!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.45)!important;
+}
+`;
+  document.head.appendChild(style);
+})();
