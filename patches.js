@@ -128,9 +128,9 @@
   setTimeout(applyHomeSkyV902035, 120);
 })();
 
-/* ===== v3.1.12 - Arco iris visible y abierto desde patches.js =====
-   Ajuste intermedio: mantiene el arco abierto, pero lo sube y aumenta un poco
-   su presencia para que se vea sin volver al efecto de anillo central. */
+/* ===== v3.1.13 - Arco iris suave visible desde patches.js =====
+   Ajuste real sobre el origen que inyecta el fondo: más altura y presencia
+   que la v3.1.12, manteniendo el arco bajo y sin volver al anillo central. */
 (function(){
   const css = `
 .home-card-v9019.home-sky-morning,
@@ -138,17 +138,17 @@
 body.dark .home-card-v9019.home-sky-morning,
 body.dark .home-card-v9019.home-sky-day{
   background:
-    radial-gradient(ellipse 180% 72% at 50% 114%,
+    radial-gradient(ellipse 200% 55% at 50% 116%,
       transparent 0%,
-      transparent 48.0%,
-      rgba(255, 112, 112, .074) 49.0%,
-      rgba(255, 176,  92, .068) 50.4%,
-      rgba(255, 235, 130, .061) 51.8%,
-      rgba(132, 218, 146, .056) 53.2%,
-      rgba(103, 195, 236, .061) 54.6%,
-      rgba(128, 151, 236, .053) 56.0%,
-      rgba(181, 133, 224, .046) 57.4%,
-      transparent 61.0%),
+      transparent 47.4%,
+      rgba(255, 112, 112, .118) 48.6%,
+      rgba(255, 176,  92, .108) 50.1%,
+      rgba(255, 235, 130, .098) 51.6%,
+      rgba(132, 218, 146, .090) 53.1%,
+      rgba(103, 195, 236, .098) 54.6%,
+      rgba(128, 151, 236, .084) 56.1%,
+      rgba(181, 133, 224, .074) 57.6%,
+      transparent 61.8%),
     radial-gradient(circle at 7% 13%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.58) 5%, rgba(255,246,198,.34) 14%, rgba(255,232,138,.18) 27%, rgba(255,232,138,0) 49%),
     radial-gradient(ellipse at 35% 16%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.16) 21%, rgba(255,255,255,0) 49%),
     radial-gradient(ellipse at 78% 25%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.13) 22%, rgba(255,255,255,0) 48%),
@@ -167,17 +167,17 @@ body.dark .home-card-v9019.home-sky-day::before{
 body.dark .home-card-v9019.home-sky-sunset{
   border-color:rgba(246,184,126,.32)!important;
   background:
-    radial-gradient(ellipse 180% 72% at 50% 114%,
+    radial-gradient(ellipse 200% 55% at 50% 116%,
       transparent 0%,
-      transparent 48.0%,
-      rgba(255, 112, 112, .052) 49.0%,
-      rgba(255, 176,  92, .047) 50.4%,
-      rgba(255, 235, 130, .042) 51.8%,
-      rgba(132, 218, 146, .039) 53.2%,
-      rgba(103, 195, 236, .044) 54.6%,
-      rgba(128, 151, 236, .038) 56.0%,
-      rgba(181, 133, 224, .033) 57.4%,
-      transparent 61.0%),
+      transparent 47.4%,
+      rgba(255, 112, 112, .090) 48.6%,
+      rgba(255, 176,  92, .080) 50.1%,
+      rgba(255, 235, 130, .072) 51.6%,
+      rgba(132, 218, 146, .067) 53.1%,
+      rgba(103, 195, 236, .074) 54.6%,
+      rgba(128, 151, 236, .065) 56.1%,
+      rgba(181, 133, 224, .057) 57.6%,
+      transparent 61.8%),
     radial-gradient(circle at 7% 14%, rgba(255,255,255,.86) 0%, rgba(255,240,204,.50) 8%, rgba(255,205,150,.22) 21%, rgba(239,148,92,.075) 36%, rgba(239,148,92,0) 60%),
     radial-gradient(ellipse at 0% 48%, rgba(255,184,120,.18) 0%, rgba(255,214,168,.09) 36%, rgba(255,214,168,0) 72%),
     radial-gradient(ellipse at 46% 24%, rgba(255,238,210,.22) 0%, rgba(255,238,210,.08) 30%, rgba(255,238,210,0) 64%),
@@ -199,11 +199,16 @@ body.dark .home-card-v9019.home-sky-sunset::after{
   filter:saturate(.82) brightness(1.08) blur(.08px)!important;
   text-shadow:0 0 18px rgba(255,226,178,.42),0 0 42px rgba(236,142,78,.13)!important;
 }`;
-  ['v3-1-4-rainbow-covenant-css','v3-1-10-rainbow-bottom-real-css','v3-1-11-rainbow-horizon-real-css'].forEach(oldId => {
+  [
+    'v3-1-4-rainbow-covenant-css',
+    'v3-1-10-rainbow-bottom-real-css',
+    'v3-1-11-rainbow-horizon-real-css',
+    'v3-1-12-rainbow-visible-open-css'
+  ].forEach(oldId => {
     const old = document.getElementById(oldId);
     if (old) old.remove();
   });
-  const id = 'v3-1-12-rainbow-visible-open-css';
+  const id = 'v3-1-13-rainbow-soft-visible-css';
   const existing = document.getElementById(id);
   if (existing) existing.remove();
   const style = document.createElement('style');
