@@ -149,21 +149,61 @@ function syncTabs(){
 }
 
 function setActiveView(view){
-  document.querySelectorAll('[data-view-btn]').forEach(btn=>btn.classList.remove('active-view'));
+  document.querySelectorAll('[data-view-btn]').forEach(btn => {
+    btn.classList.remove('active-view');
+  });
+
   if(!view) return;
-  document.querySelectorAll('[data-view-btn="'+view+'"]').forEach(btn=>btn.classList.add('active-view'));
-  const map={new:'btnNew',read:'btnRead',daily:'btnDaily',calendar:'calendarBtn',random:'btnRandom',titles:'btnTitles',edit:'btnEdit',favorites:'btnFavorites',backup:'btnBackup',trash:'btnTrash',list:'btnList'};
-  const id=map[view]||view;
-  const btn=document.getElementById(id);
+
+  document.querySelectorAll('[data-view-btn="' + view + '"]').forEach(btn => {
+    btn.classList.add('active-view');
+  });
+
+  const map = {
+    new: 'btnNew',
+    read: 'btnRead',
+    daily: 'btnDaily',
+    calendar: 'calendarBtn',
+    random: 'btnRandom',
+    titles: 'btnTitles',
+    edit: 'btnEdit',
+    favorites: 'btnFavorites',
+    backup: 'btnBackup',
+    trash: 'btnTrash',
+    list: 'btnList'
+  };
+
+  const id = map[view] || view;
+  const btn = document.getElementById(id);
+
   if(btn) btn.classList.add('active-view');
 }
 
 
   /* ===== NAVEGACIÓN PRINCIPAL ===== */
-  function switchSection(s){
-  section=s;state.section=s;try{document.body.dataset.section=s;}catch(e){};saveState();syncTabs();setSearchVisibleV26(true);setActiveView(null);renderList();
-  if(s==="verses"){currentVerseCategory=currentVerseCategory||"fe";verseNavigationMode="categories";openVerseCategories();return}
-  renderReader();openReader();
+function switchSection(s){
+  section = s;
+  state.section = s;
+
+  try{
+    document.body.dataset.section = s;
+  }catch(e){}
+
+  saveState();
+  syncTabs();
+  setSearchVisibleV26(true);
+  setActiveView(null);
+  renderList();
+
+  if(s === "verses"){
+    currentVerseCategory = currentVerseCategory || "fe";
+    verseNavigationMode = "categories";
+    openVerseCategories();
+    return;
+  }
+
+  renderReader();
+  openReader();
 }
 
 function switchSectionAndReadV90187(s){
