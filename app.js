@@ -1070,21 +1070,27 @@ function clearSentMark(id){
 }
 
 function closeMoreMenu(){
-  const old=document.getElementById("moreDropdown");
+  const old = document.getElementById("moreDropdown");
   if(old) old.remove();
+
   document.removeEventListener("click", closeMoreMenuOutside, true);
 }
+
 function closeMoreMenuOutside(e){
-  const menu=document.getElementById("moreDropdown");
+  const menu = document.getElementById("moreDropdown");
   if(!menu) return;
   if(menu.contains(e.target)) return;
-  const btn=e.target && e.target.closest ? e.target.closest('[data-more-button="1"]') : null;
+
+  const btn = e.target && e.target.closest
+    ? e.target.closest('[data-more-button="1"]')
+    : null;
+
   if(btn) return;
   closeMoreMenu();
 }
 
 function closeSendStatsPanel(){
-  const p=document.getElementById("sendStatsPanel");
+  const p = document.getElementById("sendStatsPanel");
   if(p) p.remove();
 }
 function openNeverSentStatsMenu(){
