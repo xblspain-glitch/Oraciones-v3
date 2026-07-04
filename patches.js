@@ -530,4 +530,9 @@ body.dark .home-card-v9019.home-sky-day{
   document.head.appendChild(style);
 })();
 
-.home-card-v9019.home-sky-day .home-phrase-v9019{color:#fff!important;text-shadow:0 2px 8px rgba(0,0,0,.45)!important;}
+/* V3.1.25 SAFE FIX — solo frase inferior blanca en fondo Día.
+   No toca imágenes ni fondos. */
+.home-card-v9019.home-sky-day .home-phrase-v9019{
+  color:#fff!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.45)!important;
+}
