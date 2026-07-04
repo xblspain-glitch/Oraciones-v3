@@ -7105,71 +7105,97 @@ setInterval(updateVersePositionCounter, 1000);
 
 /* V3 paso 16: parches visuales finales movidos a patches.js. */
 
-/* v3.1.3 - Arreglo real: Volver desde Títulos regresa a la botonera interna de sección */
+/* v3.1.2 - Arreglo real: Volver desde Títulos a botonera interna de sección */
 (function(){
-  if(window.__v313TitlesBackToSectionToolbarFix) return;
-  window.__v313TitlesBackToSectionToolbarFix = true;
+  if(window.__v312TitlesBackToSectionToolbar) return;
+  window.__v312TitlesBackToSectionToolbar = true;
 
-  function isSectionWithInternalToolbarV313(){
+  function isTitlesVisibleV312(){
     try{
-      return ["prayers", "notes", "guides", "parables"].indexOf(section) !== -1;
-    }catch(e){
-      return false;
-    }
+      var titles = document.getElementById('titlesView');
+      return !!(titles && !titles.classList.contains('hidden'));
+    }catch(e){ return false; }
   }
 
-  function titlesViewVisibleV313(){
+  function isNormalSectionV312(){
     try{
-      var titles = document.getElementById("titlesView");
-      return !!(titles && !titles.classList.contains("hidden"));
-    }catch(e){
-      return false;
-    }
+      return ['prayers','notes','guides','parables'].indexOf(section) !== -1;
+    }catch(e){ return false; }
   }
 
-  function hideHomeV313(){
+  window.backFromTitlesToSectionToolbarV312 = function(){
     try{
-      document.body.classList.remove("home-active-v9019");
-      var home = document.getElementById("homeView");
-      if(home) home.classList.add("hidden");
-    }catch(e){}
-  }
-
-  function scrollToSectionToolbarV313(){
-    try{
-      var reader = document.getElementById("readerView");
-      if(reader && !reader.classList.contains("hidden")){
-        reader.scrollIntoView({block:"start", behavior:"auto"});
-      }
-    }catch(e){
-      try{
-        var top = document.getElementById("readerView");
-        if(top) window.scrollTo(0, top.offsetTop || 0);
-      }catch(_e){}
-    }
-  }
-
-  var previousSmartBackV313 = window.smartBack || (typeof smartBack !== "undefined" ? smartBack : null);
-
-  window.smartBack = function(){
-    try{
-      if(titlesViewVisibleV313() && isSectionWithInternalToolbarV313()){
-        hideHomeV313();
-        if(typeof renderList === "function") renderList();
-        if(typeof renderReader === "function") renderReader();
-        if(typeof openReader === "function") openReader();
-        hideHomeV313();
-        setTimeout(scrollToSectionToolbarV313, 40);
+      if(!isNormalSectionV312()){
+        if(typeof openReader === 'function') openReader();
         return;
       }
-    }catch(e){
-      console.warn("v3.1.3 titles back fix skipped", e);
-    }
 
-    if(typeof previousSmartBackV313 === "function"){
-      return previousSmartBackV313.apply(this, arguments);
+      var home = document.getElementById('homeView');
+      if(home) home.classList.add('hidden');
+      document.body.classList.remove('home-active-v9019','titles-only','titles-fullscreen-v72','list-only','backup-only','special-view-only');
+
+      var titles = document.getElementById('titlesView');
+      if(titles) titles.classList.add('hidden');
+
+      if(typeof syncTabs === 'function') syncTabs();
+      if(typeof renderList === 'function') renderList();
+      if(typeof renderReader === 'function') renderReader();
+
+      if(typeof enterFullscreenReading === 'function'){
+        enterFullscreenReading();
+      }else if(typeof openReader === 'function'){
+        openReader();
+      }
+
+      setTimeout(function(){
+        try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ window.scrollTo(0,0); }
+      }, 40);
+    }catch(e){
+      console.error('backFromTitlesToSectionToolbarV312', e);
+      try{ if(typeof openReader === 'function') openReader(); }catch(_e){}
     }
   };
 
-  try{ smartBack = window.smartBack; }catch(e){}
+  function forceTitlesBackButtonV312(){
+    try{
+      if(!isTitlesVisibleV312() || !isNormalSectionV312()) return;
+      var backBtn = document.querySelector('#titlesView .panel-head button:first-child');
+      if(backBtn) backBtn.setAttribute('onclick','backFromTitlesToSectionToolbarV312()');
+    }catch(e){}
+  }
+
+  var previousOpenTitlesV312 = window.openTitlesView || (typeof openTitlesView !== 'undefined' ? openTitlesView : null);
+  if(typeof previousOpenTitlesV312 === 'function'){
+    window.openTitlesView = function(){
+      var r = previousOpenTitlesV312.apply(this, arguments);
+      setTimeout(forceTitlesBackButtonV312, 30);
+      setTimeout(forceTitlesBackButtonV312, 120);
+      return r;
+    };
+    try{ openTitlesView = window.openTitlesView; }catch(e){}
+  }
+
+  var previousSmartBackV312 = window.smartBack || (typeof smartBack !== 'undefined' ? smartBack : null);
+  if(typeof previousSmartBackV312 === 'function'){
+    window.smartBack = function(){
+      try{
+        if(isTitlesVisibleV312() && isNormalSectionV312()){
+          return window.backFromTitlesToSectionToolbarV312();
+        }
+      }catch(e){}
+      return previousSmartBackV312.apply(this, arguments);
+    };
+    try{ smartBack = window.smartBack; }catch(e){}
+  }
+
+  document.addEventListener('click', function(e){
+    try{
+      var btn = e.target && e.target.closest ? e.target.closest('#titlesView .panel-head button:first-child') : null;
+      if(btn && isTitlesVisibleV312() && isNormalSectionV312()){
+        e.preventDefault();
+        e.stopPropagation();
+        window.backFromTitlesToSectionToolbarV312();
+      }
+    }catch(_e){}
+  }, true);
 })();
