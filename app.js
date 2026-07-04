@@ -919,42 +919,50 @@ function saveCurrentOriginal(stay, silent){
 }
 
 function normalizeVerseDuplicateKey(s){
-  return cleanTextBreaks(String(s||""))
+  return cleanTextBreaks(String(s || ""))
     .toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .replace(/\brvr\s*1960\b/g,"")
     .replace(/\breina\s*valera\s*1960\b/g,"")
     .replace(/[–—]/g,"-")
-    .replace(/[.,;:()\[\]{}"“”'’]/g,"")
+    .replace(/[.,;:()\[\]{}"“”'’]/g, "")
     .replace(/\s+/g," ")
     .trim();
 }
 
 function extractReferenceFromPastedText(raw){
-  const lines=String(raw||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
-  const refRe=/^((?:[1-3]\s*)?(?:san\s+)?[a-záéíóúñü]+(?:\s+[a-záéíóúñü]+){0,3})\s+\d{1,3}:\d{1,3}(?:[-–—]\d{1,3})?/i;
+  const lines = String(raw || "")
+    .split(/\n+/)
+    .map(x => x.trim())
+    .filter(Boolean);
+  const refRe = /^((?:[1-3]\s*)?(?:san\s+)?[a-záéíóúñü]+(?:\s+[a-záéíóúñü]+){0,3})\s+\d{1,3}:\d{1,3}(?:[-–—]\d{1,3})?/i;
+
   for(const line of lines){
-    const clean=line.replace(/^[^\wáéíóúñü0-9]+/i,"").trim();
-    const m=clean.match(refRe);
+    const clean = line.replace(/^[^\wáéíóúñü0-9]+/i, "").trim();
+    const m = clean.match(refRe);
     if(m) return m[0].trim();
   }
+
   return "";
 }
 
 function removePastedHeadersForDuplicate(raw){
-  let s=String(raw||"");
-  const ref=extractReferenceFromPastedText(s);
+  let s = String(raw || "");
+  const ref = extractReferenceFromPastedText(s);
+
   if(ref){
-    s=s.replace(ref," ");
+    s = s.replace(ref, " ");
   }
+
   // Quita líneas tipo "❤️ Salvación", "🌅 Versículo del día", etc.
-  s=s.split(/\n+/).filter(line=>{
-    const t=line.trim();
+  s = s.split(/\n+/).filter(line => {
+    const t = line.trim();
     if(!t) return false;
     if(/^(❤️|🌿|✨|🙏🏾?|🙌🏾?|💪🏾?|🔥|👑|⏳|🕊️?|📖|🌅)/.test(t) && !/\[\d+\]/.test(t)) return false;
     if(/versículo del día/i.test(t)) return false;
     return true;
   }).join(" ");
+
   return s;
 }
 
@@ -1090,14 +1098,14 @@ function discardEditorChanges(){
       (item.reference==="Nueva referencia");
 
     if(isNew){
-      const filtered=items.filter(x=>x.id!==item.id);
+      const filtered = items.filter(x => x.id !== item.id);
       setItems(filtered);
 
-      const next=filtered[0]||null;
+      const next = filtered[0] || null;
       if(next){
         setCurrentId(next.id);
       }else{
-        const id=uid();
+        const id = uid();
         const fallback = section==="verses"
           ? {id,reference:"Nueva referencia",title:"Nueva referencia",category:(currentVerseCategory||"fe"),content:"",text:"",updatedAt:Date.now(),favorite:false,shared:false,isNewVerse:true}
           : {id,title:(section==="prayers"?"Nueva oración":section==="notes"?"Nueva nota":"Nueva guía"),content:"",updatedAt:Date.now(),favorite:false,isNewItem:true};
