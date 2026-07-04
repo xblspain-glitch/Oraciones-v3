@@ -2,7 +2,7 @@
    Módulo de constantes, normalización e importación/exportación de versículos.
    Separado sin cambiar comportamiento. */
 
-const VERSE_CATEGORIES=[
+const VERSE_CATEGORIES = [
   {id:"salvacion",label:"❤️ Salvación"},
   {id:"fe",label:"🙏🏾 Fe"},
   {id:"esperanza",label:"🕊️ Esperanza"},
@@ -18,19 +18,22 @@ const VERSE_CATEGORIES=[
   {id:"juicio",label:"⚖️ Juicio"},
   {id:"matrimonio",label:"🤝 Matrimonio"}
 ];
-let currentVerseCategory="fe";
-let verseNavigationMode="categories";
-let specialVerseMode=null;
+let currentVerseCategory = "fe";
+let verseNavigationMode = "categories";
+let specialVerseMode = null;
 function verseCategoryLabel(id){
   if(!id) return "📖 Sin categoría";
+
   const dynamicCats = (state && Array.isArray(state.verseCategories)) ? state.verseCategories : [];
-  const c = dynamicCats.find(x=>x.id===id) || VERSE_CATEGORIES.find(x=>x.id===id);
+  const c = dynamicCats.find(x => x.id === id) || VERSE_CATEGORIES.find(x => x.id === id);
+
   return c ? c.label : "📖 Sin categoría";
 }
 function normalizeVerses(){
-  if(!Array.isArray(state.verses)) state.verses=[];
-  if(!Array.isArray(state.trashVerses)) state.trashVerses=[];
-  state.verses=state.verses.map(v=>({
+  if(!Array.isArray(state.verses)) state.verses = [];
+  if(!Array.isArray(state.trashVerses)) state.trashVerses = [];
+
+  state.verses = state.verses.map(v => ({
     id:v.id||uid(),
     reference:v.reference||v.title||"Nueva referencia",
     title:v.title||v.reference||"Nueva referencia",
@@ -42,7 +45,7 @@ function normalizeVerses(){
     shared:!!v.shared,
     lastCardSentAt:v.lastCardSentAt||0
   }));
-  state.trashVerses=state.trashVerses.map(v=>({
+  state.trashVerses = state.trashVerses.map(v => ({
     ...v,
     reference:v.reference||v.title||"Nueva referencia",
     title:v.title||v.reference||"Nueva referencia",
@@ -53,7 +56,7 @@ function normalizeVerses(){
     shared:!!v.shared,
     lastCardSentAt:v.lastCardSentAt||0
   }));
-  if(!state.currentVerseId && state.verses.length) state.currentVerseId=state.verses[0].id;
+  if(!state.currentVerseId && state.verses.length) state.currentVerseId = state.verses[0].id;
 }
 
 
@@ -71,49 +74,73 @@ function cleanAllVerseBreaks(){
 
 function exportVersesOnly(){
   normalizeVerses();
-  const payload={type:"verses",exportedAt:new Date().toISOString(),verses:state.verses,trashVerses:state.trashVerses||[],verseCategories:state.verseCategories||[]};
-  const text=JSON.stringify(payload,null,2);
-  document.getElementById("backupText").value=text;
-  downloadBlob("versiculos_app.json", new Blob([text],{type:"application/json;charset=utf-8"}));
+
+  const payload = {
+    type: "verses",
+    exportedAt: new Date().toISOString(),
+    verses: state.verses,
+    trashVerses: state.trashVerses || [],
+    verseCategories: state.verseCategories || []
+  };
+  const text = JSON.stringify(payload, null, 2);
+
+  document.getElementById("backupText").value = text;
+  downloadBlob("versiculos_app.json", new Blob([text], {type: "application/json;charset=utf-8"}));
   toast("Versículos exportados");
 }
 function applyVersesImport(parsed){
-  if(!parsed || parsed.type!=="verses" || !Array.isArray(parsed.verses)) throw new Error("bad_verses_json");
+  if(!parsed || parsed.type !== "verses" || !Array.isArray(parsed.verses)) throw new Error("bad_verses_json");
   if(!confirm("¿Importar versículos sin tocar oraciones, notas ni guía?")) return false;
-  state.verses=parsed.verses;
-  state.trashVerses=Array.isArray(parsed.trashVerses)?parsed.trashVerses:[];
-  if(Array.isArray(parsed.verseCategories)) state.verseCategories=parsed.verseCategories;
+
+  state.verses = parsed.verses;
+  state.trashVerses = Array.isArray(parsed.trashVerses) ? parsed.trashVerses : [];
+
+  if(Array.isArray(parsed.verseCategories)) state.verseCategories = parsed.verseCategories;
+
   normalizeVerses();
   saveState();
-  section="verses";state.section="verses";
-  syncTabs();renderList();openVerseCategories();
-  toast("Versículos importados: "+state.verses.length);
+
+  section = "verses";
+  state.section = "verses";
+
+  syncTabs();
+  renderList();
+  openVerseCategories();
+
+  toast("Versículos importados: " + state.verses.length);
   return true;
 }
 function importVersesOnly(){
-  const text=document.getElementById("backupText").value.trim();
+  const text = document.getElementById("backupText").value.trim();
   if(!text) return alert("Pega primero un JSON de versículos o usa ❤️ Importar archivo de versículos.");
+
   try{
     applyVersesImport(JSON.parse(text));
-  }catch(e){alert("JSON de versículos no válido.")}
+  }catch(e){
+    alert("JSON de versículos no válido.");
+  }
 }
 function importVersesFromFile(file){
   if(!file) return alert("No se ha seleccionado ningún archivo.");
-  const reader=new FileReader();
-  reader.onload=()=>{
+
+  const reader = new FileReader();
+  reader.onload = () => {
     try{
-      const text=String(reader.result||"");
-      document.getElementById("backupText").value=text;
+      const text = String(reader.result || "");
+      document.getElementById("backupText").value = text;
       applyVersesImport(JSON.parse(text));
-    }catch(e){alert("El archivo no es un JSON de versículos válido.")}
+    }catch(e){
+      alert("El archivo no es un JSON de versículos válido.");
+    }
   };
-  reader.onerror=()=>alert("No se pudo leer el archivo.");
-  reader.readAsText(file,"utf-8");
+  reader.onerror = () => alert("No se pudo leer el archivo.");
+  reader.readAsText(file, "utf-8");
 }
 
 function openVersesFilePicker(){
-  const input=document.getElementById("versesFileInput");
+  const input = document.getElementById("versesFileInput");
   if(!input) return alert("Selector de versículos no disponible.");
-  input.value="";
+
+  input.value = "";
   input.click();
 }
