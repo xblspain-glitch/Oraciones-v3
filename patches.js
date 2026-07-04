@@ -414,3 +414,54 @@ body.dark .home-card-v9019.home-sky-night{
 `;
   document.head.appendChild(style);
 })();
+
+/* ===== V3.1.23 pulido visual de tarjeta ilustrada ===== */
+(function(){
+  var ids = [
+    'v3-1-23-illustrated-card-polish-css'
+  ];
+  ids.forEach(function(id){
+    var old = document.getElementById(id);
+    if(old) old.remove();
+  });
+
+  var style = document.createElement('style');
+  style.id = 'v3-1-23-illustrated-card-polish-css';
+  style.textContent = `
+.home-card-v9019{
+  transition:background-image .45s ease, background-position .45s ease, filter .35s ease, box-shadow .35s ease, border-color .35s ease!important;
+}
+.home-card-v9019 .home-date-v9019{
+  backdrop-filter:blur(10px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.08)!important;
+}
+.home-card-v9019.home-sky-morning .home-ref-v9019,
+.home-card-v9019.home-sky-day .home-ref-v9019,
+.home-card-v9019.home-sky-sunset .home-ref-v9019{
+  text-shadow:0 3px 16px rgba(255,255,255,.78),0 1px 0 rgba(255,255,255,.60),0 12px 28px rgba(0,76,130,.08)!important;
+}
+.home-card-v9019.home-sky-night .home-ref-v9019{
+  text-shadow:0 2px 18px rgba(0,0,0,.46),0 0 18px rgba(110,185,255,.14)!important;
+}
+.home-card-v9019.home-sky-morning,
+body.dark .home-card-v9019.home-sky-morning,
+.home-card-v9019.home-sky-day,
+body.dark .home-card-v9019.home-sky-day,
+.home-card-v9019.home-sky-sunset,
+body.dark .home-card-v9019.home-sky-sunset{
+  box-shadow:0 26px 60px rgba(72,153,214,.20),0 10px 28px rgba(40,90,130,.08),inset 0 1px 0 rgba(255,255,255,.70)!important;
+}
+.home-card-v9019.home-sky-night,
+body.dark .home-card-v9019.home-sky-night{
+  box-shadow:0 28px 64px rgba(8,28,52,.34),inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+.home-card-v9019 .home-phrase-v9019{
+  margin-top:18px!important;
+}
+@media(max-width:420px){
+  .home-card-v9019 .home-phrase-v9019{margin-top:16px!important;}
+}
+`;
+  document.head.appendChild(style);
+})();
+
