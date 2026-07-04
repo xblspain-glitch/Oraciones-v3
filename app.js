@@ -844,47 +844,78 @@ function openEditor(){
   setActiveView("edit");
   clearNavModes();
   document.body.classList.add("editing-focus");
-  const item=currentItem();if(!item) return;
-  const cat=document.getElementById("editCategory");
-  if(section==="verses"){
-    document.getElementById("editTitle").value=item.reference||item.title||"";
+
+  const item = currentItem();
+  if(!item) return;
+
+  const cat = document.getElementById("editCategory");
+
+  if(section === "verses"){
+    document.getElementById("editTitle").value = item.reference || item.title || "";
     cat.classList.remove("hidden");
-    cat.value=item.category||"fe";
-    document.getElementById("editText").value=item.text||item.content||"";
+    cat.value = item.category || "fe";
+    document.getElementById("editText").value = item.text || item.content || "";
   }else{
-    document.getElementById("editTitle").value=item.title||"";
+    document.getElementById("editTitle").value = item.title || "";
     cat.classList.add("hidden");
-    document.getElementById("editText").value=item.content||"";
+    document.getElementById("editText").value = item.content || "";
   }
+
   document.getElementById("editorView").classList.remove("hidden");
   document.getElementById("readerView").classList.add("hidden");
   document.getElementById("backupView").classList.add("hidden");
   document.getElementById("trashView").classList.add("hidden");
   document.getElementById("titlesView").classList.add("hidden");
-  var vc=document.getElementById("verseCategoriesView");if(vc)vc.classList.add("hidden");
-  document.body.classList.remove("reading-mobile","fullscreen-reading","hide-reading-ui");
-  isDirty=false;
+
+  const vc = document.getElementById("verseCategoriesView");
+  if(vc) vc.classList.add("hidden");
+
+  document.body.classList.remove("reading-mobile", "fullscreen-reading", "hide-reading-ui");
+
+  isDirty = false;
   setSaveStatus("Sin cambios");
-  setTimeout(()=>{try{window.scrollTo({top:0,behavior:"smooth"});document.getElementById("editText").focus({preventScroll:true});}catch(e){}},80);
+
+  setTimeout(() => {
+    try{
+      window.scrollTo({top: 0, behavior: "smooth"});
+      document.getElementById("editText").focus({preventScroll: true});
+    }catch(e){}
+  }, 80);
 }
-function scheduleAutosave(){isDirty=true;setSaveStatus("Cambios sin guardar");if(autosaveTimer) clearTimeout(autosaveTimer);/* v42C: autoguardado desactivado; solo guarda al pulsar Guardar */}
+function scheduleAutosave(){
+  isDirty = true;
+  setSaveStatus("Cambios sin guardar");
+
+  if(autosaveTimer) clearTimeout(autosaveTimer);
+
+  /* v42C: autoguardado desactivado; solo guarda al pulsar Guardar */
+}
 function saveCurrentOriginal(stay, silent){
-  const item=currentItem();if(!item)return;
-  if(section==="verses"){
-    item.reference=document.getElementById("editTitle").value.trim()||"Sin referencia";
-    item.title=item.reference;
-    item.category=(document.getElementById("editCategory").value||currentVerseCategory||"fe"); currentVerseCategory=item.category;
-    item.text=document.getElementById("editText").value;
-    item.content=item.text;
+  const item = currentItem();
+  if(!item) return;
+
+  if(section === "verses"){
+    item.reference = document.getElementById("editTitle").value.trim() || "Sin referencia";
+    item.title = item.reference;
+    item.category = document.getElementById("editCategory").value || currentVerseCategory || "fe";
+    currentVerseCategory = item.category;
+    item.text = document.getElementById("editText").value;
+    item.content = item.text;
   }else{
-    item.title=document.getElementById("editTitle").value.trim()||"Sin título";
-    item.content=document.getElementById("editText").value;
+    item.title = document.getElementById("editTitle").value.trim() || "Sin título";
+    item.content = document.getElementById("editText").value;
   }
-  item.updatedAt=Date.now();
-  isDirty=false;setSaveStatus("Guardado");
-  saveState();renderList();renderReader();
-  if(!stay)openReader();
-  if(!silent)toast("Guardado")
+
+  item.updatedAt = Date.now();
+  isDirty = false;
+  setSaveStatus("Guardado");
+
+  saveState();
+  renderList();
+  renderReader();
+
+  if(!stay) openReader();
+  if(!silent) toast("Guardado");
 }
 
 function normalizeVerseDuplicateKey(s){
