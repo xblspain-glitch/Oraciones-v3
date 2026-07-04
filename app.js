@@ -2379,15 +2379,21 @@ document.addEventListener("click",function(ev){
 function openBackup(){
   setActiveView("backup");
   clearNavModes();
-  document.body.classList.add("backup-only","special-view-only");
-  document.body.classList.remove("reading-mobile","fullscreen-reading","hide-reading-ui");
+
+  document.body.classList.add("backup-only", "special-view-only");
+  document.body.classList.remove("reading-mobile", "fullscreen-reading", "hide-reading-ui");
+
   document.getElementById("backupView").classList.remove("hidden");
   document.getElementById("readerView").classList.add("hidden");
   document.getElementById("editorView").classList.add("hidden");
   document.getElementById("trashView").classList.add("hidden");
   document.getElementById("titlesView").classList.add("hidden");
-  var vc=document.getElementById("verseCategoriesView");if(vc)vc.classList.add("hidden");
-  var cal=document.getElementById("calendarView");if(cal)cal.classList.add("hidden");
+
+  var vc = document.getElementById("verseCategoriesView");
+  if(vc) vc.classList.add("hidden");
+
+  var cal = document.getElementById("calendarView");
+  if(cal) cal.classList.add("hidden");
 }
 function downloadBlob(filename, blob){
   const url = URL.createObjectURL(blob);
@@ -3245,19 +3251,33 @@ async function exportAllZip(){
   toast("ZIP exportado");
 }
 function buildBackupText(){
-  const payload={"exportedAt":new Date().toISOString(),...state};
-  const text=JSON.stringify(payload,null,2);
-  document.getElementById("backupText").value=text;
+  const payload = {
+    "exportedAt": new Date().toISOString(),
+    ...state
+  };
+
+  const text = JSON.stringify(payload, null, 2);
+  document.getElementById("backupText").value = text;
   return text;
 }
 function backupFilename(){
-  const now=new Date();
-  const stamp=now.getFullYear().toString()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0")+"_"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
-  return "backup_oraciones_notas_"+stamp+".json";
+  const now = new Date();
+  const stamp =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0") +
+    "_" +
+    String(now.getHours()).padStart(2, "0") +
+    String(now.getMinutes()).padStart(2, "0");
+
+  return "backup_oraciones_notas_" + stamp + ".json";
 }
 function downloadBackupJson(){
-  const text=buildBackupText();
-  downloadBlob(backupFilename(), new Blob([text],{type:"application/json;charset=utf-8"}));
+  const text = buildBackupText();
+  downloadBlob(
+    backupFilename(),
+    new Blob([text], {type: "application/json;charset=utf-8"})
+  );
   toast("JSON descargado");
 }
 async function copyBackupJson(){
