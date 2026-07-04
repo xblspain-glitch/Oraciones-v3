@@ -7199,3 +7199,80 @@ setInterval(updateVersePositionCounter, 1000);
     }catch(_e){}
   }, true);
 })();
+
+/* v3.1.3 - Arreglo: Volver desde Títulos de Versículos mantiene flujo de Versículos */
+(function(){
+  if(window.__v313VerseTitlesBackFix) return;
+  window.__v313VerseTitlesBackFix = true;
+
+  function isVerseTitlesVisibleV313(){
+    try{
+      var titles = document.getElementById('titlesView');
+      return !!(titles && !titles.classList.contains('hidden') && typeof section !== 'undefined' && section === 'verses');
+    }catch(e){ return false; }
+  }
+
+  window.backFromVerseTitlesV313 = function(){
+    try{
+      var home = document.getElementById('homeView');
+      if(home) home.classList.add('hidden');
+      document.body.classList.remove('home-active-v9019','titles-only','titles-fullscreen-v72','list-only','backup-only','special-view-only');
+
+      try{ section = 'verses'; }catch(_e1){}
+      try{ state.section = 'verses'; }catch(_e2){}
+      try{ specialVerseMode = null; }catch(_e3){}
+      try{ verseNavigationMode = 'categories'; }catch(_e4){}
+      try{ categoryListActive = true; }catch(_e5){}
+
+      if(typeof openVerseCategories === 'function'){
+        openVerseCategories();
+      }else if(typeof openReader === 'function'){
+        openReader();
+      }
+    }catch(e){
+      console.error('backFromVerseTitlesV313', e);
+      try{ if(typeof openVerseCategories === 'function') openVerseCategories(); }catch(_e){}
+    }
+  };
+
+  function forceVerseTitlesBackButtonV313(){
+    try{
+      if(!isVerseTitlesVisibleV313()) return;
+      var backBtn = document.querySelector('#titlesView .panel-head button:first-child');
+      if(backBtn) backBtn.setAttribute('onclick','backFromVerseTitlesV313()');
+    }catch(e){}
+  }
+
+  var previousOpenTitlesV313 = window.openTitlesView || (typeof openTitlesView !== 'undefined' ? openTitlesView : null);
+  if(typeof previousOpenTitlesV313 === 'function'){
+    window.openTitlesView = function(){
+      var r = previousOpenTitlesV313.apply(this, arguments);
+      setTimeout(forceVerseTitlesBackButtonV313, 40);
+      setTimeout(forceVerseTitlesBackButtonV313, 140);
+      return r;
+    };
+    try{ openTitlesView = window.openTitlesView; }catch(e){}
+  }
+
+  var previousSmartBackV313 = window.smartBack || (typeof smartBack !== 'undefined' ? smartBack : null);
+  if(typeof previousSmartBackV313 === 'function'){
+    window.smartBack = function(){
+      try{
+        if(isVerseTitlesVisibleV313()) return window.backFromVerseTitlesV313();
+      }catch(e){}
+      return previousSmartBackV313.apply(this, arguments);
+    };
+    try{ smartBack = window.smartBack; }catch(e){}
+  }
+
+  document.addEventListener('click', function(e){
+    try{
+      var btn = e.target && e.target.closest ? e.target.closest('#titlesView .panel-head button:first-child') : null;
+      if(btn && isVerseTitlesVisibleV313()){
+        e.preventDefault();
+        e.stopPropagation();
+        window.backFromVerseTitlesV313();
+      }
+    }catch(_e){}
+  }, true);
+})();
