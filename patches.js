@@ -548,3 +548,66 @@ body.dark .home-card-v9019.home-sky-day .home-phrase-v9019{
 `;
   document.head.appendChild(style);
 })();
+
+/* ===== V3.1.26 - Volver desde Editar a la botonera de la sección =====
+   Cambio mínimo: el botón ← Volver del editor guarda en silencio si hay cambios
+   y regresa a la sección activa con la botonera superior visible. */
+(function(){
+  if(window.__v3126EditorBackToSectionToolbar) return;
+  window.__v3126EditorBackToSectionToolbar = true;
+
+  function hideAllExceptReaderV3126(){
+    try{
+      ["editorView","backupView","trashView","titlesView","verseCategoriesView","calendarView","homeView"].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.classList.add("hidden");
+      });
+      var reader = document.getElementById("readerView");
+      if(reader) reader.classList.remove("hidden");
+    }catch(e){}
+  }
+
+  window.backFromEditorToSectionToolbarV3126 = function(){
+    try{
+      if(typeof isDirty !== "undefined" && isDirty && typeof saveCurrent === "function"){
+        saveCurrent(true, true);
+      }
+
+      try{ if(typeof syncTabs === "function") syncTabs(); }catch(_e1){}
+      try{ if(typeof renderList === "function") renderList(); }catch(_e2){}
+      try{ if(typeof renderReader === "function") renderReader(); }catch(_e3){}
+
+      hideAllExceptReaderV3126();
+
+      document.body.classList.remove(
+        "editing-focus",
+        "home-active-v9019",
+        "fullscreen-reading",
+        "hide-reading-ui",
+        "titles-fullscreen-v72",
+        "categories-fullscreen-v73",
+        "backup-only",
+        "special-view-only",
+        "verse-special-fullscreen-v74",
+        "verse-special-fullscreen-v751",
+        "sent-fullscreen-v76",
+        "calendar-fullscreen-v78"
+      );
+
+      if(window.innerWidth <= 860) document.body.classList.add("reading-mobile");
+      else document.body.classList.remove("reading-mobile");
+
+      try{ if(typeof setActiveView === "function") setActiveView("read"); }catch(_e4){}
+      try{ if(typeof updateSearchForReaderV26 === "function") updateSearchForReaderV26(); }catch(_e5){}
+      try{ window.scrollTo({top:0, behavior:"auto"}); }catch(_e6){ window.scrollTo(0,0); }
+    }catch(e){
+      console.error("backFromEditorToSectionToolbarV3126", e);
+      try{ if(typeof openReader === "function") openReader(); }catch(_e){}
+    }
+  };
+
+  window.leaveEditor = function(){
+    return window.backFromEditorToSectionToolbarV3126();
+  };
+  try{ leaveEditor = window.leaveEditor; }catch(e){}
+})();
