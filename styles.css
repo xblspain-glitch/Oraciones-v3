@@ -2548,3 +2548,19 @@ body.dark .category-card.verse-sent-bg-v3128{
   background:rgba(80,150,210,.18)!important;
   border-color:rgba(140,200,245,.35)!important;
 }
+
+
+/* V3.1.30 - Fondo azul también en el versículo abierto si está compartido/enviado */
+#readerView.reader-sent-bg-v3130{
+  background:#eaf4ff!important;
+  border-color:#cfe5f7!important;
+}
+#readerView.reader-sent-bg-v3130 .reader-code,
+#readerView.reader-sent-bg-v3130 .reader-title,
+#readerView.reader-sent-bg-v3130 .reader-text{
+  background:transparent!important;
+}
+body.dark #readerView.reader-sent-bg-v3130{
+  background:rgba(80,150,210,.18)!important;
+  border-color:rgba(140,200,245,.35)!important;
+}

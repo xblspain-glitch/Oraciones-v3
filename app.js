@@ -500,6 +500,10 @@ function renderReader(){
   }
 
   const item=currentItem();
+  const readerPanel=document.getElementById("readerView");
+  if(readerPanel){
+    readerPanel.classList.remove("reader-sent-bg-v3130");
+  }
   if(!item){
     document.getElementById("readerCode").textContent="";
     document.getElementById("readerTitle").textContent=section==="verses"?"❤️ Versículos":"";
@@ -508,6 +512,9 @@ function renderReader(){
   }
 
   if(section==="verses"){
+    if(readerPanel && (item.shared || item.lastCardSentAt)){
+      readerPanel.classList.add("reader-sent-bg-v3130");
+    }
     const catEl=document.getElementById("readerCategory");
     if(catEl){
       catEl.textContent=verseCategoryLabel(item.category);
