@@ -7669,3 +7669,82 @@ setInterval(updateVersePositionCounter, 1000);
   setTimeout(afterV3138, 500);
   setInterval(removeReaderBuscarTodosV3138, 1000);
 })();
+
+/* v3.1.41 - Descartar en Parábolas vuelve a la botonera de la sección */
+(function(){
+  if(window.__v3141ParablesDiscardBackToToolbar) return;
+  window.__v3141ParablesDiscardBackToToolbar = true;
+
+  var previousDiscardV3141 = window.discardEditorChanges || (typeof discardEditorChanges !== 'undefined' ? discardEditorChanges : null);
+
+  function backToParablesToolbarV3141(){
+    try{
+      if(typeof backFromEditorToSectionToolbarV3126 === 'function'){
+        return backFromEditorToSectionToolbarV3126();
+      }
+    }catch(e){}
+
+    try{
+      var home=document.getElementById('homeView'); if(home) home.classList.add('hidden');
+      ['editorView','backupView','trashView','titlesView','verseCategoriesView','calendarView'].forEach(function(id){
+        var el=document.getElementById(id); if(el) el.classList.add('hidden');
+      });
+      document.body.classList.remove('home-active-v9019','titles-only','titles-fullscreen-v72','categories-fullscreen-v73','list-only','backup-only','special-view-only','editing-focus','hide-reading-ui');
+      if(typeof syncTabs === 'function') syncTabs();
+      if(typeof renderList === 'function') renderList();
+      if(typeof renderReader === 'function') renderReader();
+      if(typeof enterFullscreenReading === 'function') enterFullscreenReading();
+      else if(typeof openReader === 'function') openReader();
+    }catch(e){
+      try{ if(typeof openReader === 'function') openReader(); }catch(_e){}
+    }
+  }
+
+  window.discardEditorChanges = function(){
+    try{
+      if(typeof section !== 'undefined' && section === 'parables'){
+        if(!confirm('¿Descartar cambios?')) return;
+        try{ if(typeof autosaveTimer !== 'undefined' && autosaveTimer) clearTimeout(autosaveTimer); }catch(_t){}
+        var item = (typeof currentItem === 'function') ? currentItem() : null;
+        try{
+          if(!item){
+            isDirty = false;
+            backToParablesToolbarV3141();
+            if(typeof toast === 'function') toast('Cambios descartados');
+            return;
+          }
+
+          var items = (typeof getItems === 'function') ? getItems() : [];
+          var isNew = !!(item.isNewItem || item.title === 'Nueva parábola');
+          if(isNew){
+            var filtered = (items || []).filter(function(x){ return x.id !== item.id; });
+            if(typeof setItems === 'function') setItems(filtered);
+            var next = filtered[0] || null;
+            if(next && typeof setCurrentId === 'function') setCurrentId(next.id);
+            if(typeof saveState === 'function') saveState();
+            if(typeof renderList === 'function') renderList();
+            if(typeof renderReader === 'function') renderReader();
+            isDirty = false;
+            backToParablesToolbarV3141();
+            if(typeof toast === 'function') toast('Descartado');
+            return;
+          }
+
+          isDirty = false;
+          if(typeof renderReader === 'function') renderReader();
+          backToParablesToolbarV3141();
+          if(typeof toast === 'function') toast('Cambios descartados');
+          return;
+        }catch(err){
+          console.error('discard parables v3.1.41', err);
+          try{ isDirty = false; }catch(_d){}
+          backToParablesToolbarV3141();
+          if(typeof toast === 'function') toast('Cambios descartados');
+          return;
+        }
+      }
+    }catch(e){}
+    if(typeof previousDiscardV3141 === 'function') return previousDiscardV3141.apply(this, arguments);
+  };
+  try{ discardEditorChanges = window.discardEditorChanges; }catch(e){}
+})();
