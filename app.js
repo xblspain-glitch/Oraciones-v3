@@ -7295,17 +7295,20 @@ setInterval(updateVersePositionCounter, 1000);
 
   function currentVerseV3135(){
     try{
-      var mode = (typeof section !== "undefined") ? section : "";
-      var daily = false;
-      try{ daily = !!document.getElementById("readerDailyDate"); }catch(e){}
-      if(mode !== "verses" && !daily) return null;
+      var verses = (window.state && state.verses) || [];
+      var id = (window.state && (state.currentVerseId || state.currentId)) || null;
+      var fromState = id ? verses.find(function(v){ return v && v.id === id; }) : null;
+
       if(typeof currentItem === "function"){
         var it = currentItem();
-        if(it) return it;
+        if(it){
+          var found = verses.find(function(v){ return v && v.id === it.id; });
+          if(found) return found;
+        }
       }
-      var id = (window.state && (state.currentVerseId || state.currentId)) || null;
-      if(!id) return null;
-      return (state.verses || []).find(function(v){ return v && v.id === id; }) || null;
+
+      if(fromState && (typeof section === "undefined" || section === "verses" || specialVerseMode === "daily")) return fromState;
+      return null;
     }catch(e){ return null; }
   }
 
@@ -7350,8 +7353,11 @@ setInterval(updateVersePositionCounter, 1000);
     try{
       var v = currentVerseV3135();
       var head = document.querySelector("#readerView .panel-head");
-      if(!head || !v) return;
       var existing = document.getElementById("readerSharedToggleBtnV3135");
+      if(!head || !v){
+        if(existing && existing.parentNode) existing.parentNode.removeChild(existing);
+        return;
+      }
       if(!existing){
         var btn = document.createElement("button");
         btn.id = "readerSharedToggleBtnV3135";
