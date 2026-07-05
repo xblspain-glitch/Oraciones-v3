@@ -7590,3 +7590,85 @@ setInterval(updateVersePositionCounter, 1000);
   setTimeout(ensureAllVerseTitlesButtonsV3137, 100);
   setTimeout(ensureAllVerseTitlesButtonsV3137, 500);
 })();
+
+/* v3.1.38 - Títulos y Buscar todos en pantalla principal de Versículos */
+(function(){
+  if(window.__v3138VerseCategoriesTitleButtons) return;
+  window.__v3138VerseCategoriesTitleButtons = true;
+
+  function ensureVerseCategorySearchButtonsV3138(){
+    try{
+      var head = document.querySelector('#verseCategoriesView .categories-head-v73') || document.querySelector('#verseCategoriesView .panel-head');
+      if(!head) return;
+
+      var deleteBtn = Array.prototype.slice.call(head.querySelectorAll('button')).find(function(b){
+        return (b.textContent || '').indexOf('Eliminar') !== -1;
+      });
+
+      var titlesBtn = document.getElementById('btnVerseCatsTitlesV3138');
+      if(!titlesBtn){
+        titlesBtn = document.createElement('button');
+        titlesBtn.id = 'btnVerseCatsTitlesV3138';
+        titlesBtn.className = 'btn soft';
+        titlesBtn.type = 'button';
+        titlesBtn.textContent = '📑 Títulos';
+        titlesBtn.setAttribute('onclick', 'openTitlesView()');
+        head.insertBefore(titlesBtn, deleteBtn || null);
+      }
+
+      var allBtn = document.getElementById('btnVerseCatsAllTitlesV3138');
+      if(!allBtn){
+        allBtn = document.createElement('button');
+        allBtn.id = 'btnVerseCatsAllTitlesV3138';
+        allBtn.className = 'btn soft all-verse-titles-btn-v3137';
+        allBtn.type = 'button';
+        allBtn.textContent = '🔎 Buscar todos';
+        allBtn.setAttribute('data-view-btn', 'allVerseTitles');
+        allBtn.setAttribute('onclick', 'openAllVerseTitlesViewV3137()');
+        head.insertBefore(allBtn, deleteBtn || null);
+      }
+    }catch(e){ console.error('ensureVerseCategorySearchButtonsV3138', e); }
+  }
+
+  function removeReaderBuscarTodosV3138(){
+    try{
+      var btn = document.getElementById('btnReaderAllVerseTitlesV3137');
+      if(btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    }catch(e){}
+  }
+
+  function afterV3138(){
+    ensureVerseCategorySearchButtonsV3138();
+    removeReaderBuscarTodosV3138();
+  }
+
+  var oldOpenVerseCategoriesV3138 = window.openVerseCategories || (typeof openVerseCategories !== 'undefined' ? openVerseCategories : null);
+  if(typeof oldOpenVerseCategoriesV3138 === 'function' && !oldOpenVerseCategoriesV3138.__v3138Wrapped){
+    var wrappedOpenVerseCategoriesV3138 = function(){
+      var r = oldOpenVerseCategoriesV3138.apply(this, arguments);
+      setTimeout(afterV3138, 20);
+      setTimeout(afterV3138, 120);
+      return r;
+    };
+    wrappedOpenVerseCategoriesV3138.__v3138Wrapped = true;
+    window.openVerseCategories = wrappedOpenVerseCategoriesV3138;
+    try{ openVerseCategories = window.openVerseCategories; }catch(e){}
+  }
+
+  var oldSyncTabsV3138 = window.syncTabs || (typeof syncTabs !== 'undefined' ? syncTabs : null);
+  if(typeof oldSyncTabsV3138 === 'function' && !oldSyncTabsV3138.__v3138Wrapped){
+    var wrappedSyncTabsV3138 = function(){
+      var r = oldSyncTabsV3138.apply(this, arguments);
+      setTimeout(afterV3138, 20);
+      return r;
+    };
+    wrappedSyncTabsV3138.__v3138Wrapped = true;
+    window.syncTabs = wrappedSyncTabsV3138;
+    try{ syncTabs = window.syncTabs; }catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', afterV3138);
+  setTimeout(afterV3138, 100);
+  setTimeout(afterV3138, 500);
+  setInterval(removeReaderBuscarTodosV3138, 1000);
+})();
