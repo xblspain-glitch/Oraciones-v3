@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.48";
-const APP_VERSION_ZIP = "oraciones_v3_1_48_checklist_publicacion.zip";
+const APP_VERSION_LABEL = "v3.1.49";
+const APP_VERSION_ZIP = "oraciones_v3_1_49_estado_copia_seguridad.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -2611,6 +2611,7 @@ document.addEventListener("click",function(ev){
 function openBackup(){
   setActiveView("backup");
   clearNavModes();
+  try{ renderBackupStatusV3149(); }catch(e){}
 
   document.body.classList.add("backup-only", "special-view-only");
   document.body.classList.remove("reading-mobile", "fullscreen-reading", "hide-reading-ui");
@@ -3482,6 +3483,108 @@ async function exportAllZip(){
   downloadBlob("exportacion_oraciones_notas.zip", blob);
   toast("ZIP exportado");
 }
+
+/* ===== v3.1.49 - Estado de copia de seguridad ===== */
+const BACKUP_EXPORT_STATUS_KEY_V3149 = "oraciones_v3_last_backup_export_status";
+
+function backupCountsV3149(){
+  const count = function(arr){ return Array.isArray(arr) ? arr.length : 0; };
+  return {
+    prayers: count(state && state.prayers),
+    notes: count(state && state.notes),
+    guides: count(state && state.guides),
+    verses: count(state && state.verses),
+    parables: count(state && state.parables)
+  };
+}
+
+function backupTotalV3149(c){
+  c = c || backupCountsV3149();
+  return (c.prayers||0) + (c.notes||0) + (c.guides||0) + (c.verses||0) + (c.parables||0);
+}
+
+function formatBackupDateV3149(iso){
+  if(!iso) return "Sin exportaciones registradas";
+  try{
+    const d = new Date(iso);
+    return d.toLocaleString("es-ES", {
+      weekday:"long",
+      day:"2-digit",
+      month:"long",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }catch(e){
+    return iso;
+  }
+}
+
+function backupAgeTextV3149(iso){
+  if(!iso) return {tone:"warn", text:"Todavía no hay una copia registrada."};
+  const ms = Date.now() - new Date(iso).getTime();
+  const days = Math.max(0, Math.floor(ms / 86400000));
+  if(days === 0) return {tone:"ok", text:"Hoy"};
+  if(days === 1) return {tone:"ok", text:"Ayer"};
+  if(days <= 14) return {tone:"ok", text:"Hace " + days + " días"};
+  if(days <= 45) return {tone:"mid", text:"Hace " + days + " días"};
+  return {tone:"bad", text:"Hace " + days + " días"};
+}
+
+function backupAdviceV3149(age){
+  if(!age || age.tone === "warn") return "Cuando descargues o compartas un JSON, guardaré aquí la fecha de la última copia.";
+  if(age.tone === "ok") return "Tu copia de seguridad está reciente.";
+  if(age.tone === "mid") return "Hace un tiempo que no exportas. Sería buena idea guardar un JSON nuevo.";
+  return "Conviene hacer una copia nueva antes de seguir añadiendo contenido.";
+}
+
+function readBackupStatusV3149(){
+  try{
+    return JSON.parse(localStorage.getItem(BACKUP_EXPORT_STATUS_KEY_V3149) || "null");
+  }catch(e){
+    return null;
+  }
+}
+
+function saveBackupStatusV3149(method, filename){
+  const counts = backupCountsV3149();
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    method: method || "JSON",
+    filename: filename || "",
+    counts: counts,
+    total: backupTotalV3149(counts)
+  };
+  localStorage.setItem(BACKUP_EXPORT_STATUS_KEY_V3149, JSON.stringify(payload));
+  renderBackupStatusV3149();
+}
+
+function renderBackupStatusV3149(){
+  const box = document.getElementById("backupStatusV3149");
+  if(!box) return;
+  const data = readBackupStatusV3149();
+  const age = backupAgeTextV3149(data && data.exportedAt);
+  const counts = (data && data.counts) || backupCountsV3149();
+  const total = (data && typeof data.total === "number") ? data.total : backupTotalV3149(counts);
+  const file = data && data.filename ? data.filename : "Aún no hay archivo registrado";
+  box.innerHTML =
+    '<div class="backup-status-card-v3149 backup-status-'+age.tone+'-v3149">' +
+      '<div class="backup-status-title-v3149">💾 Estado de la copia de seguridad</div>' +
+      '<div class="backup-status-row-v3149"><strong>Última exportación:</strong><br>' + formatBackupDateV3149(data && data.exportedAt) + '</div>' +
+      '<div class="backup-status-row-v3149"><strong>Antigüedad:</strong> ' + age.text + '</div>' +
+      '<div class="backup-status-row-v3149"><strong>Archivo:</strong><br><span class="backup-status-file-v3149">' + file + '</span></div>' +
+      '<div class="backup-status-grid-v3149">' +
+        '<span>🙏🏾 Oraciones: <strong>' + (counts.prayers||0) + '</strong></span>' +
+        '<span>📖 Versículos: <strong>' + (counts.verses||0) + '</strong></span>' +
+        '<span>📚 Parábolas: <strong>' + (counts.parables||0) + '</strong></span>' +
+        '<span>📝 Notas: <strong>' + (counts.notes||0) + '</strong></span>' +
+        '<span>🧭 Guía: <strong>' + (counts.guides||0) + '</strong></span>' +
+        '<span>📦 Total: <strong>' + total + '</strong></span>' +
+      '</div>' +
+      '<div class="backup-status-advice-v3149">' + backupAdviceV3149(age) + '</div>' +
+    '</div>';
+}
+
 function buildBackupText(){
   const payload = {
     "exportedAt": new Date().toISOString(),
@@ -3506,16 +3609,19 @@ function backupFilename(){
 }
 function downloadBackupJson(){
   const text = buildBackupText();
+  const filename = backupFilename();
   downloadBlob(
-    backupFilename(),
+    filename,
     new Blob([text], {type: "application/json;charset=utf-8"})
   );
+  saveBackupStatusV3149("Descarga JSON", filename);
   toast("JSON descargado");
 }
 async function copyBackupJson(){
   const text=buildBackupText();
   try{
     await navigator.clipboard.writeText(cleanTextBreaks(text));
+    saveBackupStatusV3149("Copia JSON", "JSON copiado al portapapeles");
     toast("JSON copiado");
   }catch(e){
     alert("No se pudo copiar automáticamente. El JSON queda visible para copiarlo manualmente.");
@@ -3528,18 +3634,22 @@ async function shareBackupJson(){
   try{
     if(navigator.canShare && navigator.canShare({files:[file]})){
       await navigator.share({title:"Backup Oraciones y Notas", text:"Backup de Oraciones y Notas", files:[file]});
+      saveBackupStatusV3149("Compartir JSON", filename);
       toast("Compartido");
       return;
     }
     if(navigator.share){
       await navigator.share({title:"Backup Oraciones y Notas", text:text});
+      saveBackupStatusV3149("Compartir JSON como texto", filename);
       toast("Compartido como texto");
       return;
     }
     downloadBlob(filename, new Blob([text],{type:"application/json;charset=utf-8"}));
+    saveBackupStatusV3149("Descarga JSON", filename);
     alert("Tu navegador no permite compartir desde aquí. Se ha descargado el JSON.");
   }catch(e){
     downloadBlob(filename, new Blob([text],{type:"application/json;charset=utf-8"}));
+    saveBackupStatusV3149("Descarga JSON", filename);
     toast("Compartir cancelado o no disponible");
   }
 }
