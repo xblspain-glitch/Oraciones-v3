@@ -347,7 +347,7 @@ function renderList(){
 
   items.forEach(item => {
     const div = document.createElement("div");
-    div.className = "item" + (current && item.id === current.id ? " active" : "") + (section === "verses" && (item.shared || item.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
+    div.className = "item" + (current && item.id === current.id ? " active" : "");
 
     const preview = String(item.content || "")
       .trim()
@@ -500,10 +500,6 @@ function renderReader(){
   }
 
   const item=currentItem();
-  const readerPanel=document.getElementById("readerView");
-  if(readerPanel){
-    readerPanel.classList.remove("reader-sent-bg-v3130");
-  }
   if(!item){
     document.getElementById("readerCode").textContent="";
     document.getElementById("readerTitle").textContent=section==="verses"?"❤️ Versículos":"";
@@ -512,9 +508,6 @@ function renderReader(){
   }
 
   if(section==="verses"){
-    if(readerPanel && (item.shared || item.lastCardSentAt)){
-      readerPanel.classList.add("reader-sent-bg-v3130");
-    }
     const catEl=document.getElementById("readerCategory");
     if(catEl){
       catEl.textContent=verseCategoryLabel(item.category);
@@ -1732,8 +1725,8 @@ function renderVerseCategories(){
       const div = document.createElement("div");
       const preview = String(v.content || "").replace(/\n+/g, " ").slice(0, 95);
 
-      div.className = "category-card" + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
-      div.innerHTML = '<div><strong>' + escapeHtml(((v.shared || v.lastCardSentAt) ? '✓ ' : '') + (v.reference || v.title || "Sin referencia")) + '</strong></div><div class="category-count">' + escapeHtml(catLabel(v.category)) + (preview ? ' · ' + escapeHtml(preview) : '') + '</div>';
+      div.className = "category-card";
+      div.innerHTML = '<div><strong>' + escapeHtml(v.reference || v.title || "Sin referencia") + '</strong></div><div class="category-count">' + escapeHtml(catLabel(v.category)) + (preview ? ' · ' + escapeHtml(preview) : '') + '</div>';
       div.onclick = ()=>{
         verseNavigationMode = "verse";
         currentVerseCategory = v.category || currentVerseCategory || "fe";
@@ -1807,7 +1800,7 @@ function renderVerseReferenceList(catId){
   verses.forEach((v, idx)=>{
     const div = document.createElement("div");
 
-    div.className = "title-row" + (state.currentVerseId===v.id ? " active" : "") + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
+    div.className = "title-row" + (state.currentVerseId===v.id ? " active" : "");
     div.innerHTML = '<div class="title-code">V' + (idx + 1) + '</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.favorite ? '⭐ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
     div.onclick = ()=>{
       verseNavigationMode = "verse";
@@ -1846,7 +1839,7 @@ function openVerseFavorites(){
 
   verses.forEach((v, idx) => {
     const div = document.createElement("div");
-    div.className = "title-row" + (state.currentVerseId === v.id ? " active" : "") + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
+    div.className = "title-row" + (state.currentVerseId === v.id ? " active" : "");
     div.innerHTML = '<div class="title-code">★</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
     div.onclick = () => {
       verseNavigationMode = "verse";
@@ -1901,7 +1894,7 @@ function renderTitles(){
 
   items.forEach(item => {
     const div = document.createElement("div");
-    div.className = "title-row" + (current && item.id === current.id ? " active" : "") + (section === "verses" && (item.shared || item.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
+    div.className = "title-row" + (current && item.id === current.id ? " active" : "");
     div.innerHTML = '<div class="title-code">' + escapeHtml(item.__code) + '</div><div class="title-name">' + escapeHtml(displayItemTitle(item)) + '</div>';
     div.onclick = () => {
       if(section === "verses"){
@@ -4770,8 +4763,8 @@ setInterval(updateVersePositionCounter, 1000);
 
     items.forEach(item=>{
       const div=document.createElement("div");
-      div.className="title-row"+(current&&item.id===current.id?" active":"")+(section==="verses"&&(item.shared||item.lastCardSentAt)?" verse-sent-bg-v3128":"");
-      div.innerHTML='<div class="title-code">'+escapeHtml(item.__code)+'</div><div class="title-name">'+escapeHtml((section==="verses"&&(item.shared||item.lastCardSentAt)&&!item.shared?"✓ ":"")+displayItemTitle(item))+'</div>';
+      div.className="title-row"+(current&&item.id===current.id?" active":"");
+      div.innerHTML='<div class="title-code">'+escapeHtml(item.__code)+'</div><div class="title-name">'+escapeHtml(displayItemTitle(item))+'</div>';
       div.onclick=()=>{
         if(section==="verses"){
           specialVerseMode=null;

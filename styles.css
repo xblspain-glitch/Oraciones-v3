@@ -1065,7 +1065,7 @@ body:not(.dark) .topbar{
 }
 
 body:not(.dark) .topbar-row{
-  background:#f4f0ff!important;
+  background:#eaf4ff!important;
   border:1px solid #d5e7f8!important;
   border-radius:24px!important;
   padding:10px!important;
@@ -2529,38 +2529,4 @@ body.dark .reader-end-card::before{
     0 10px 30px rgba(78,68,160,.18),
     0 0 34px rgba(151,112,225,.08),
     inset 0 1px 0 rgba(255,255,255,.14)!important;
-}
-
-
-/* V3.1.31 - Versículos compartidos/enviados con fondo lavanda muy clarito */
-.item.verse-sent-bg-v3128,
-.title-row.verse-sent-bg-v3128,
-.category-card.verse-sent-bg-v3128{
-  background:#f4f0ff!important;
-  border-color:#ddd2ff!important;
-}
-.title-row.verse-sent-bg-v3128.active{
-  background:#f4f0ff!important;
-}
-body.dark .item.verse-sent-bg-v3128,
-body.dark .title-row.verse-sent-bg-v3128,
-body.dark .category-card.verse-sent-bg-v3128{
-  background:rgba(150,110,220,.20)!important;
-  border-color:rgba(190,160,245,.38)!important;
-}
-
-
-/* V3.1.31 - Fondo lavanda también en el versículo abierto si está compartido/enviado */
-#readerView.reader-sent-bg-v3130{
-  background:#f4f0ff!important;
-  border-color:#ddd2ff!important;
-}
-#readerView.reader-sent-bg-v3130 .reader-code,
-#readerView.reader-sent-bg-v3130 .reader-title,
-#readerView.reader-sent-bg-v3130 .reader-text{
-  background:transparent!important;
-}
-body.dark #readerView.reader-sent-bg-v3130{
-  background:rgba(150,110,220,.20)!important;
-  border-color:rgba(190,160,245,.38)!important;
 }
