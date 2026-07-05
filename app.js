@@ -7293,12 +7293,20 @@ setInterval(updateVersePositionCounter, 1000);
   if(window.__v3135ToggleSharedButton) return;
   window.__v3135ToggleSharedButton = true;
 
+  function isVerseReaderContextV3135(){
+    try{
+      if(typeof specialVerseMode !== "undefined" && specialVerseMode === "daily") return true;
+      var codeEl = document.getElementById("readerCode");
+      var code = codeEl ? (codeEl.textContent || "") : "";
+      if(/^\s*V\d+\s*\/\s*\d+/.test(code)) return true;
+      return false;
+    }catch(e){ return false; }
+  }
+
   function currentVerseV3135(){
     try{
+      if(!isVerseReaderContextV3135()) return null;
       var verses = (window.state && state.verses) || [];
-      var id = (window.state && (state.currentVerseId || state.currentId)) || null;
-      var fromState = id ? verses.find(function(v){ return v && v.id === id; }) : null;
-
       if(typeof currentItem === "function"){
         var it = currentItem();
         if(it){
@@ -7306,9 +7314,10 @@ setInterval(updateVersePositionCounter, 1000);
           if(found) return found;
         }
       }
-
-      if(fromState && (typeof section === "undefined" || section === "verses" || specialVerseMode === "daily")) return fromState;
-      return null;
+      var id = (window.state && state.currentVerseId) || null;
+      if(!id && typeof specialVerseMode !== "undefined" && specialVerseMode === "daily" && state && state.dailyVerse) id = state.dailyVerse.id;
+      if(!id) return null;
+      return verses.find(function(v){ return v && v.id === id; }) || null;
     }catch(e){ return null; }
   }
 
