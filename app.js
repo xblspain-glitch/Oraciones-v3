@@ -7417,9 +7417,6 @@ setInterval(updateVersePositionCounter, 1000);
   function ensureAllVerseTitlesButtonsV3137(){
     try{
       var targets = [];
-      var mainTitles = document.getElementById('btnTitles');
-      if(mainTitles) targets.push({anchor: mainTitles, id: 'btnAllVerseTitlesV3137'});
-
       var readerHead = document.querySelector('#readerView .panel-head');
       if(readerHead){
         var readerTitles = Array.prototype.slice.call(readerHead.querySelectorAll('button')).find(function(b){
