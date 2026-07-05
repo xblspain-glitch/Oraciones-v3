@@ -1065,7 +1065,7 @@ body:not(.dark) .topbar{
 }
 
 body:not(.dark) .topbar-row{
-  background:#ebe2ff!important;
+  background:#DFEEFF!important;
   border:1px solid #d5e7f8!important;
   border-radius:24px!important;
   padding:10px!important;
@@ -2536,11 +2536,11 @@ body.dark .reader-end-card::before{
 .item.verse-sent-bg-v3128,
 .title-row.verse-sent-bg-v3128,
 .category-card.verse-sent-bg-v3128{
-  background:#ebe2ff!important;
-  border-color:#cbb8ff!important;
+  background:#DDD0FF!important;
+  border-color:#ddd2ff!important;
 }
 .title-row.verse-sent-bg-v3128.active{
-  background:#ebe2ff!important;
+  background:#DDD0FF!important;
 }
 body.dark .item.verse-sent-bg-v3128,
 body.dark .title-row.verse-sent-bg-v3128,
@@ -2552,8 +2552,8 @@ body.dark .category-card.verse-sent-bg-v3128{
 
 /* V3.1.31 - Fondo lavanda también en el versículo abierto si está compartido/enviado */
 #readerView.reader-sent-bg-v3130{
-  background:#ebe2ff!important;
-  border-color:#cbb8ff!important;
+  background:#DDD0FF!important;
+  border-color:#ddd2ff!important;
 }
 #readerView.reader-sent-bg-v3130 .reader-code,
 #readerView.reader-sent-bg-v3130 .reader-title,
