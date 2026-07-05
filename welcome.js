@@ -3,7 +3,7 @@
      ORACIONES V3 LAB - WELCOME.JS
      Paso 14: módulo de bienvenida separado.
      ============================================================ */
-  // Oraciones V2 v1.4: bienvenida siempre visible, sincronizada con el Versículo del día y texto largo con puntos suspensivos.
+  // Oraciones V3 v1.4: bienvenida siempre visible, sincronizada con el Versículo del día y texto largo con puntos suspensivos.
 
   /* ===== DATOS BASE / CONSTANTES ===== */
   var STORAGE_KEY='oraciones_full_numeracion_v1';

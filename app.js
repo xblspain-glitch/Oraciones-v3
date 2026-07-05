@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v90.18.5";
-const APP_VERSION_ZIP = "oraciones_v2_v90_18_5_about_actualizado.zip";
+const APP_VERSION_LABEL = "v3.1.46";
+const APP_VERSION_ZIP = "oraciones_v3_1_46_offline_base.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -1435,7 +1435,7 @@ function openAppCredits(){
   overlay.innerHTML =
     '<div class="app-credits-card">' +
       '<img class="app-credits-icon" src="icon-192.png" alt="Icono de la app">' +
-      '<div class="app-credits-title">Oraciones V2</div>' +
+      '<div class="app-credits-title">Oraciones V3</div>' +
       '<div class="app-credits-line"><strong>Versión instalada:</strong> '+APP_VERSION_LABEL+'</div>' +
       '<div class="app-credits-line"><strong>ZIP:</strong></div>' +
       '<div class="app-credits-zip">'+APP_VERSION_ZIP+'</div>' +
@@ -3777,7 +3777,7 @@ async function shareVerseCard(){
     }
     ctx.restore();
 
-    // Marca de agua real de Oraciones V2.
+    // Marca de agua real de Oraciones V3.
     // Usa el icono original de la app como máscara: conserva la cruz etíope y el libro,
     // pero elimina el fondo azul para que quede integrado en la tarjeta.
     async function loadCardLogoImage(src){
