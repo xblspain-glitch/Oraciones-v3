@@ -7752,3 +7752,71 @@ setInterval(updateVersePositionCounter, 1000);
   };
   try{ discardEditorChanges = window.discardEditorChanges; }catch(e){}
 })();
+
+/* ===== v3.1.43 - Inicio completo al volver desde lectores/favoritos ===== */
+(function(){
+  if(window.__v3143HomeChromeRestore) return;
+  window.__v3143HomeChromeRestore = true;
+
+  function restoreHomeChromeV3143(){
+    try{
+      document.body.classList.remove(
+        "favorites-fullscreen-v791",
+        "sent-fullscreen-v76",
+        "sent-reader-v903",
+        "verse-special-fullscreen-v74",
+        "verse-special-fullscreen-v751",
+        "calendar-fullscreen-v78",
+        "titles-fullscreen-v72",
+        "categories-fullscreen-v73",
+        "backup-only",
+        "special-view-only",
+        "reading-mobile",
+        "fullscreen-reading",
+        "hide-reading-ui",
+        "editing-focus"
+      );
+    }catch(e){}
+
+    try{
+      [".topbar", ".sidebar", "#list"].forEach(function(sel){
+        document.querySelectorAll(sel).forEach(function(el){
+          el.style.display = "";
+          try{
+            delete el.dataset.v791FavDisplaySaved;
+            delete el.dataset.v791FavOldDisplay;
+          }catch(_e){}
+        });
+      });
+    }catch(e){}
+
+    try{
+      var main = document.querySelector(".main");
+      if(main){
+        main.style.display = "";
+        main.style.gridTemplateColumns = "";
+        main.style.minHeight = "";
+        try{ delete main.dataset.v791FavSaved; }catch(_e){}
+      }
+      var content = document.querySelector(".content");
+      if(content){
+        content.style.padding = "";
+        content.style.minHeight = "";
+        content.style.width = "";
+        content.style.maxWidth = "";
+        try{ delete content.dataset.v791FavSaved; }catch(_e){}
+      }
+    }catch(e){}
+  }
+
+  var oldShowHomeV3143 = window.showHomeV9019 || (typeof showHomeV9019 !== "undefined" ? showHomeV9019 : null);
+  if(typeof oldShowHomeV3143 === "function"){
+    window.showHomeV9019 = function(){
+      restoreHomeChromeV3143();
+      var r = oldShowHomeV3143.apply(this, arguments);
+      setTimeout(restoreHomeChromeV3143, 0);
+      return r;
+    };
+    try{ showHomeV9019 = window.showHomeV9019; }catch(e){}
+  }
+})();
