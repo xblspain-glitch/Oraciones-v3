@@ -1420,8 +1420,8 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.46";
-const APP_VERSION_ZIP = "oraciones_v3_1_46_offline_base.zip";
-const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_46_offline_about_actualizado.zip";
+const APP_BASE_ZIP = "oraciones_v3_1_45_microajuste_marco_superior.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
   if(el) el.remove();
@@ -3777,7 +3777,7 @@ async function shareVerseCard(){
     }
     ctx.restore();
 
-    // Marca de agua real de Oraciones V3.
+    // Marca de agua real de Oraciones V2.
     // Usa el icono original de la app como máscara: conserva la cruz etíope y el libro,
     // pero elimina el fondo azul para que quede integrado en la tarjeta.
     async function loadCardLogoImage(src){
