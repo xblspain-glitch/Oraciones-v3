@@ -718,3 +718,11 @@ body.dark .home-card-v9019.home-sky-day .home-phrase-v9019{
     }catch(_e){}
   }, true);
 })();
+
+/* V3.1.44 - Ajuste fino: subir 2px la tarjeta de inicio para evitar que el borde sobresalga */
+(function(){
+ var s=document.createElement("style");
+ s.id="v3-1-44-homecard-offset";
+ s.textContent=`.home-panel-v9019{padding-top:20px!important;}`;
+ document.head.appendChild(s);
+})();
