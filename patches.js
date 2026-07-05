@@ -549,65 +549,89 @@ body.dark .home-card-v9019.home-sky-day .home-phrase-v9019{
   document.head.appendChild(style);
 })();
 
-/* ===== V3.1.26 - Volver desde Editar a la botonera de la sección =====
-   Cambio mínimo: el botón ← Volver del editor guarda en silencio si hay cambios
-   y regresa a la sección activa con la botonera superior visible. */
+
+/* ===== v3.1.26 - Volver desde Editar a botonera interna de la sección ===== */
 (function(){
   if(window.__v3126EditorBackToSectionToolbar) return;
   window.__v3126EditorBackToSectionToolbar = true;
 
-  function hideAllExceptReaderV3126(){
+  function isNormalSectionV3126(){
+    try{ return ['prayers','notes','guides','parables'].indexOf(section) !== -1; }
+    catch(e){ return false; }
+  }
+
+  function hideHomeAndAuxViewsV3126(){
+    try{ var home=document.getElementById('homeView'); if(home) home.classList.add('hidden'); }catch(e){}
     try{
-      ["editorView","backupView","trashView","titlesView","verseCategoriesView","calendarView","homeView"].forEach(function(id){
-        var el = document.getElementById(id);
-        if(el) el.classList.add("hidden");
+      ['editorView','backupView','trashView','titlesView','verseCategoriesView','calendarView'].forEach(function(id){
+        var el=document.getElementById(id); if(el) el.classList.add('hidden');
       });
-      var reader = document.getElementById("readerView");
-      if(reader) reader.classList.remove("hidden");
+    }catch(e){}
+    try{
+      document.body.classList.remove(
+        'home-active-v9019','titles-only','titles-fullscreen-v72','categories-fullscreen-v73',
+        'list-only','backup-only','special-view-only','editing-focus','hide-reading-ui'
+      );
     }catch(e){}
   }
 
   window.backFromEditorToSectionToolbarV3126 = function(){
     try{
-      if(typeof isDirty !== "undefined" && isDirty && typeof saveCurrent === "function"){
-        saveCurrent(true, true);
+      if(!isNormalSectionV3126()){
+        if(typeof openReader === 'function') openReader();
+        return;
       }
 
-      try{ if(typeof syncTabs === "function") syncTabs(); }catch(_e1){}
-      try{ if(typeof renderList === "function") renderList(); }catch(_e2){}
-      try{ if(typeof renderReader === "function") renderReader(); }catch(_e3){}
+      hideHomeAndAuxViewsV3126();
+      try{ if(typeof syncTabs === 'function') syncTabs(); }catch(e){}
+      try{ if(typeof renderList === 'function') renderList(); }catch(e){}
+      try{ if(typeof renderReader === 'function') renderReader(); }catch(e){}
 
-      hideAllExceptReaderV3126();
+      if(typeof enterFullscreenReading === 'function'){
+        enterFullscreenReading();
+      }else if(typeof openReader === 'function'){
+        openReader();
+        hideHomeAndAuxViewsV3126();
+        try{ document.body.classList.add('fullscreen-reading'); }catch(e){}
+      }
 
-      document.body.classList.remove(
-        "editing-focus",
-        "home-active-v9019",
-        "fullscreen-reading",
-        "hide-reading-ui",
-        "titles-fullscreen-v72",
-        "categories-fullscreen-v73",
-        "backup-only",
-        "special-view-only",
-        "verse-special-fullscreen-v74",
-        "verse-special-fullscreen-v751",
-        "sent-fullscreen-v76",
-        "calendar-fullscreen-v78"
-      );
-
-      if(window.innerWidth <= 860) document.body.classList.add("reading-mobile");
-      else document.body.classList.remove("reading-mobile");
-
-      try{ if(typeof setActiveView === "function") setActiveView("read"); }catch(_e4){}
-      try{ if(typeof updateSearchForReaderV26 === "function") updateSearchForReaderV26(); }catch(_e5){}
-      try{ window.scrollTo({top:0, behavior:"auto"}); }catch(_e6){ window.scrollTo(0,0); }
+      setTimeout(function(){
+        try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ try{ window.scrollTo(0,0); }catch(_e){} }
+      },40);
     }catch(e){
-      console.error("backFromEditorToSectionToolbarV3126", e);
-      try{ if(typeof openReader === "function") openReader(); }catch(_e){}
+      console.error('backFromEditorToSectionToolbarV3126', e);
+      try{ if(typeof openReader === 'function') openReader(); }catch(_e){}
     }
   };
 
+  var previousLeaveEditorV3126 = window.leaveEditor || (typeof leaveEditor !== 'undefined' ? leaveEditor : null);
   window.leaveEditor = function(){
-    return window.backFromEditorToSectionToolbarV3126();
+    try{
+      if(isNormalSectionV3126()){
+        try{
+          if(typeof isDirty !== 'undefined' && isDirty && typeof saveCurrent === 'function'){
+            saveCurrent(true, true);
+          }
+        }catch(e){}
+        try{ isDirty = false; }catch(e){}
+        return window.backFromEditorToSectionToolbarV3126();
+      }
+    }catch(e){}
+    if(typeof previousLeaveEditorV3126 === 'function') return previousLeaveEditorV3126.apply(this, arguments);
+    if(typeof openReader === 'function') return openReader();
   };
   try{ leaveEditor = window.leaveEditor; }catch(e){}
+
+  document.addEventListener('click', function(e){
+    try{
+      var btn = e.target && e.target.closest ? e.target.closest('#editorView .panel-head button') : null;
+      if(!btn) return;
+      var label = (btn.textContent || '').trim();
+      if(label.indexOf('Volver') === -1) return;
+      if(!isNormalSectionV3126()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      window.leaveEditor();
+    }catch(_e){}
+  }, true);
 })();
