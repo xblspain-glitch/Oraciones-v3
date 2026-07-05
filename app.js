@@ -7287,3 +7287,121 @@ setInterval(updateVersePositionCounter, 1000);
     }catch(_e){}
   }, true);
 })();
+
+/* ===== v3.1.35 - Botón directo Compartido en detalle y Versículo del día ===== */
+(function(){
+  if(window.__v3135ToggleSharedButton) return;
+  window.__v3135ToggleSharedButton = true;
+
+  function currentVerseV3135(){
+    try{
+      if(typeof section !== "undefined" && section !== "verses") return null;
+      if(typeof currentItem === "function"){
+        var it = currentItem();
+        if(it) return it;
+      }
+      var id = (window.state && (state.currentVerseId || state.currentId)) || null;
+      if(!id) return null;
+      return (state.verses || []).find(function(v){ return v && v.id === id; }) || null;
+    }catch(e){ return null; }
+  }
+
+  function isSentV3135(v){
+    return !!(v && (v.shared || v.lastCardSentAt));
+  }
+
+  function refreshSharedToggleButtonV3135(){
+    try{
+      var btn = document.getElementById("readerSharedToggleBtnV3135");
+      var v = currentVerseV3135();
+      if(!btn || !v) return;
+      var sent = isSentV3135(v);
+      btn.textContent = sent ? "✓ Compartido" : "☐ Compartido";
+      btn.title = sent ? "Quitar marca de compartido" : "Marcar como compartido";
+      btn.classList.toggle("active-view", sent);
+    }catch(e){}
+  }
+
+  window.toggleCurrentVerseSharedV3135 = function(){
+    try{
+      var v = currentVerseV3135();
+      if(!v){ if(typeof toast === "function") toast("No hay versículo abierto"); return; }
+      if(isSentV3135(v)){
+        v.shared = false;
+        v.lastCardSentAt = 0;
+        if(typeof toast === "function") toast("Compartido quitado");
+      }else{
+        v.shared = true;
+        if(!v.lastCardSentAt) v.lastCardSentAt = Date.now();
+        if(typeof toast === "function") toast("Marcado como compartido");
+      }
+      if(typeof saveState === "function") saveState();
+      if(typeof renderList === "function") renderList();
+      if(typeof renderReader === "function") renderReader();
+      setTimeout(window.ensureSharedToggleButtonV3135, 30);
+      setTimeout(window.ensureSharedToggleButtonV3135, 120);
+    }catch(e){ console.error("toggleCurrentVerseSharedV3135", e); }
+  };
+
+  window.ensureSharedToggleButtonV3135 = function(){
+    try{
+      var v = currentVerseV3135();
+      var head = document.querySelector("#readerView .panel-head");
+      if(!head || !v) return;
+      var existing = document.getElementById("readerSharedToggleBtnV3135");
+      if(!existing){
+        var btn = document.createElement("button");
+        btn.id = "readerSharedToggleBtnV3135";
+        btn.className = "btn soft";
+        btn.type = "button";
+        btn.setAttribute("onclick", "toggleCurrentVerseSharedV3135()");
+
+        var buttons = Array.prototype.slice.call(head.querySelectorAll("button"));
+        var shareBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Compartir") !== -1; });
+        var cardBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Tarjeta") !== -1; });
+        var neverBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Nunca enviados") !== -1; });
+        var anchor = shareBtn || cardBtn || neverBtn || null;
+        if(anchor && anchor.parentNode === head){
+          head.insertBefore(btn, anchor.nextSibling);
+        }else{
+          head.appendChild(btn);
+        }
+      }
+      refreshSharedToggleButtonV3135();
+    }catch(e){ console.error("ensureSharedToggleButtonV3135", e); }
+  };
+
+  function afterV3135(){
+    setTimeout(window.ensureSharedToggleButtonV3135, 20);
+    setTimeout(window.ensureSharedToggleButtonV3135, 120);
+    setTimeout(window.ensureSharedToggleButtonV3135, 300);
+  }
+
+  var oldRenderReader = window.renderReader || (typeof renderReader !== "undefined" ? renderReader : null);
+  if(typeof oldRenderReader === "function"){
+    window.renderReader = function(){
+      var r = oldRenderReader.apply(this, arguments);
+      afterV3135();
+      return r;
+    };
+    try{ renderReader = window.renderReader; }catch(e){}
+  }
+
+  ["openReader", "openDailyVerse", "openVerseSpecial", "shareCurrent", "shareVerseCard", "markCurrentVerseCardSentDirect"].forEach(function(name){
+    try{
+      var old = window[name] || (typeof eval(name) !== "undefined" ? eval(name) : null);
+      if(typeof old !== "function" || old.__v3135Wrapped) return;
+      var wrapped = function(){
+        var r = old.apply(this, arguments);
+        afterV3135();
+        return r;
+      };
+      wrapped.__v3135Wrapped = true;
+      window[name] = wrapped;
+      try{ eval(name + " = window[name]"); }catch(e){}
+    }catch(e){}
+  });
+
+  document.addEventListener("DOMContentLoaded", afterV3135);
+  setTimeout(afterV3135, 250);
+})();
