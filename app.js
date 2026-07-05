@@ -7404,3 +7404,189 @@ setInterval(updateVersePositionCounter, 1000);
   document.addEventListener("DOMContentLoaded", afterV3135);
   setTimeout(afterV3135, 250);
 })();
+
+/* v3.1.37 - Botón Buscar todos los versículos con buscador global */
+(function(){
+  if(window.__v3137AllVerseTitles) return;
+  window.__v3137AllVerseTitles = true;
+
+  function isVerseSentV3137(v){
+    return !!(v && (v.shared || v.lastCardSentAt));
+  }
+
+  function ensureAllVerseTitlesButtonsV3137(){
+    try{
+      var targets = [];
+      var mainTitles = document.getElementById('btnTitles');
+      if(mainTitles) targets.push({anchor: mainTitles, id: 'btnAllVerseTitlesV3137'});
+
+      var readerHead = document.querySelector('#readerView .panel-head');
+      if(readerHead){
+        var readerTitles = Array.prototype.slice.call(readerHead.querySelectorAll('button')).find(function(b){
+          return (b.textContent || '').indexOf('Títulos') !== -1;
+        });
+        if(readerTitles) targets.push({anchor: readerTitles, id: 'btnReaderAllVerseTitlesV3137'});
+      }
+
+      targets.forEach(function(t){
+        if(!t.anchor || !t.anchor.parentNode) return;
+        var btn = document.getElementById(t.id);
+        if(!btn){
+          btn = document.createElement('button');
+          btn.id = t.id;
+          btn.className = 'btn soft all-verse-titles-btn-v3137';
+          btn.type = 'button';
+          btn.setAttribute('data-view-btn', 'allVerseTitles');
+          btn.setAttribute('onclick', 'openAllVerseTitlesViewV3137()');
+          btn.textContent = '🔎 Buscar todos';
+          t.anchor.parentNode.insertBefore(btn, t.anchor.nextSibling);
+        }
+      });
+      updateAllVerseTitlesButtonsV3137();
+    }catch(e){ console.error('ensureAllVerseTitlesButtonsV3137', e); }
+  }
+
+  function updateAllVerseTitlesButtonsV3137(){
+    try{
+      var show = (typeof section !== 'undefined' && section === 'verses');
+      document.querySelectorAll('.all-verse-titles-btn-v3137').forEach(function(btn){
+        btn.classList.toggle('hidden', !show);
+        btn.style.display = show ? '' : 'none';
+      });
+    }catch(e){}
+  }
+
+  window.renderAllVerseTitlesV3137 = function(){
+    try{
+      var box = document.getElementById('titlesList');
+      if(!box) return;
+      box.innerHTML = '';
+
+      var search = document.getElementById('titlesSearch');
+      var q = (search ? search.value : '').trim().toLowerCase();
+      var verses = (state && Array.isArray(state.verses) ? state.verses : []).map(function(v, idx){
+        var copy = Object.assign({}, v);
+        copy.__idx = idx;
+        copy.__code = 'V' + (idx + 1);
+        return copy;
+      });
+
+      if(q){
+        verses = verses.filter(function(v){
+          var cat = (typeof verseCategoryLabel === 'function') ? verseCategoryLabel(v.category) : (v.category || '');
+          var hay = [v.__code, v.reference, v.title, v.text, v.content, v.category, cat].filter(Boolean).join(' ').toLowerCase();
+          return hay.indexOf(q) !== -1;
+        });
+      }
+
+      if(!verses.length){
+        box.innerHTML = '<div class="empty">No hay resultados.</div>';
+        return;
+      }
+
+      var current = (typeof currentItem === 'function') ? currentItem() : null;
+      verses.forEach(function(v){
+        var div = document.createElement('div');
+        div.className = 'title-row' + (current && v.id === current.id ? ' active' : '') + (isVerseSentV3137(v) ? ' verse-sent-bg-v3134' : '');
+        var ref = escapeHtml(v.reference || v.title || 'Sin referencia');
+        var cat = '';
+        try{ cat = (typeof verseCategoryLabel === 'function') ? verseCategoryLabel(v.category) : (v.category || ''); }catch(e){}
+        var preview = escapeHtml(String(v.text || v.content || '').trim().replace(/\n+/g, ' ').slice(0, 90));
+        div.innerHTML = '<div class="title-code">' + escapeHtml(v.__code) + '</div>' +
+          '<div class="title-name">' + (isVerseSentV3137(v) ? '✓ ' : '') + ref + '</div>' +
+          '<div class="small-note">' + escapeHtml(cat || '') + (preview ? ' · ' + preview : '') + '</div>';
+        div.onclick = function(){
+          try{
+            section = 'verses';
+            state.section = 'verses';
+            state.currentVerseId = v.id;
+            currentVerseCategory = v.category || 'sin_categoria';
+            specialVerseMode = null;
+            verseNavigationMode = 'titles';
+            if(typeof saveState === 'function') saveState();
+            if(typeof syncTabs === 'function') syncTabs();
+            if(typeof renderList === 'function') renderList();
+            if(typeof renderReader === 'function') renderReader();
+            if(typeof enterFullscreenReading === 'function') enterFullscreenReading();
+            else if(typeof openReader === 'function') openReader();
+          }catch(e){ console.error('open all verse item', e); }
+        };
+        box.appendChild(div);
+      });
+    }catch(e){
+      console.error('renderAllVerseTitlesV3137', e);
+    }
+  };
+
+  window.openAllVerseTitlesViewV3137 = function(){
+    try{
+      section = 'verses';
+      state.section = 'verses';
+      specialVerseMode = null;
+      verseNavigationMode = 'allVerseTitles';
+      categoryListActive = false;
+      sentListActive = false;
+      if(typeof saveState === 'function') saveState();
+      if(typeof syncTabs === 'function') syncTabs();
+      if(typeof clearNavModes === 'function') clearNavModes();
+      if(typeof setActiveView === 'function') setActiveView('allVerseTitles');
+
+      document.body.classList.add('titles-only','titles-fullscreen-v72');
+      document.body.classList.remove('reading-mobile','fullscreen-reading','hide-reading-ui','categories-fullscreen-v73','home-active-v9019');
+
+      ['readerView','editorView','backupView','trashView','verseCategoriesView','calendarView','homeView'].forEach(function(id){
+        var el = document.getElementById(id); if(el) el.classList.add('hidden');
+      });
+      var titles = document.getElementById('titlesView');
+      if(titles) titles.classList.remove('hidden');
+      var search = document.getElementById('titlesSearch');
+      if(search){
+        search.value = '';
+        search.placeholder = 'Buscar en todos los versículos';
+      }
+      var backBtn = document.querySelector('#titlesView .panel-head button:first-child');
+      if(backBtn) backBtn.setAttribute('onclick', 'backFromVerseTitlesV313()');
+      window.renderAllVerseTitlesV3137();
+      setTimeout(function(){ try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){} }, 30);
+    }catch(e){
+      console.error('openAllVerseTitlesViewV3137', e);
+      alert('No se pudo abrir Buscar todos.');
+    }
+  };
+
+  var oldRenderTitlesV3137 = window.renderTitles || (typeof renderTitles !== 'undefined' ? renderTitles : null);
+  if(typeof oldRenderTitlesV3137 === 'function'){
+    window.renderTitles = function(){
+      try{
+        if(typeof section !== 'undefined' && section === 'verses' && typeof verseNavigationMode !== 'undefined' && verseNavigationMode === 'allVerseTitles'){
+          return window.renderAllVerseTitlesV3137();
+        }
+      }catch(e){}
+      return oldRenderTitlesV3137.apply(this, arguments);
+    };
+    try{ renderTitles = window.renderTitles; }catch(e){}
+  }
+
+  var oldSyncTabsV3137 = window.syncTabs || (typeof syncTabs !== 'undefined' ? syncTabs : null);
+  if(typeof oldSyncTabsV3137 === 'function'){
+    window.syncTabs = function(){
+      var r = oldSyncTabsV3137.apply(this, arguments);
+      ensureAllVerseTitlesButtonsV3137();
+      updateAllVerseTitlesButtonsV3137();
+      return r;
+    };
+    try{ syncTabs = window.syncTabs; }catch(e){}
+  }
+
+  document.addEventListener('input', function(e){
+    try{
+      if(e.target && e.target.id === 'titlesSearch' && typeof section !== 'undefined' && section === 'verses' && typeof verseNavigationMode !== 'undefined' && verseNavigationMode === 'allVerseTitles'){
+        window.renderAllVerseTitlesV3137();
+      }
+    }catch(_e){}
+  }, true);
+
+  document.addEventListener('DOMContentLoaded', ensureAllVerseTitlesButtonsV3137);
+  setTimeout(ensureAllVerseTitlesButtonsV3137, 100);
+  setTimeout(ensureAllVerseTitlesButtonsV3137, 500);
+})();
