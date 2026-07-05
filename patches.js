@@ -635,3 +635,86 @@ body.dark .home-card-v9019.home-sky-day .home-phrase-v9019{
     }catch(_e){}
   }, true);
 })();
+
+/* ===== v3.1.27 - Volver desde Editar de Versículos a categorías de Versículos ===== */
+(function(){
+  if(window.__v3127EditorBackVerseCategories) return;
+  window.__v3127EditorBackVerseCategories = true;
+
+  function isVerseEditorV3127(){
+    try{
+      var editor = document.getElementById('editorView');
+      return !!(editor && !editor.classList.contains('hidden') && typeof section !== 'undefined' && section === 'verses');
+    }catch(e){ return false; }
+  }
+
+  function cleanBeforeVerseCategoriesV3127(){
+    try{ var home=document.getElementById('homeView'); if(home) home.classList.add('hidden'); }catch(e){}
+    try{ var editor=document.getElementById('editorView'); if(editor) editor.classList.add('hidden'); }catch(e){}
+    try{ var reader=document.getElementById('readerView'); if(reader) reader.classList.add('hidden'); }catch(e){}
+    try{ var titles=document.getElementById('titlesView'); if(titles) titles.classList.add('hidden'); }catch(e){}
+    try{ var backup=document.getElementById('backupView'); if(backup) backup.classList.add('hidden'); }catch(e){}
+    try{ var trash=document.getElementById('trashView'); if(trash) trash.classList.add('hidden'); }catch(e){}
+    try{ var cal=document.getElementById('calendarView'); if(cal) cal.classList.add('hidden'); }catch(e){}
+    try{
+      document.body.classList.remove(
+        'home-active-v9019','editing-focus','reading-mobile','fullscreen-reading','hide-reading-ui',
+        'titles-only','titles-fullscreen-v72','categories-fullscreen-v73','list-only','backup-only','special-view-only'
+      );
+    }catch(e){}
+  }
+
+  window.backFromVerseEditorToCategoriesV3127 = function(){
+    try{
+      try{
+        if(typeof isDirty !== 'undefined' && isDirty && typeof saveCurrent === 'function'){
+          saveCurrent(true, true);
+        }
+      }catch(_saveErr){}
+      try{ isDirty = false; }catch(_dirtyErr){}
+      try{ section = 'verses'; }catch(_e1){}
+      try{ state.section = 'verses'; }catch(_e2){}
+      try{ specialVerseMode = null; }catch(_e3){}
+      try{ returnToSentList = false; }catch(_e4){}
+      try{ sentListActive = false; }catch(_e5){}
+      try{ verseNavigationMode = 'categories'; }catch(_e6){}
+      try{ categoryListActive = true; }catch(_e7){}
+
+      cleanBeforeVerseCategoriesV3127();
+      try{ if(typeof syncTabs === 'function') syncTabs(); }catch(_syncErr){}
+      if(typeof openVerseCategories === 'function'){
+        openVerseCategories();
+      }else if(typeof openReader === 'function'){
+        openReader();
+      }
+      setTimeout(function(){
+        try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ try{ window.scrollTo(0,0); }catch(_e){} }
+      }, 40);
+    }catch(e){
+      console.error('backFromVerseEditorToCategoriesV3127', e);
+      try{ if(typeof openVerseCategories === 'function') openVerseCategories(); }catch(_e){}
+    }
+  };
+
+  var previousLeaveEditorV3127 = window.leaveEditor || (typeof leaveEditor !== 'undefined' ? leaveEditor : null);
+  window.leaveEditor = function(){
+    try{
+      if(isVerseEditorV3127()) return window.backFromVerseEditorToCategoriesV3127();
+    }catch(e){}
+    if(typeof previousLeaveEditorV3127 === 'function') return previousLeaveEditorV3127.apply(this, arguments);
+    if(typeof openReader === 'function') return openReader();
+  };
+  try{ leaveEditor = window.leaveEditor; }catch(e){}
+
+  document.addEventListener('click', function(e){
+    try{
+      var btn = e.target && e.target.closest ? e.target.closest('#editorView .panel-head button') : null;
+      if(!btn || !isVerseEditorV3127()) return;
+      var label = (btn.textContent || '').trim();
+      if(label.indexOf('Volver') === -1) return;
+      e.preventDefault();
+      e.stopPropagation();
+      window.backFromVerseEditorToCategoriesV3127();
+    }catch(_e){}
+  }, true);
+})();
