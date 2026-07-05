@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.47";
-const APP_VERSION_ZIP = "oraciones_v3_1_47_actualizacion_prueba.zip";
+const APP_VERSION_LABEL = "v3.1.48";
+const APP_VERSION_ZIP = "oraciones_v3_1_48_checklist_publicacion.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
