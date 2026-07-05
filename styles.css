@@ -2563,3 +2563,22 @@ body.dark #readerView.reader-sent-bg-v3134{
   background:rgba(150,110,220,.20)!important;
   border-color:rgba(190,160,245,.38)!important;
 }
+
+
+/* V3.1.44 - microajuste visual: respiro superior del marco de la tarjeta de inicio.
+   Solo afecta al Versículo del día de la pantalla principal. */
+#homeView #homeCardV9019.home-card-v9019{
+  margin-top:6px!important;
+  background-clip:padding-box!important;
+}
+#homeView #homeCardV9019.home-card-v9019::before{
+  top:14px!important;
+}
+@media (max-width:420px){
+  #homeView #homeCardV9019.home-card-v9019{
+    margin-top:6px!important;
+  }
+  #homeView #homeCardV9019.home-card-v9019::before{
+    top:14px!important;
+  }
+}
