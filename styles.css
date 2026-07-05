@@ -2534,7 +2534,8 @@ body.dark .reader-end-card::before{
 
 /* V3.1.28 - Versículos compartidos/enviados con fondo azul clarito */
 .item.verse-sent-bg-v3128,
-.title-row.verse-sent-bg-v3128{
+.title-row.verse-sent-bg-v3128,
+.category-card.verse-sent-bg-v3128{
   background:#eaf4ff!important;
   border-color:#cfe5f7!important;
 }
@@ -2542,7 +2543,8 @@ body.dark .reader-end-card::before{
   background:#eaf4ff!important;
 }
 body.dark .item.verse-sent-bg-v3128,
-body.dark .title-row.verse-sent-bg-v3128{
+body.dark .title-row.verse-sent-bg-v3128,
+body.dark .category-card.verse-sent-bg-v3128{
   background:rgba(80,150,210,.18)!important;
   border-color:rgba(140,200,245,.35)!important;
 }

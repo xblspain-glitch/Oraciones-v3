@@ -1725,8 +1725,8 @@ function renderVerseCategories(){
       const div = document.createElement("div");
       const preview = String(v.content || "").replace(/\n+/g, " ").slice(0, 95);
 
-      div.className = "category-card";
-      div.innerHTML = '<div><strong>' + escapeHtml(v.reference || v.title || "Sin referencia") + '</strong></div><div class="category-count">' + escapeHtml(catLabel(v.category)) + (preview ? ' · ' + escapeHtml(preview) : '') + '</div>';
+      div.className = "category-card" + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
+      div.innerHTML = '<div><strong>' + escapeHtml(((v.shared || v.lastCardSentAt) ? '✓ ' : '') + (v.reference || v.title || "Sin referencia")) + '</strong></div><div class="category-count">' + escapeHtml(catLabel(v.category)) + (preview ? ' · ' + escapeHtml(preview) : '') + '</div>';
       div.onclick = ()=>{
         verseNavigationMode = "verse";
         currentVerseCategory = v.category || currentVerseCategory || "fe";
@@ -4763,8 +4763,8 @@ setInterval(updateVersePositionCounter, 1000);
 
     items.forEach(item=>{
       const div=document.createElement("div");
-      div.className="title-row"+(current&&item.id===current.id?" active":"");
-      div.innerHTML='<div class="title-code">'+escapeHtml(item.__code)+'</div><div class="title-name">'+escapeHtml(displayItemTitle(item))+'</div>';
+      div.className="title-row"+(current&&item.id===current.id?" active":"")+(section==="verses"&&(item.shared||item.lastCardSentAt)?" verse-sent-bg-v3128":"");
+      div.innerHTML='<div class="title-code">'+escapeHtml(item.__code)+'</div><div class="title-name">'+escapeHtml((section==="verses"&&(item.shared||item.lastCardSentAt)&&!item.shared?"✓ ":"")+displayItemTitle(item))+'</div>';
       div.onclick=()=>{
         if(section==="verses"){
           specialVerseMode=null;
