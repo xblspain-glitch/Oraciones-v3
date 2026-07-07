@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.60";
-const APP_VERSION_ZIP = "oraciones_v3_1_60_eliminar_versiculo_limpio.zip";
+const APP_VERSION_LABEL = "v3.1.61";
+const APP_VERSION_ZIP = "oraciones_v3_1_61_papelera_en_versiculos.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -8467,3 +8467,6 @@ setInterval(updateVersePositionCounter, 1000);
 
   try{ moveToTrash = window.moveToTrash; }catch(e){}
 })();
+
+
+/* v3.1.61 - Acceso directo a Papelera en pantalla principal de Versículos */
