@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.53";
-const APP_VERSION_ZIP = "oraciones_v3_1_53_nueva_en_versiculos.zip";
+const APP_VERSION_LABEL = "v3.1.54";
+const APP_VERSION_ZIP = "oraciones_v3_1_54_nueva_elige_categoria.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -6737,7 +6737,7 @@ setInterval(updateVersePositionCounter, 1000);
             '<div style="font-weight:700;color:#3b2b19;margin-bottom:4px;">📖 '+escapeV9017(refV9017(v))+'</div>'+
             '<div style="font-size:14px;color:#665b4d;line-height:1.35;">'+escapeV9017(snippetV9017(textV9017(v)))+'</div>'+
           '</button>';
-        }).join('');
+        }).join('\n');
       };
       var run = function(){
         var q = input ? input.value : "";
@@ -7951,6 +7951,71 @@ setInterval(updateVersePositionCounter, 1000);
   if(window.__v3153NewVerseFromCategories) return;
   window.__v3153NewVerseFromCategories = true;
 
+  function chooseVerseCategoryForNewV3154(){
+    try{
+      if(typeof ensureVerseCategories === 'function') ensureVerseCategories();
+      var cats = (state && state.verseCategories && state.verseCategories.length)
+        ? state.verseCategories
+        : (typeof VERSE_CATEGORIES !== 'undefined' ? VERSE_CATEGORIES : []);
+      if(!cats || !cats.length) return null;
+      var msg = 'Elige la categoría para el nuevo versículo:\n\n' + cats.map(function(c, i){
+        return (i + 1) + '. ' + (c.label || c.id || 'Sin categoría');
+      }).join('\n');
+      var currentIndex = 1;
+      try{
+        var active = cats.findIndex(function(c){ return c.id === currentVerseCategory; });
+        if(active >= 0) currentIndex = active + 1;
+      }catch(e){}
+      var answer = prompt(msg, String(currentIndex));
+      if(answer === null) return null;
+      var n = parseInt(String(answer).trim(), 10);
+      if(!n || n < 1 || n > cats.length){
+        alert('Categoría no válida. No se ha creado el versículo.');
+        return null;
+      }
+      return cats[n - 1];
+    }catch(e){
+      console.error('chooseVerseCategoryForNewV3154', e);
+      return null;
+    }
+  }
+
+  function newVerseFromCategoriesV3154(){
+    try{
+      if(typeof section !== 'undefined') section = 'verses';
+      var cat = chooseVerseCategoryForNewV3154();
+      if(!cat) return;
+      if(typeof setActiveView === 'function') setActiveView('new');
+      var id = (typeof uid === 'function') ? uid() : String(Date.now());
+      var title = 'Nueva referencia';
+      var item = {
+        id: id,
+        reference: title,
+        title: title,
+        category: cat.id || 'sin_categoria',
+        content: '',
+        text: '',
+        updatedAt: Date.now(),
+        favorite: false,
+        shared: false,
+        isNewVerse: true,
+        isNewItem: true
+      };
+      currentVerseCategory = item.category;
+      var items = (typeof getItems === 'function') ? getItems() : (state.verses || []);
+      items.unshift(item);
+      if(typeof setItems === 'function') setItems(items); else state.verses = items;
+      if(typeof setCurrentId === 'function') setCurrentId(id); else state.currentVerseId = id;
+      if(typeof saveState === 'function') saveState();
+      if(typeof renderList === 'function') renderList();
+      if(typeof renderReader === 'function') renderReader();
+      if(typeof openEditor === 'function') openEditor();
+    }catch(e){
+      console.error('Nueva desde pantalla principal de Versículos', e);
+      alert('No se pudo crear el versículo.');
+    }
+  }
+
   function ensureNewVerseButtonInCategoriesV3153(){
     try{
       var head = document.querySelector('#verseCategoriesView .categories-head-v73') || document.querySelector('#verseCategoriesView .panel-head');
@@ -7962,10 +8027,7 @@ setInterval(updateVersePositionCounter, 1000);
       btn.className = 'btn primary';
       btn.type = 'button';
       btn.textContent = '➕ Nueva';
-      btn.onclick = function(){
-        try{ if(typeof section !== 'undefined') section = 'verses'; }catch(e){}
-        try{ if(typeof newItem === 'function') return newItem(); }catch(e){ console.error('Nueva desde categorías', e); }
-      };
+      btn.onclick = newVerseFromCategoriesV3154;
 
       var volver = Array.prototype.slice.call(head.querySelectorAll('button')).find(function(b){
         return (b.textContent || '').indexOf('Volver') !== -1;
