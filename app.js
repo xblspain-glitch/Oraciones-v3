@@ -1419,7 +1419,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.57";
+const APP_VERSION_LABEL = "v3.1.58";
 const APP_VERSION_ZIP = "oraciones_v3_1_54_nueva_elige_categoria.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -8091,7 +8091,7 @@ setInterval(updateVersePositionCounter, 1000);
       out.push({ id:id, label:(c.label || (typeof verseCategoryLabel === 'function' ? verseCategoryLabel(id) : id) || id) });
     }
 
-    if(window.state && Array.isArray(state.verseCategories)){
+    if(typeof state !== 'undefined' && state && Array.isArray(state.verseCategories)){
       state.verseCategories.forEach(addCat);
     }
     if(typeof VERSE_CATEGORIES !== 'undefined' && Array.isArray(VERSE_CATEGORIES)){
@@ -8100,8 +8100,8 @@ setInterval(updateVersePositionCounter, 1000);
 
     try{
       var allVerses = [];
-      if(window.state && Array.isArray(state.verses)) allVerses = allVerses.concat(state.verses);
-      if(window.state && Array.isArray(state.trashVerses)) allVerses = allVerses.concat(state.trashVerses);
+      if(typeof state !== 'undefined' && state && Array.isArray(state.verses)) allVerses = allVerses.concat(state.verses);
+      if(typeof state !== 'undefined' && state && Array.isArray(state.trashVerses)) allVerses = allVerses.concat(state.trashVerses);
       allVerses.forEach(function(v){
         if(v && v.category) addCat({id:v.category, label:(typeof verseCategoryLabel === 'function' ? verseCategoryLabel(v.category) : v.category)});
       });
