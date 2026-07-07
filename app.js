@@ -1419,7 +1419,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.55";
+const APP_VERSION_LABEL = "v3.1.56";
 const APP_VERSION_ZIP = "oraciones_v3_1_54_nueva_elige_categoria.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -8070,4 +8070,138 @@ setInterval(updateVersePositionCounter, 1000);
   document.addEventListener('DOMContentLoaded', afterV3153);
   setTimeout(afterV3153, 100);
   setTimeout(afterV3153, 600);
+})();
+
+/* v3.1.56 - Selector propio de categoría para Nueva en pantalla principal de Versículos */
+(function(){
+  if(window.__v3156NewVerseCategoryModal) return;
+  window.__v3156NewVerseCategoryModal = true;
+
+  function catsV3156(){
+    try{ if(typeof ensureVerseCategories === 'function') ensureVerseCategories(); }catch(e){}
+    return (window.state && state.verseCategories && state.verseCategories.length)
+      ? state.verseCategories
+      : (typeof VERSE_CATEGORIES !== 'undefined' ? VERSE_CATEGORIES : []);
+  }
+
+  function createVerseInCategoryV3156(cat){
+    try{
+      if(!cat) return;
+      if(typeof section !== 'undefined') section = 'verses';
+      if(typeof setActiveView === 'function') setActiveView('new');
+      var id = (typeof uid === 'function') ? uid() : String(Date.now());
+      var title = 'Nueva referencia';
+      var item = {
+        id: id,
+        reference: title,
+        title: title,
+        category: cat.id || 'sin_categoria',
+        content: '',
+        text: '',
+        updatedAt: Date.now(),
+        favorite: false,
+        shared: false,
+        isNewVerse: true,
+        isNewItem: true
+      };
+      currentVerseCategory = item.category;
+      var items = (typeof getItems === 'function') ? getItems() : (state.verses || []);
+      items.unshift(item);
+      if(typeof setItems === 'function') setItems(items); else state.verses = items;
+      if(typeof setCurrentId === 'function') setCurrentId(id); else state.currentVerseId = id;
+      if(typeof saveState === 'function') saveState();
+      if(typeof renderList === 'function') renderList();
+      if(typeof renderReader === 'function') renderReader();
+      if(typeof openEditor === 'function') openEditor();
+    }catch(e){
+      console.error('createVerseInCategoryV3156', e);
+      alert('No se pudo crear el versículo.');
+    }
+  }
+
+  function closeModalV3156(){
+    var old = document.getElementById('verseCategoryModalV3156');
+    if(old) old.remove();
+  }
+
+  function showCategoryModalV3156(){
+    try{
+      closeModalV3156();
+      var cats = catsV3156();
+      if(!cats || !cats.length){ alert('No hay categorías disponibles.'); return; }
+
+      var overlay = document.createElement('div');
+      overlay.id = 'verseCategoryModalV3156';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;';
+
+      var card = document.createElement('div');
+      card.style.cssText = 'width:min(92vw,560px);max-height:82vh;overflow:auto;background:#fff;border-radius:26px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,.28);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1d2733;';
+
+      var title = document.createElement('div');
+      title.textContent = 'Elige categoría';
+      title.style.cssText = 'font-size:24px;font-weight:800;margin-bottom:8px;';
+      card.appendChild(title);
+
+      var sub = document.createElement('div');
+      sub.textContent = 'Selecciona dónde guardar el nuevo versículo.';
+      sub.style.cssText = 'font-size:16px;color:#67717d;margin-bottom:18px;line-height:1.35;';
+      card.appendChild(sub);
+
+      var list = document.createElement('div');
+      list.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+      cats.forEach(function(cat){
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = cat.label || cat.id || 'Sin categoría';
+        btn.style.cssText = 'width:100%;text-align:left;border:1px solid #e2d8c8;background:#faf8f2;border-radius:18px;padding:14px 16px;font-size:18px;font-weight:700;color:#1d2733;box-shadow:0 3px 10px rgba(0,0,0,.04);';
+        btn.onclick = function(){ closeModalV3156(); createVerseInCategoryV3156(cat); };
+        list.appendChild(btn);
+      });
+      card.appendChild(list);
+
+      var footer = document.createElement('div');
+      footer.style.cssText = 'display:flex;justify-content:flex-end;margin-top:18px;';
+      var cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.textContent = 'Cancelar';
+      cancel.style.cssText = 'border:0;background:#eee7dc;border-radius:16px;padding:12px 18px;font-size:17px;font-weight:700;color:#2b2b2b;';
+      cancel.onclick = closeModalV3156;
+      footer.appendChild(cancel);
+      card.appendChild(footer);
+
+      overlay.appendChild(card);
+      overlay.addEventListener('click', function(ev){ if(ev.target === overlay) closeModalV3156(); });
+      document.body.appendChild(overlay);
+    }catch(e){
+      console.error('showCategoryModalV3156', e);
+      alert('No se pudo abrir el selector de categorías.');
+    }
+  }
+
+  function bindNewButtonV3156(){
+    try{
+      var btn = document.getElementById('btnVerseCatsNewV3153');
+      if(btn){
+        btn.onclick = showCategoryModalV3156;
+        btn.dataset.v3156Bound = '1';
+      }
+    }catch(e){}
+  }
+
+  var oldOpenVerseCategoriesV3156 = window.openVerseCategories || (typeof openVerseCategories !== 'undefined' ? openVerseCategories : null);
+  if(typeof oldOpenVerseCategoriesV3156 === 'function' && !oldOpenVerseCategoriesV3156.__v3156Wrapped){
+    var wrappedOpenVerseCategoriesV3156 = function(){
+      var r = oldOpenVerseCategoriesV3156.apply(this, arguments);
+      setTimeout(bindNewButtonV3156, 30);
+      setTimeout(bindNewButtonV3156, 180);
+      return r;
+    };
+    wrappedOpenVerseCategoriesV3156.__v3156Wrapped = true;
+    window.openVerseCategories = wrappedOpenVerseCategoriesV3156;
+    try{ openVerseCategories = window.openVerseCategories; }catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(bindNewButtonV3156, 200); });
+  setTimeout(bindNewButtonV3156, 300);
+  setTimeout(bindNewButtonV3156, 900);
 })();
