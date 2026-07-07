@@ -1419,7 +1419,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.56";
+const APP_VERSION_LABEL = "v3.1.57";
 const APP_VERSION_ZIP = "oraciones_v3_1_54_nueva_elige_categoria.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -8079,9 +8079,35 @@ setInterval(updateVersePositionCounter, 1000);
 
   function catsV3156(){
     try{ if(typeof ensureVerseCategories === 'function') ensureVerseCategories(); }catch(e){}
-    return (window.state && state.verseCategories && state.verseCategories.length)
-      ? state.verseCategories
-      : (typeof VERSE_CATEGORIES !== 'undefined' ? VERSE_CATEGORIES : []);
+
+    var out = [];
+    var seen = {};
+    function addCat(c){
+      if(!c) return;
+      var id = c.id || c.category || '';
+      if(!id) return;
+      if(seen[id]) return;
+      seen[id] = true;
+      out.push({ id:id, label:(c.label || (typeof verseCategoryLabel === 'function' ? verseCategoryLabel(id) : id) || id) });
+    }
+
+    if(window.state && Array.isArray(state.verseCategories)){
+      state.verseCategories.forEach(addCat);
+    }
+    if(typeof VERSE_CATEGORIES !== 'undefined' && Array.isArray(VERSE_CATEGORIES)){
+      VERSE_CATEGORIES.forEach(addCat);
+    }
+
+    try{
+      var allVerses = [];
+      if(window.state && Array.isArray(state.verses)) allVerses = allVerses.concat(state.verses);
+      if(window.state && Array.isArray(state.trashVerses)) allVerses = allVerses.concat(state.trashVerses);
+      allVerses.forEach(function(v){
+        if(v && v.category) addCat({id:v.category, label:(typeof verseCategoryLabel === 'function' ? verseCategoryLabel(v.category) : v.category)});
+      });
+    }catch(e){}
+
+    return out;
   }
 
   function createVerseInCategoryV3156(cat){
@@ -8135,7 +8161,7 @@ setInterval(updateVersePositionCounter, 1000);
       overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;';
 
       var card = document.createElement('div');
-      card.style.cssText = 'width:min(92vw,560px);max-height:82vh;overflow:auto;background:#fff;border-radius:26px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,.28);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1d2733;';
+      card.style.cssText = 'width:min(92vw,560px);max-height:88vh;overflow:hidden;background:#fff;border-radius:26px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,.28);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1d2733;display:flex;flex-direction:column;';
 
       var title = document.createElement('div');
       title.textContent = 'Elige categoría';
@@ -8143,12 +8169,12 @@ setInterval(updateVersePositionCounter, 1000);
       card.appendChild(title);
 
       var sub = document.createElement('div');
-      sub.textContent = 'Selecciona dónde guardar el nuevo versículo.';
+      sub.textContent = 'Selecciona dónde guardar el nuevo versículo (' + cats.length + ' categorías).';
       sub.style.cssText = 'font-size:16px;color:#67717d;margin-bottom:18px;line-height:1.35;';
       card.appendChild(sub);
 
       var list = document.createElement('div');
-      list.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+      list.style.cssText = 'display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:58vh;padding-right:4px;-webkit-overflow-scrolling:touch;';
       cats.forEach(function(cat){
         var btn = document.createElement('button');
         btn.type = 'button';
@@ -8158,6 +8184,13 @@ setInterval(updateVersePositionCounter, 1000);
         list.appendChild(btn);
       });
       card.appendChild(list);
+
+      if(cats.length > 8){
+        var hint = document.createElement('div');
+        hint.textContent = 'Desliza para ver todas las categorías.';
+        hint.style.cssText = 'font-size:13px;color:#7b6f60;margin-top:10px;text-align:center;';
+        card.appendChild(hint);
+      }
 
       var footer = document.createElement('div');
       footer.style.cssText = 'display:flex;justify-content:flex-end;margin-top:18px;';
