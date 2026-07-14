@@ -8704,3 +8704,207 @@ setInterval(updateVersePositionCounter, 1000);
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",syncButtonV3166); else setTimeout(syncButtonV3166,0);
 })();
+
+/* v3.1.70 - Organización manual: mantener visible el título movido */
+(function(){
+  if(window.__v3168TitleOrganizer) return;
+  window.__v3168TitleOrganizer = true;
+
+  var organizeModeV3168 = false;
+
+  function supportsTitleOrderV3168(){
+    try{ return ['prayers','notes','guides','parables'].indexOf(section) !== -1; }
+    catch(e){ return false; }
+  }
+
+  function ensureOrganizeButtonV3168(){
+    var head = document.querySelector('#titlesView .titles-head-v72');
+    if(!head) return null;
+    var btn = document.getElementById('organizeTitlesBtnV3168');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.id = 'organizeTitlesBtnV3168';
+      btn.type = 'button';
+      btn.className = 'btn soft organize-titles-btn-v3168';
+      btn.onclick = function(e){
+        if(e){ e.preventDefault(); e.stopPropagation(); }
+        organizeModeV3168 = !organizeModeV3168;
+        updateOrganizeButtonV3168();
+        if(typeof window.renderTitles === 'function') window.renderTitles();
+      };
+      var search = document.getElementById('titlesSearch');
+      if(search) head.insertBefore(btn, search);
+      else head.appendChild(btn);
+    }
+    return btn;
+  }
+
+  function updateOrganizeButtonV3168(){
+    var btn = ensureOrganizeButtonV3168();
+    if(!btn) return;
+    var show = supportsTitleOrderV3168();
+    btn.style.display = show ? '' : 'none';
+    btn.textContent = organizeModeV3168 ? 'Finalizar' : 'Ordenar';
+    btn.classList.toggle('active-organize-v3168', organizeModeV3168);
+    document.body.classList.toggle('organizing-titles-v3168', show && organizeModeV3168);
+  }
+
+  function displayCodeV3168(index){
+    try{ return typeof getDisplayCode === 'function' ? getDisplayCode(index, section) : String(index + 1); }
+    catch(e){ return String(index + 1); }
+  }
+
+  function titleTextV3168(item){
+    try{ return typeof displayItemTitle === 'function' ? displayItemTitle(item) : (item.title || item.reference || 'Sin título'); }
+    catch(e){ return item.title || item.reference || 'Sin título'; }
+  }
+
+  function moveTitleV3168(id, direction){
+    if(!supportsTitleOrderV3168()) return;
+
+    // Guardamos la posición visual exacta de la tarjeta antes de volver a pintar
+    // la lista. Así el elemento que se está moviendo permanece bajo la mirada
+    // y la pantalla no regresa al principio.
+    var selector = '#titlesList .title-row[data-title-id="'+String(id).replace(/"/g,'\\"')+'"]';
+    var previousRow = document.querySelector(selector);
+    var previousTop = previousRow ? previousRow.getBoundingClientRect().top : null;
+
+    var items = (typeof getItems === 'function' ? getItems() : []).slice();
+    var index = items.findIndex(function(item){ return item && item.id === id; });
+    var nextIndex = index + direction;
+    if(index < 0 || nextIndex < 0 || nextIndex >= items.length) return;
+
+    var temp = items[index];
+    items[index] = items[nextIndex];
+    items[nextIndex] = temp;
+    // Guardamos también el desplazamiento real antes de repintar. En esta
+    // pantalla el scroll pertenece al documento; renderList/renderReader
+    // lo devolvían al inicio, aunque después intentáramos seguir la tarjeta.
+    var scrollRoot = document.scrollingElement || document.documentElement;
+    var previousScrollTop = scrollRoot ? scrollRoot.scrollTop : (window.pageYOffset || 0);
+
+    if(typeof setItems === 'function') setItems(items);
+    if(typeof saveState === 'function') saveState();
+
+    // Solo hay que repintar la lista de títulos. La lista lateral y el lector
+    // se actualizarán normalmente al abrir un elemento; repintarlos aquí era
+    // la causa de que la vista saltara al principio.
+    if(typeof window.renderTitles === 'function') window.renderTitles();
+
+    if(scrollRoot) scrollRoot.scrollTop = previousScrollTop;
+    else window.scrollTo(0, previousScrollTop);
+
+    requestAnimationFrame(function(){
+      var row = document.querySelector(selector);
+      if(!row) return;
+      if(previousTop !== null){
+        var currentTop = row.getBoundingClientRect().top;
+        var correction = currentTop - previousTop;
+        if(Math.abs(correction) > 1){
+          if(scrollRoot) scrollRoot.scrollTop += correction;
+          else window.scrollBy(0, correction);
+        }
+      }else if(row.scrollIntoView){
+        row.scrollIntoView({block:'nearest'});
+      }
+    });
+    if(typeof toast === 'function') toast('Orden actualizado');
+  }
+
+  var previousRenderTitlesV3168 = window.renderTitles || (typeof renderTitles !== 'undefined' ? renderTitles : null);
+  window.renderTitles = function(){
+    updateOrganizeButtonV3168();
+    if(!organizeModeV3168 || !supportsTitleOrderV3168()){
+      return typeof previousRenderTitlesV3168 === 'function' ? previousRenderTitlesV3168.apply(this, arguments) : undefined;
+    }
+
+    var box = document.getElementById('titlesList');
+    if(!box) return;
+    box.innerHTML = '';
+
+    var q = (document.getElementById('titlesSearch') && document.getElementById('titlesSearch').value || '').trim().toLowerCase();
+    var source = typeof getItems === 'function' ? getItems() : [];
+    var items = source.map(function(item, index){ return {item:item, index:index}; });
+    if(q){
+      items = items.filter(function(entry){ return titleTextV3168(entry.item).toLowerCase().indexOf(q) !== -1; });
+    }
+
+    if(!items.length){
+      box.innerHTML = '<div class="empty">No hay resultados.</div>';
+      return;
+    }
+
+    items.forEach(function(entry){
+      var item = entry.item;
+      var index = entry.index;
+      var row = document.createElement('div');
+      row.className = 'title-row title-row-organize-v3168';
+      row.setAttribute('data-title-id', item.id);
+
+      var code = document.createElement('div');
+      code.className = 'title-code';
+      code.textContent = displayCodeV3168(index);
+
+      var name = document.createElement('div');
+      name.className = 'title-name';
+      name.textContent = titleTextV3168(item);
+
+      var controls = document.createElement('div');
+      controls.className = 'title-order-controls-v3168';
+
+      var up = document.createElement('button');
+      up.type = 'button';
+      up.className = 'title-order-arrow-v3168';
+      up.textContent = '↑';
+      up.title = 'Subir';
+      up.setAttribute('aria-label', 'Subir título');
+      up.disabled = index === 0;
+      up.onclick = function(e){ e.preventDefault(); e.stopPropagation(); moveTitleV3168(item.id, -1); };
+
+      var down = document.createElement('button');
+      down.type = 'button';
+      down.className = 'title-order-arrow-v3168';
+      down.textContent = '↓';
+      down.title = 'Bajar';
+      down.setAttribute('aria-label', 'Bajar título');
+      down.disabled = index === source.length - 1;
+      down.onclick = function(e){ e.preventDefault(); e.stopPropagation(); moveTitleV3168(item.id, 1); };
+
+      controls.appendChild(up);
+      controls.appendChild(down);
+      row.appendChild(code);
+      row.appendChild(name);
+      row.appendChild(controls);
+      box.appendChild(row);
+    });
+  };
+  try{ renderTitles = window.renderTitles; }catch(e){}
+
+  var previousOpenTitlesV3168 = window.openTitlesView || (typeof openTitlesView !== 'undefined' ? openTitlesView : null);
+  if(typeof previousOpenTitlesV3168 === 'function'){
+    window.openTitlesView = function(){
+      organizeModeV3168 = false;
+      var result = previousOpenTitlesV3168.apply(this, arguments);
+      updateOrganizeButtonV3168();
+      return result;
+    };
+    try{ openTitlesView = window.openTitlesView; }catch(e){}
+  }
+
+  var previousSyncTabsV3168 = window.syncTabs || (typeof syncTabs !== 'undefined' ? syncTabs : null);
+  if(typeof previousSyncTabsV3168 === 'function'){
+    window.syncTabs = function(){
+      var result = previousSyncTabsV3168.apply(this, arguments);
+      if(!supportsTitleOrderV3168()) organizeModeV3168 = false;
+      updateOrganizeButtonV3168();
+      return result;
+    };
+    try{ syncTabs = window.syncTabs; }catch(e){}
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ ensureOrganizeButtonV3168(); updateOrganizeButtonV3168(); });
+  }else{
+    setTimeout(function(){ ensureOrganizeButtonV3168(); updateOrganizeButtonV3168(); }, 0);
+  }
+})();
