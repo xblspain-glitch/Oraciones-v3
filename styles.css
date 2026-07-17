@@ -552,14 +552,14 @@ button.btn.premium-pressing{
 .reader-next-link:hover{background:rgba(47,111,184,.08)}
 
 .reader-next{margin:8px auto 8px;text-align:center}
-.reader-next-label{color:#4f6f95;font-weight:650;margin-bottom:8px}
+.reader-next-label{color:#5d7a2d;font-weight:550;margin-bottom:8px}
 .reader-next-link,.reader-top-link{color:#2f6fb8;font-weight:800;cursor:pointer;display:inline-block;padding:6px 10px;border-radius:10px;transition:background-color .15s ease,transform .09s ease}
 .reader-next-link:hover,.reader-top-link:hover{background:rgba(47,111,184,.08)}
 .reader-next-link:active,.reader-top-link:active{transform:scale(.98) translateY(1px)}
 .reader-top-link{margin-top:8px;color:#5f7086;font-weight:750}
 
 .reader-next{margin:8px auto 8px;text-align:center}
-.reader-next-label{color:#4f6f95;font-weight:650;margin-bottom:8px}
+.reader-next-label{color:#5d7a2d;font-weight:550;margin-bottom:8px}
 .reader-next-link,.reader-top-link{color:#2f6fb8;font-weight:800;cursor:pointer;display:inline-block;padding:6px 10px;border-radius:10px;transition:background-color .15s ease,transform .09s ease}
 .reader-next-link:hover,.reader-top-link:hover{background:rgba(47,111,184,.08)}
 .reader-next-link:active,.reader-top-link:active{transform:scale(.98) translateY(1px)}
@@ -2808,4 +2808,269 @@ body.dark .separator-mini-action-v3171{color:#c2c9c0}
   letter-spacing:0;
   white-space:nowrap;
   opacity:.78;
+}
+
+/* v3.1.76 - botón Salmos */
+.psalms-note-v3176{color:#66805a;font-weight:900;font-size:1.18em;line-height:1}
+body.dark .psalms-note-v3176{color:#a8c792}
+
+/* ===== v3.1.76.2 - Filas fijas conservando tamaños originales ===== */
+.home-row-break-v31762{display:none}
+body.home-active-v9019 .home-row-break-v31762{
+  display:block;
+  flex:0 0 100%;
+  width:100%;
+  height:0;
+  padding:0;
+  margin:0;
+}
+
+/* ===== v3.1.76.3 - Filas fijas del inicio sin alterar el tamaño original ===== */
+.home-fixed-row-v31763{display:contents}
+body.home-active-v9019 .home-fixed-row-v31763{
+  display:flex;
+  flex:0 0 100%;
+  width:100%;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  flex-wrap:nowrap;
+  min-width:0;
+}
+body.home-active-v9019 .home-fixed-row-v31763 > .btn{
+  flex:0 0 auto;
+  width:auto;
+  min-width:0;
+  max-width:none;
+}
+body.home-active-v9019 .home-fixed-row-four-v31763 #btnTheme{
+  flex:0 0 56px;
+  width:56px;
+  min-width:56px;
+  max-width:56px;
+}
+@media(max-width:420px){
+  body.home-active-v9019 .home-fixed-row-v31763{gap:6px}
+  body.home-active-v9019 .home-fixed-row-v31763 > .btn{padding-left:9px;padding-right:9px}
+  body.home-active-v9019 .home-fixed-row-four-v31763 #btnTheme{flex-basis:50px;width:50px;min-width:50px;max-width:50px}
+}
+
+
+/* v3.1.77 - Categorías de Salmos */
+.psalm-category-editor-v3177{
+  padding:12px 14px 10px;
+  border-bottom:1px solid var(--line);
+  background:rgba(102,128,90,.06);
+}
+.psalm-category-editor-v3177.hidden{display:none!important}
+.psalm-category-editor-v3177 label{
+  display:block;
+  margin:0 0 7px;
+  font-size:14px;
+  font-weight:700;
+  color:#58704e;
+}
+.psalm-category-select-v3177{
+  width:100%;
+  min-height:44px;
+  border-radius:10px!important;
+  border:1px solid rgba(102,128,90,.35)!important;
+  background:var(--panel);
+  font-size:17px!important;
+}
+.psalm-category-icon-v3177{
+  display:inline-block;
+  min-width:1.35em;
+  font-size:1.08em;
+  line-height:1;
+  vertical-align:-.08em;
+}
+body.dark .psalm-category-editor-v3177,
+body.dark-mode .psalm-category-editor-v3177{
+  background:rgba(154,184,137,.08);
+}
+body.dark .psalm-category-editor-v3177 label,
+body.dark-mode .psalm-category-editor-v3177 label{color:#b9d2ad}
+
+/* ===== v3.1.80 - Categorías múltiples de Oraciones ===== */
+.prayer-categories-editor-v3180{margin:14px 0 4px;padding:14px;border:1px solid rgba(255,255,255,.16);border-radius:16px;background:rgba(0,0,0,.12)}
+.prayer-categories-header-v3180{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.prayer-category-count-v3180{font-size:.82rem;font-weight:600;opacity:.72;text-align:right}
+.prayer-categories-help-v3180{font-size:.86rem;opacity:.72;margin-bottom:12px}
+.prayer-categories-grid-v3180{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.prayer-category-option-v3180{display:flex;align-items:center;gap:9px;min-height:42px;padding:9px 10px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(255,255,255,.045);cursor:pointer;user-select:none;transition:.16s ease}
+.prayer-category-option-v3180:hover{background:rgba(255,255,255,.085)}
+.prayer-category-option-v3180.selected{border-color:rgba(255,255,255,.42);background:rgba(255,255,255,.13)}
+.prayer-category-option-v3180 input{width:18px;height:18px;flex:0 0 auto;accent-color:currentColor}
+.prayer-category-option-v3180 span{line-height:1.2}
+@media(max-width:620px){.prayer-categories-grid-v3180{grid-template-columns:1fr}.prayer-categories-editor-v3180{padding:12px}.prayer-category-option-v3180{min-height:44px}}
+
+
+/* ===== v3.1.81 - Categoría completa en títulos de Salmos ===== */
+.psalm-category-prefix-v3181{
+  display:inline;
+  font-weight:650;
+}
+.psalm-category-label-v3181{
+  margin-left:.18em;
+}
+.psalm-category-separator-v3181{
+  opacity:.58;
+  font-weight:500;
+}
+@media (max-width:420px){
+  .psalm-category-prefix-v3181{font-size:.94em}
+}
+
+/* ===== v3.1.82 - Recomendaciones compactas al final de una oración ===== */
+.reader-next .reader-recommendation-button-v3182{
+  width:min(92%,470px)!important;
+  min-height:0!important;
+  margin:8px auto!important;
+  padding:12px 15px!important;
+  border-radius:15px!important;
+  font-size:.94em!important;
+  line-height:1.28!important;
+}
+.reader-psalm-label-v3182{
+  margin:16px 0 8px!important;
+  color:#4f7199!important;
+  font-weight:800!important;
+  font-size:.96em!important;
+  text-align:center!important;
+}
+.reader-psalm-link-v3182{
+  color:#2f6f9f!important;
+}
+body.dark .reader-psalm-label-v3182{color:#b9cdec!important}
+body.dark .reader-psalm-link-v3182{color:#d9ebff!important}
+body.dark .reader-next-label{color:#a7c46a!important}
+@media(max-width:420px){
+  .reader-next .reader-recommendation-button-v3182{
+    width:min(94%,450px)!important;
+    padding:11px 13px!important;
+    border-radius:14px!important;
+    font-size:.91em!important;
+  }
+  .reader-psalm-label-v3182{font-size:.92em!important;margin-top:14px!important}
+}
+
+/* ===== v3.1.84 - Final de lectura mucho más compacto ===== */
+.reader-next{
+  margin:14px auto 12px!important;
+}
+.reader-next-label{
+  margin:0 0 8px!important;
+  font-size:.91em!important;
+  line-height:1.18!important;
+}
+.reader-next .reader-recommendation-button-v3182,
+.reader-next .reader-top-link{
+  width:min(88%,440px)!important;
+  min-height:0!important;
+  margin:6px auto!important;
+  padding:8px 11px!important;
+  border-radius:13px!important;
+  font-size:.78em!important;
+  line-height:1.18!important;
+  gap:6px!important;
+}
+.reader-psalm-label-v3182{
+  margin:10px 0 5px!important;
+  font-size:.80em!important;
+  line-height:1.30!important;
+}
+.reader-psalm-link-v3182{
+  padding-top:9px!important;
+  padding-bottom:9px!important;
+}
+@media(max-width:420px){
+  .reader-next{margin-top:12px!important;margin-bottom:10px!important}
+  .reader-next-label{font-size:.88em!important;margin-bottom:7px!important}
+  .reader-next .reader-recommendation-button-v3182,
+  .reader-next .reader-top-link{
+    width:min(90%,430px)!important;
+    margin:5px auto!important;
+    padding:7px 10px!important;
+    border-radius:12px!important;
+    font-size:.75em!important;
+    line-height:1.17!important;
+  }
+  .reader-psalm-label-v3182{
+    margin:9px 0 4px!important;
+    font-size:.77em!important;
+    line-height:1.28!important;
+  }
+}
+
+/* ===== v3.1.85 - Acciones finales por color y tamaño equilibrado ===== */
+.reader-next .reader-recommendation-button-v3182{
+  width:min(90%,455px)!important;
+  min-height:46px!important;
+  margin:7px auto!important;
+  padding:10px 14px!important;
+  border-radius:14px!important;
+  font-size:.86em!important;
+  line-height:1.22!important;
+  border:1px solid transparent!important;
+  box-shadow:0 4px 12px rgba(55,75,95,.08)!important;
+}
+.reader-next .reader-recommendation-button-v3182:not(.reader-psalm-link-v3182){
+  color:#2f7a4d!important;
+  background:linear-gradient(180deg,rgba(234,248,238,.98),rgba(222,242,228,.98))!important;
+  border-color:rgba(66,139,88,.24)!important;
+}
+.reader-psalm-label-v3182{
+  color:#b86b20!important;
+  margin:12px 0 6px!important;
+  font-size:.86em!important;
+  line-height:1.25!important;
+}
+.reader-next .reader-psalm-link-v3182{
+  color:#b45f16!important;
+  background:linear-gradient(180deg,rgba(255,245,230,.99),rgba(255,235,210,.99))!important;
+  border-color:rgba(214,126,43,.27)!important;
+}
+.reader-next .reader-top-link{
+  width:min(90%,455px)!important;
+  min-height:52px!important;
+  margin:9px auto 6px!important;
+  padding:12px 15px!important;
+  border-radius:15px!important;
+  font-size:.92em!important;
+  line-height:1.2!important;
+  color:#2f69a2!important;
+  background:linear-gradient(180deg,rgba(235,244,255,.99),rgba(221,236,252,.99))!important;
+  border:1px solid rgba(54,112,169,.25)!important;
+  box-shadow:0 5px 14px rgba(47,105,162,.10)!important;
+}
+body.dark .reader-next .reader-recommendation-button-v3182:not(.reader-psalm-link-v3182),
+body.dark-mode .reader-next .reader-recommendation-button-v3182:not(.reader-psalm-link-v3182){
+  color:#bfe8cb!important;background:rgba(45,91,59,.30)!important;border-color:rgba(123,199,145,.34)!important;
+}
+body.dark .reader-psalm-label-v3182,body.dark-mode .reader-psalm-label-v3182{color:#f0b36f!important}
+body.dark .reader-next .reader-psalm-link-v3182,body.dark-mode .reader-next .reader-psalm-link-v3182{
+  color:#ffd09e!important;background:rgba(126,71,24,.30)!important;border-color:rgba(238,158,79,.35)!important;
+}
+body.dark .reader-next .reader-top-link,body.dark-mode .reader-next .reader-top-link{
+  color:#c5ddf8!important;background:rgba(42,78,118,.34)!important;border-color:rgba(118,164,214,.35)!important;
+}
+@media(max-width:420px){
+  .reader-next .reader-recommendation-button-v3182{
+    width:min(92%,445px)!important;min-height:45px!important;padding:9px 12px!important;font-size:.84em!important;
+  }
+  .reader-psalm-label-v3182{font-size:.84em!important;margin:11px 0 5px!important}
+  .reader-next .reader-top-link{
+    width:min(92%,445px)!important;min-height:50px!important;padding:11px 13px!important;font-size:.90em!important;
+  }
+}
+
+
+/* ===== v3.1.86 - Encabezado de continuación en verde oliva ===== */
+.reader-next-label{
+  color:#5f7f31!important;
+}
+body.dark .reader-next-label,
+body.dark-mode .reader-next-label{
+  color:#b9d58a!important;
 }
