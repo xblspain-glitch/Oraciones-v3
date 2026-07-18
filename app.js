@@ -10805,6 +10805,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
           toggle.addEventListener('touchstart',function(e){e.stopPropagation();},{capture:true,passive:true});
         }
         updateToggle(toggle,recommendationCount(content),toggle.getAttribute('aria-expanded')==='true');
+        /* V3.1.132: solo se hace visible cuando ya está completamente agrupado. */
+        box.classList.add('recommendations-ready-v31132');
       });
     }catch(e){console.error('No se pudieron plegar las recomendaciones',e);}
     finally{arranging=false;}

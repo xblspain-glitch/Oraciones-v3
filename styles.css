@@ -3783,3 +3783,17 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
 @media (prefers-reduced-motion:reduce){
   .reader-recommendations-content-v31127,.reader-recommendations-arrow-v31127{transition:none!important}
 }
+
+
+/* ===== V3.1.132 - Agrupado invisible hasta estar completo =====
+   Conserva intacta la lógica estable de V3.1.128. Mientras Oración, Salmo y
+   Versículo se están generando, solo permanece visible «Volver al inicio».
+   El botón plegable aparece cuando todo ya ha sido movido a su interior. */
+.reader-next:not(.recommendations-ready-v31132) > :not(.reader-top-link){
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.reader-next.recommendations-ready-v31132 > .reader-recommendations-toggle-v31127{
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
