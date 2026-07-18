@@ -861,7 +861,34 @@ function registerCurrentAsReadV47G(){
 
 function enterFullscreenReading(){registerCurrentAsReadV47G();setActiveView("read");document.getElementById("readerView").classList.remove("hidden");document.getElementById("editorView").classList.add("hidden");document.getElementById("backupView").classList.add("hidden");document.getElementById("trashView").classList.add("hidden");document.getElementById("titlesView").classList.add("hidden");var vc=document.getElementById("verseCategoriesView");if(vc)vc.classList.add("hidden");var cal=document.getElementById("calendarView");if(cal)cal.classList.add("hidden");document.body.classList.remove("titles-fullscreen-v72");document.body.classList.add("fullscreen-reading");document.body.classList.remove("reading-mobile","hide-reading-ui");window.scrollTo({top:0,behavior:"smooth"});toast("Pantalla completa")}
 function exitFullscreenReading(){document.body.classList.remove("fullscreen-reading","hide-reading-ui");openReader()}
-function toggleReadingUI(){if(!document.body.classList.contains("fullscreen-reading")) return;document.body.classList.toggle("hide-reading-ui")}
+function toggleReadingUI(){
+  if(!document.body.classList.contains("fullscreen-reading")) return;
+
+  const willHide = !document.body.classList.contains("hide-reading-ui");
+  document.body.classList.toggle("hide-reading-ui");
+
+  // V3.1.126: al ocultar la botonera, acerca automáticamente el inicio
+  // de la lectura a la parte superior. Los versículos conservan su
+  // comportamiento anterior y al volver a mostrar la botonera no se mueve.
+  if(!willHide || section === "verses") return;
+
+  window.setTimeout(function(){
+    try{
+      const identity = document.getElementById("readerIdentityV31103");
+      const identityVisible = identity && !identity.classList.contains("hidden");
+      const target = identityVisible
+        ? identity
+        : (document.getElementById("readerTitle") || document.getElementById("readerText"));
+
+      if(!target) return;
+      const rect = target.getBoundingClientRect();
+      const top = Math.max(0, window.scrollY + rect.top - 8);
+      window.scrollTo({top: top, behavior: "smooth"});
+    }catch(e){
+      console.warn("No se pudo ajustar el inicio de lectura", e);
+    }
+  }, 80);
+}
 function openEditor(){
   setActiveView("edit");
   clearNavModes();
@@ -4886,8 +4913,10 @@ setInterval(updateVersePositionCounter, 1000);
         const s=choosePrayer();
         if(s){
           box.innerHTML =
-            '<div class="reader-next-label">🌿 Puede continuar con...</div>'+
-            '<div class="reader-next-link" data-v59d-next="'+esc(s.id)+'">'+esc(s.title||"Oración")+'</div>'+
+            '<div class="reader-recommendations-content-v31127" aria-hidden="true">'+
+              '<div class="reader-next-label">🌿 Puede continuar con...</div>'+
+              '<div class="reader-next-link" data-v59d-next="'+esc(s.id)+'">'+esc(s.title||"Oración")+'</div>'+
+            '</div>'+
             '<div class="reader-top-link" data-v59d-top="1">↑ Volver al inicio</div>';
         }else{
           box.innerHTML='<div class="reader-top-link" data-v59d-top="1">↑ Volver al inicio</div>';
@@ -9694,32 +9723,30 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   var PSALM_CATEGORIES_V3177 = [
     {id:'', icon:'', label:'Sin categoría'},
-    {id:'alabanza_adoracion', icon:'🙌🏾', label:'Alabanza y adoración'},
+    {id:'alabanza', icon:'👑', label:'Alabanza y adoración'},
+    {id:'gratitud', icon:'🙏🏾', label:'Gratitud'},
+    {id:'fe', icon:'✨', label:'Fe y esperanza'},
+    {id:'salvacion', icon:'✝️', label:'Salvación y vida eterna'},
+    {id:'agradar', icon:'🤍', label:'Agradar a Dios'},
+    {id:'confianza', icon:'💚', label:'Confianza y entrega'},
     {id:'amor', icon:'❤️', label:'Amor'},
-    {id:'salvacion_vida_eterna', icon:'✝️', label:'Salvación y vida eterna'},
-    {id:'consagracion_santidad', icon:'🤍', label:'Consagración y santidad'},
-    {id:'confianza_entrega', icon:'💚', label:'Confianza y entrega'},
-    {id:'arrepentimiento_perdon', icon:'🙏🏾', label:'Arrepentimiento y perdón'},
     {id:'proteccion', icon:'🫂', label:'Protección'},
-    {id:'paz_consuelo', icon:'🕊️', label:'Paz y consuelo'},
     {id:'fortaleza', icon:'💪🏾', label:'Fortaleza'},
-    {id:'fe_esperanza', icon:'✨', label:'Fe y esperanza'},
-    {id:'gratitud', icon:'🤲🏾', label:'Gratitud'},
-    {id:'sabiduria_ensenanza', icon:'📖', label:'Sabiduría y enseñanza'},
-    {id:'guia_voluntad', icon:'🧭', label:'Guía y voluntad de Dios'},
-    {id:'justicia_juicio', icon:'⚖️', label:'Justicia y juicio'},
-    {id:'reino_soberania', icon:'👑', label:'Reino y soberanía de Dios'},
-    {id:'espiritu_santo', icon:'🔥', label:'Espíritu Santo'},
-    {id:'creacion_grandeza', icon:'🌍', label:'Creación y grandeza de Dios'},
-    {id:'familia_hogar', icon:'👨‍👩‍👧‍👦', label:'Familia y hogar'},
-    {id:'projimo_servicio_misericordia', icon:'🤝', label:'Prójimo, servicio y misericordia'},
-    {id:'sanacion_salud', icon:'🌿', label:'Sanación y salud'},
-    {id:'lucha_tentacion', icon:'🪨', label:'Lucha espiritual y tentación'},
-    {id:'manana_nuevo_dia', icon:'🌅', label:'Mañana y nuevo día'},
-    {id:'noche_descanso', icon:'🌙', label:'Noche y descanso'},
-    {id:'iglesia_pueblo', icon:'⛪', label:'Iglesia y pueblo de Dios'},
-    {id:'mision_evangelizacion', icon:'🕯️', label:'Misión y evangelización'}
-  ];
+    {id:'sabiduria', icon:'📖', label:'Sabiduría'},
+    {id:'guia', icon:'🧭', label:'Guía y voluntad de Dios'},
+    {id:'espiritu', icon:'🔥', label:'Espíritu Santo'},
+    {id:'servicio', icon:'🤝', label:'Servicio y misericordia'},
+    {id:'familia', icon:'👨🏾‍👩🏾‍👧🏾‍👦🏾', label:'Familia'},
+    {id:'sanacion', icon:'🌿', label:'Sanación'},
+    {id:'paz', icon:'🕊️', label:'Paz y consuelo'},
+    {id:'arrepentimiento', icon:'🤲🏾', label:'Arrepentimiento y perdón'},
+    {id:'lucha', icon:'🪨', label:'Lucha espiritual'},
+    {id:'ansiedad', icon:'😰', label:'Preocupación o ansiedad'},
+    {id:'tristeza', icon:'😔', label:'Tristeza y desánimo'},
+    {id:'intercesion', icon:'🌍', label:'Intercesión por el mundo'},
+    {id:'manana', icon:'🌅', label:'Mañana y nuevo día'},
+    {id:'noche', icon:'🌙', label:'Noche y descanso'}
+];
   window.PSALM_CATEGORIES_V3177=PSALM_CATEGORIES_V3177;
   window.psalmCategoryMetaV3177=function(id){
     return PSALM_CATEGORIES_V3177.find(function(x){return x.id===String(id||'');}) || PSALM_CATEGORIES_V3177[0];
@@ -10201,36 +10228,49 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   function writeRecent(ids){
     try{localStorage.setItem(RECENT_KEY,JSON.stringify((ids||[]).slice(0,12)))}catch(e){}
   }
-  function prayerCategories(item){
+  function inferPrayerCategoriesV3114(item){
     if(!item) return [];
-    var values=Array.isArray(item.categories)?item.categories.slice():[];
-    if(item.category && values.indexOf(item.category)<0) values.unshift(item.category);
+    var values=[];
+    if(Array.isArray(item.momentCategoriesV31102)) values=values.concat(item.momentCategoriesV31102);
+    if(Array.isArray(item.categories)) values=values.concat(item.categories);
+    if(item.category) values.push(item.category);
+    var text=[item.title,item.content,item.text].filter(Boolean).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    var rules={
+      alabanza:['alaban','ador','gloria','santo es','grandeza'], gratitud:['gracias','agrade','bendicion'],
+      fe:['fe','esperanza','promesa'], salvacion:['salvacion','vida eterna','cristo','jesus','cruz'],
+      agradar:['agradar','obedec','santidad','consagr'], confianza:['confio','confianza','entrego','descanso en'],
+      amor:['amor','amar','corazon'], proteccion:['protege','proteccion','refugio','amparo','guarda'],
+      fortaleza:['fortaleza','fuerza','animo','victoria'], sabiduria:['sabiduria','entendimiento','ensenanza'],
+      guia:['guia','voluntad','camino','direccion'], espiritu:['espiritu santo','espiritu'],
+      servicio:['servir','servicio','misericordia','projimo'], familia:['familia','hijo','hija','esposa','esposo','hogar'],
+      sanacion:['sanacion','sana','salud','enfermedad','dolor'], paz:['paz','consuelo','calma'],
+      arrepentimiento:['arrepent','perdon','pecado'], lucha:['tentacion','lucha espiritual','enemigo','maligno'],
+      ansiedad:['ansiedad','preocupacion','angustia','miedo'], tristeza:['tristeza','desanimo','llanto','soledad'],
+      intercesion:['mundo','naciones','pueblos','interced'], manana:['manana','nuevo dia','amanecer'], noche:['noche','dormir','descanso']
+    };
+    Object.keys(rules).forEach(function(cat){if(rules[cat].some(function(k){return text.indexOf(k)>=0;})) values.push(cat);});
+    var aliases={esperanza:'fe',santidad:'agradar',arrepentimiento_perdon:'arrepentimiento',paz_consuelo:'paz',
+      confianza_entrega:'confianza',salvacion_vida_eterna:'salvacion',guia_voluntad:'guia',espiritu_santo:'espiritu',
+      familia_hogar:'familia',sanacion_salud:'sanacion',lucha_tentacion:'lucha',manana_nuevo_dia:'manana',noche_descanso:'noche'};
     var seen={};
-    return values.map(function(x){return String(x||'').trim()}).filter(function(x){
-      if(!x || seen[x]) return false;
-      seen[x]=true;
-      return true;
-    });
+    return values.map(function(x){var v=String(x||'').trim();return aliases[v]||v;}).filter(function(x){if(!x||seen[x])return false;seen[x]=true;return true;});
   }
+  function prayerCategories(item){ return inferPrayerCategoriesV3114(item); }
   function chooseRelatedPsalm(prayer){
     try{
       if(typeof state==='undefined' || !state || !Array.isArray(state.psalms) || !state.psalms.length) return null;
-      var cats=prayerCategories(prayer);
-      if(!cats.length) return null;
-      var available=cats.filter(function(cat){
-        return state.psalms.some(function(p){return p && String(p.category||'')===cat});
-      });
-      if(!available.length) return null;
-      var chosenCategory=available[Math.floor(Math.random()*available.length)];
-      var recent=readRecent();
-      var pool=state.psalms.filter(function(p){
-        return p && String(p.category||'')===chosenCategory && recent.indexOf(p.id)<0;
-      });
-      if(!pool.length){
-        pool=state.psalms.filter(function(p){return p && String(p.category||'')===chosenCategory});
+      var cats=prayerCategories(prayer), recent=readRecent();
+      var available=cats.filter(function(cat){return state.psalms.some(function(p){return p&&String(p.category||'')===cat;});});
+      var pool=[];
+      if(available.length){
+        var chosenCategory=available[Math.floor(Math.random()*available.length)];
+        pool=state.psalms.filter(function(p){return p&&String(p.category||'')===chosenCategory&&recent.indexOf(p.id)<0;});
+        if(!pool.length) pool=state.psalms.filter(function(p){return p&&String(p.category||'')===chosenCategory;});
       }
-      if(!pool.length) return null;
-      return pool[Math.floor(Math.random()*pool.length)];
+      /* Si no hay una coincidencia exacta, siempre recomienda automáticamente un Salmo disponible. */
+      if(!pool.length) pool=state.psalms.filter(function(p){return p&&recent.indexOf(p.id)<0;});
+      if(!pool.length) pool=state.psalms.filter(Boolean);
+      return pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
     }catch(e){return null}
   }
   function openPsalm(id){
@@ -10279,9 +10319,9 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
         ? window.formatPsalmRecommendationTitleV3181(psalm)
         : (psalm.title||'Salmo');
 
-      var insertBefore=top||null;
-      box.insertBefore(label,insertBefore);
-      box.insertBefore(button,insertBefore);
+      var content=box.querySelector('.reader-recommendations-content-v31127')||box;
+      content.appendChild(label);
+      content.appendChild(button);
 
       function activate(){openPsalm(button.dataset.v3182Psalm)}
       button.addEventListener('click',activate);
@@ -10334,7 +10374,13 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     projimo_servicio_misericordia:['amor','santidad'], sanacion_salud:['fortaleza','esperanza'],
     lucha_tentacion:['fortaleza','fe','santidad'], manana_nuevo_dia:['esperanza','alabanza'],
     noche_descanso:['descanso','fe'], iglesia_pueblo:['reino','espiritu'],
-    mision_evangelizacion:['salvacion','espiritu','reino']
+    mision_evangelizacion:['salvacion','espiritu','reino'],
+    alabanza:['alabanza'], gratitud:['alabanza'], fe:['fe','esperanza'], salvacion:['salvacion','esperanza'],
+    agradar:['santidad','sabiduria'], confianza:['fe','descanso','esperanza'], proteccion:['fe','fortaleza'],
+    sabiduria:['sabiduria'], guia:['sabiduria','fe'], espiritu:['espiritu'], servicio:['amor','santidad'],
+    familia:['matrimonio','amor'], sanacion:['fortaleza','esperanza'], paz:['descanso','esperanza'],
+    arrepentimiento:['salvacion','santidad'], lucha:['fortaleza','fe','santidad'], ansiedad:['descanso','fe','esperanza'],
+    tristeza:['descanso','esperanza','amor'], intercesion:['amor','reino'], manana:['esperanza','alabanza'], noche:['descanso','fe']
   };
 
   function escapeV3188(value){
@@ -10343,10 +10389,14 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   }
   function prayerCategoriesV3188(item){
     if(!item) return [];
-    var list=Array.isArray(item.categories)?item.categories.slice():[];
-    if(item.category && list.indexOf(item.category)<0) list.unshift(item.category);
-    var seen={};
-    return list.map(function(x){return String(x||'').trim();}).filter(function(x){if(!x||seen[x])return false;seen[x]=true;return true;});
+    var list=[];
+    if(Array.isArray(item.momentCategoriesV31102)) list=list.concat(item.momentCategoriesV31102);
+    if(Array.isArray(item.categories)) list=list.concat(item.categories);
+    if(item.category) list.unshift(item.category);
+    var text=[item.title,item.content,item.text].filter(Boolean).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    var rules={alabanza:['alaban','ador','gloria'],gratitud:['gracias','agrade'],fe:['fe','esperanza','promesa'],salvacion:['salvacion','vida eterna','cristo','jesus'],agradar:['agradar','obedec','santidad'],confianza:['confio','confianza','entrego'],amor:['amor','amar'],proteccion:['protege','refugio','amparo'],fortaleza:['fortaleza','fuerza','animo'],sabiduria:['sabiduria','entendimiento'],guia:['guia','voluntad','camino'],espiritu:['espiritu santo'],servicio:['servir','misericordia','projimo'],familia:['familia','hijo','hija','hogar'],sanacion:['sanacion','salud','dolor'],paz:['paz','consuelo','calma'],arrepentimiento:['arrepent','perdon','pecado'],lucha:['tentacion','enemigo','maligno'],ansiedad:['ansiedad','preocupacion','angustia','miedo'],tristeza:['tristeza','desanimo','llanto'],intercesion:['mundo','naciones','pueblos'],manana:['manana','amanecer'],noche:['noche','dormir','descanso']};
+    Object.keys(rules).forEach(function(cat){if(rules[cat].some(function(k){return text.indexOf(k)>=0;}))list.push(cat);});
+    var seen={};return list.map(function(x){return String(x||'').trim();}).filter(function(x){if(!x||seen[x])return false;seen[x]=true;return true;});
   }
   function readRecentV3188(){
     try{return JSON.parse(localStorage.getItem(VERSE_RECENT_KEY)||'[]');}catch(e){return [];}
@@ -10367,12 +10417,13 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       prayerCategoriesV3188(prayer).forEach(function(cat){
         (VERSE_CATEGORY_MAP_V3188[cat]||[]).forEach(function(v){if(target.indexOf(v)<0)target.push(v);});
       });
-      if(!target.length) return null;
       var recent=readRecentV3188();
-      var pool=state.verses.filter(function(v){return v&&target.indexOf(String(v.category||''))>=0&&recent.indexOf(v.id)<0;});
-      if(!pool.length) pool=state.verses.filter(function(v){return v&&target.indexOf(String(v.category||''))>=0;});
-      if(!pool.length) return null;
-      return pool[Math.floor(Math.random()*pool.length)];
+      var pool=target.length?state.verses.filter(function(v){return v&&target.indexOf(String(v.category||''))>=0&&recent.indexOf(v.id)<0;}):[];
+      if(!pool.length&&target.length) pool=state.verses.filter(function(v){return v&&target.indexOf(String(v.category||''))>=0;});
+      /* Si no hay coincidencia exacta, siempre recomienda automáticamente un versículo disponible. */
+      if(!pool.length) pool=state.verses.filter(function(v){return v&&recent.indexOf(v.id)<0;});
+      if(!pool.length) pool=state.verses.filter(Boolean);
+      return pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
     }catch(e){return null;}
   }
   function modalTextV3188(text){
@@ -10492,7 +10543,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       button.setAttribute('role','button');button.setAttribute('tabindex','0');
       button.dataset.v3188Verse=verse.id;
       button.textContent=(meta.icon||'📖')+' '+(verse.reference||verse.title||'Versículo');
-      box.insertBefore(label,top||null);box.insertBefore(button,top||null);
+      var content=box.querySelector('.reader-recommendations-content-v31127')||box;
+      content.appendChild(label);content.appendChild(button);
       function activate(){
         var id=button.dataset.v3188Verse;
         var recent=readRecentV3188().filter(function(x){return String(x)!==String(id);});
@@ -10517,3 +10569,275 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initV3188); else initV3188();
 })();
+
+
+/* ===== v3.1.113 - Selector definitivo de categorías en Oraciones ===== */
+(function(){
+  if(window.__v3113PrayerCategorySelectorInstalled) return;
+  window.__v3113PrayerCategorySelectorInstalled=true;
+
+  var FINAL_PRAYER_CATEGORIES_V3113 = [
+    {id:'alabanza', icon:'👑', label:'Alabanza y adoración'},
+    {id:'gratitud', icon:'🙏🏾', label:'Gratitud'},
+    {id:'fe', icon:'✨', label:'Fe y esperanza'},
+    {id:'salvacion', icon:'✝️', label:'Salvación y vida eterna'},
+    {id:'agradar', icon:'🤍', label:'Agradar a Dios'},
+    {id:'confianza', icon:'💚', label:'Confianza y entrega'},
+    {id:'amor', icon:'❤️', label:'Amor'},
+    {id:'proteccion', icon:'🫂', label:'Protección'},
+    {id:'fortaleza', icon:'💪🏾', label:'Fortaleza'},
+    {id:'sabiduria', icon:'📖', label:'Sabiduría'},
+    {id:'guia', icon:'🧭', label:'Guía y voluntad de Dios'},
+    {id:'espiritu', icon:'🔥', label:'Espíritu Santo'},
+    {id:'servicio', icon:'🤝🏾', label:'Servicio y misericordia'},
+    {id:'familia', icon:'👨🏾‍👩🏾‍👧🏾‍👦🏾', label:'Familia'},
+    {id:'sanacion', icon:'🌿', label:'Sanación'},
+    {id:'paz', icon:'🕊️', label:'Paz y consuelo'},
+    {id:'arrepentimiento', icon:'🤲🏾', label:'Arrepentimiento y perdón'},
+    {id:'lucha', icon:'🪨', label:'Lucha espiritual'},
+    {id:'ansiedad', icon:'😰', label:'Preocupación o ansiedad'},
+    {id:'tristeza', icon:'😔', label:'Tristeza y desánimo'},
+    {id:'intercesion', icon:'🌍', label:'Intercesión por el mundo'},
+    {id:'manana', icon:'🌅', label:'Mañana y nuevo día'},
+    {id:'noche', icon:'🌙', label:'Noche y descanso'}
+  ];
+
+  function selectedIds(){
+    var item=(typeof currentItem==='function') ? currentItem() : null;
+    var values=item && Array.isArray(item.categories) ? item.categories.slice() : [];
+    if(item && item.category && values.indexOf(item.category)<0) values.unshift(item.category);
+    return values;
+  }
+
+  function rebuildPrayerCategoryGridV3113(){
+    var grid=document.getElementById('editPrayerCategoriesV3180');
+    if(!grid) return;
+    var selected={};
+    selectedIds().forEach(function(id){ selected[String(id||'')]=true; });
+    grid.innerHTML='';
+    FINAL_PRAYER_CATEGORIES_V3113.forEach(function(cat){
+      var option=document.createElement('label');
+      option.className='prayer-category-option-v3180'+(selected[cat.id]?' selected':'');
+      var input=document.createElement('input');
+      input.type='checkbox';
+      input.value=cat.id;
+      input.dataset.categoryId=cat.id;
+      input.checked=!!selected[cat.id];
+      input.addEventListener('change',function(){
+        option.classList.toggle('selected',input.checked);
+        var checked=grid.querySelectorAll('input[type="checkbox"]:checked').length;
+        var counter=document.getElementById('prayerCategoryCountV3180');
+        if(counter) counter.textContent=checked ? (checked+(checked===1?' seleccionada':' seleccionadas')) : 'Ninguna seleccionada';
+        try{ if(typeof scheduleAutosave==='function') scheduleAutosave(); }catch(e){}
+      });
+      var text=document.createElement('span');
+      text.textContent=cat.icon+' '+cat.label;
+      option.appendChild(input);
+      option.appendChild(text);
+      grid.appendChild(option);
+    });
+    var checked=grid.querySelectorAll('input[type="checkbox"]:checked').length;
+    var counter=document.getElementById('prayerCategoryCountV3180');
+    if(counter) counter.textContent=checked ? (checked+(checked===1?' seleccionada':' seleccionadas')) : 'Ninguna seleccionada';
+  }
+
+  var previousOpenEditorV3113=window.openEditor || (typeof openEditor!=='undefined'?openEditor:null);
+  window.openEditor=function(){
+    var result=typeof previousOpenEditorV3113==='function' ? previousOpenEditorV3113.apply(this,arguments) : undefined;
+    if(typeof section!=='undefined' && section==='prayers') rebuildPrayerCategoryGridV3113();
+    return result;
+  };
+  try{openEditor=window.openEditor;}catch(e){}
+
+  function init(){
+    window.PSALM_CATEGORIES_V3177=[{id:'',icon:'',label:'Sin categoría'}].concat(FINAL_PRAYER_CATEGORIES_V3113);
+    rebuildPrayerCategoryGridV3113();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else setTimeout(init,0);
+})();
+
+/* ===== v3.1.116 - Momentos ordenados, contador y retirada segura de categorías antiguas ===== */
+(function(){
+  if(window.__v31116MomentCatalogCleanupInstalled)return;
+  window.__v31116MomentCatalogCleanupInstalled=true;
+
+  function currentMomentCountV31116(){
+    try{
+      var it=typeof currentItem==='function'?currentItem():null;
+      return it&&Array.isArray(it.momentCategoriesV31102)?it.momentCategoriesV31102.length:0;
+    }catch(e){return 0;}
+  }
+
+  function cleanupLegacyCategoriesV31116(){
+    try{
+      var prayer=document.getElementById('editPrayerCategoriesWrapV3180');
+      if(prayer&&!prayer.classList.contains('hidden'))prayer.classList.add('hidden');
+      var prayerOld=document.getElementById('editPrayerCategoryWrapV3178');
+      if(prayerOld&&!prayerOld.classList.contains('hidden'))prayerOld.classList.add('hidden');
+      var psalm=document.getElementById('editPsalmCategoryWrapV3177');
+      if(psalm&&!psalm.classList.contains('hidden'))psalm.classList.add('hidden');
+    }catch(e){console.error('cleanupLegacyCategoriesV31116',e);}
+  }
+
+  window.updateMomentCatalogButtonV31115=function(){
+    try{
+      cleanupLegacyCategoriesV31116();
+      var btn=document.querySelector('#editorView button[onclick="openMomentCatalogV31102()"]');
+      if(!btn)return;
+      var allowed=(typeof section!=='undefined'&&['prayers','psalms','verses'].indexOf(section)>=0);
+      btn.classList.toggle('hidden',!allowed);
+      var nextText='🏷️ Momentos ('+currentMomentCountV31116()+')';
+      if(btn.textContent!==nextText)btn.textContent=nextText;
+    }catch(e){console.error('updateMomentCatalogButtonV31116',e);}
+  };
+
+  function refreshSoonV31116(){setTimeout(function(){window.updateMomentCatalogButtonV31115();},0);}
+
+  var oldOpenV31116=window.openEditor||(typeof openEditor!=='undefined'?openEditor:null);
+  if(typeof oldOpenV31116==='function'){
+    window.openEditor=function(){
+      var result=oldOpenV31116.apply(this,arguments);
+      refreshSoonV31116();
+      return result;
+    };
+    try{openEditor=window.openEditor;}catch(e){}
+  }
+
+  var oldNewV31116=window.newItem||(typeof newItem!=='undefined'?newItem:null);
+  if(typeof oldNewV31116==='function'){
+    window.newItem=function(){
+      var result=oldNewV31116.apply(this,arguments);
+      refreshSoonV31116();
+      return result;
+    };
+    try{newItem=window.newItem;}catch(e){}
+  }
+
+  function initV31116(){
+    cleanupLegacyCategoriesV31116();
+    window.updateMomentCatalogButtonV31115();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initV31116);
+  else setTimeout(initV31116,0);
+})();
+
+/* ===== V3.1.128 - Versículos y recomendaciones plegables estables ===== */
+(function(){
+  if(window.__v31128ReadingComfortInstalled) return;
+  window.__v31128ReadingComfortInstalled=true;
+
+  window.toggleReadingUI=function(){
+    if(!document.body.classList.contains('fullscreen-reading')) return;
+    var willHide=!document.body.classList.contains('hide-reading-ui');
+    document.body.classList.toggle('hide-reading-ui');
+    if(!willHide) return;
+    window.setTimeout(function(){
+      try{
+        var identity=document.getElementById('readerIdentityV31103');
+        var identityVisible=identity && !identity.classList.contains('hidden');
+        var target=identityVisible ? identity : (document.getElementById('readerTitle') || document.getElementById('readerText'));
+        if(!target) return;
+        var rect=target.getBoundingClientRect();
+        window.scrollTo({top:Math.max(0,window.scrollY+rect.top-8),behavior:'smooth'});
+      }catch(e){console.warn('No se pudo ajustar el inicio de lectura',e);}
+    },80);
+  };
+  try{toggleReadingUI=window.toggleReadingUI;}catch(e){}
+
+  var pending=null;
+  var arranging=false;
+
+  function recommendationCount(box){
+    return box.querySelectorAll('[data-v59d-next],[data-v3182-psalm],[data-v3188-verse],.reader-psalm-link-v3182,.reader-verse-link-v3188').length;
+  }
+
+  function updateToggle(toggle,count,open){
+    toggle.innerHTML='<span>🌿 Puede continuar con...'+(count?' ('+count+')':'')+'</span><span class="reader-recommendations-arrow-v31127" aria-hidden="true">'+(open?'▲':'▼')+'</span>';
+  }
+
+  function arrangeRecommendations(){
+    if(arranging) return;
+    arranging=true;
+    try{
+      document.querySelectorAll('.reader-next').forEach(function(box){
+        var top=box.querySelector(':scope > [data-v59d-top]') || box.querySelector('[data-v59d-top]');
+        if(!top) return;
+
+        var content=box.querySelector(':scope > .reader-recommendations-content-v31127');
+        var toggle=box.querySelector(':scope > .reader-recommendations-toggle-v31127');
+        if(!content){
+          content=document.createElement('div');
+          content.className='reader-recommendations-content-v31127';
+          content.setAttribute('aria-hidden','true');
+          box.insertBefore(content,top);
+        }
+
+        /* Mueve al desplegable todas las recomendaciones que los módulos anteriores
+           ya hayan creado. Se ejecuta tarde para no interferir con su generación. */
+        Array.prototype.slice.call(box.children).forEach(function(child){
+          if(child===top || child===toggle || child===content) return;
+          content.appendChild(child);
+        });
+
+        var count=recommendationCount(content);
+        if(!count){
+          if(toggle) toggle.remove();
+          content.remove();
+          return;
+        }
+
+        if(!toggle){
+          toggle=document.createElement('button');
+          toggle.type='button';
+          toggle.className='reader-recommendations-toggle-v31127';
+          toggle.setAttribute('aria-expanded','false');
+          box.insertBefore(toggle,content);
+          toggle.addEventListener('click',function(e){
+            /* Evita que el toque llegue al lector y active «Volver al inicio». */
+            e.preventDefault();
+            e.stopPropagation();
+            if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+            var open=toggle.getAttribute('aria-expanded')==='true';
+            toggle.setAttribute('aria-expanded',open?'false':'true');
+            content.setAttribute('aria-hidden',open?'true':'false');
+            box.classList.toggle('recommendations-open-v31127',!open);
+            updateToggle(toggle,recommendationCount(content),!open);
+          },true);
+          toggle.addEventListener('pointerdown',function(e){e.stopPropagation();},true);
+          toggle.addEventListener('touchstart',function(e){e.stopPropagation();},{capture:true,passive:true});
+        }
+        updateToggle(toggle,recommendationCount(content),toggle.getAttribute('aria-expanded')==='true');
+      });
+    }catch(e){console.error('No se pudieron plegar las recomendaciones',e);}
+    finally{arranging=false;}
+  }
+
+  function schedule(delay){
+    clearTimeout(pending);
+    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:25);
+  }
+
+  /* Espera a que se creen oración, Salmo y versículo antes de plegarlos. */
+  var observer=new MutationObserver(function(){if(!arranging)schedule(25);});
+  function init(){
+    try{observer.observe(document.body,{childList:true,subtree:true});}catch(e){}
+    schedule(25);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+
+  var previousRender=window.renderReader || (typeof renderReader!=='undefined'?renderReader:null);
+  if(typeof previousRender==='function' && !window.__v31128RenderWrapped){
+    window.__v31128RenderWrapped=true;
+    window.renderReader=function(){
+      var result=previousRender.apply(this,arguments);
+      schedule(25);
+      return result;
+    };
+    try{renderReader=window.renderReader;}catch(e){}
+  }
+})();
+
+
+/* ===== V3.1.129 - Desplegable de recomendaciones preparado desde el primer render ===== */

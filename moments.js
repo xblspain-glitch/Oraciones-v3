@@ -1,55 +1,257 @@
-/* Oraciones V3.1.106 — Momentos al azar + Mis momentos personalizables */
+/* Oraciones V3.1.123 — Catalogación temática mejorada de Salmos y Versículos */
 (function(){
   'use strict';
   if(window.__momentsV31106Installed) return;
   window.__momentsV31106Installed=true;
 
   var TAGS=[
-    {id:'alabanza',label:'🙌🏾 Alabanza y adoración'},{id:'amor',label:'❤️ Amor'},
-    {id:'salvacion',label:'✝️ Salvación y vida eterna'},{id:'santidad',label:'🤍 Consagración y santidad'},
-    {id:'confianza',label:'💚 Confianza y entrega'},{id:'arrepentimiento',label:'🙏🏾 Arrepentimiento y perdón'},
-    {id:'proteccion',label:'🫂 Protección'},{id:'paz',label:'🕊️ Paz y consuelo'},
-    {id:'fortaleza',label:'💪🏾 Fortaleza'},{id:'esperanza',label:'✨ Fe y esperanza'},
-    {id:'gratitud',label:'🤲🏾 Gratitud'},{id:'sabiduria',label:'📖 Sabiduría y enseñanza'},
-    {id:'guia',label:'🧭 Guía y voluntad de Dios'},{id:'justicia',label:'⚖️ Justicia y juicio'},
-    {id:'reino',label:'👑 Reino y soberanía de Dios'},{id:'espiritu',label:'🔥 Espíritu Santo'},
-    {id:'creacion',label:'🌍 Creación y grandeza de Dios'},{id:'familia',label:'👨‍👩‍👧‍👦 Familia y matrimonio'},
-    {id:'sanacion',label:'💙 Sanación'},{id:'descanso',label:'🌙 Descanso'}
+    {id:'alabanza',label:'👑 Alabanza y adoración'},
+    {id:'gratitud',label:'🙏🏾 Gratitud'},
+    {id:'fe',label:'✨ Fe y esperanza'},
+    {id:'salvacion',label:'✝️ Salvación y vida eterna'},
+    {id:'agradar',label:'🤍 Agradar a Dios'},
+    {id:'confianza',label:'💚 Confianza y entrega'},
+    {id:'amor',label:'❤️ Amor'},
+    {id:'proteccion',label:'🫂 Protección'},
+    {id:'fortaleza',label:'💪🏾 Fortaleza'},
+    {id:'sabiduria',label:'📖 Sabiduría'},
+    {id:'guia',label:'🧭 Guía y voluntad de Dios'},
+    {id:'espiritu',label:'🔥 Espíritu Santo'},
+    {id:'servicio',label:'🤝🏾 Servicio y misericordia'},
+    {id:'familia',label:'👨🏾‍👩🏾‍👧🏾‍👦🏾 Familia'},
+    {id:'sanacion',label:'🌿 Sanación'},
+    {id:'paz',label:'🕊️ Paz y consuelo'},
+    {id:'arrepentimiento',label:'🤲🏾 Arrepentimiento y perdón'},
+    {id:'lucha',label:'🪨 Lucha espiritual'},
+    {id:'ansiedad',label:'😰 Preocupación o ansiedad'},
+    {id:'tristeza',label:'😔 Tristeza y desánimo'},
+    {id:'intercesion',label:'🌍 Intercesión por el mundo'},
+    {id:'manana',label:'🌅 Mañana y nuevo día'},
+    {id:'noche',label:'🌙 Noche y descanso'}
   ];
   var MOMENTS=[
-    {id:'ansiedad',icon:'😟',title:'Preocupación o ansiedad',sub:'Reciba paz y vuelva a confiar en Dios.',tags:['paz','confianza','esperanza','proteccion','fortaleza']},
-    {id:'tristeza',icon:'😢',title:'Tristeza o desánimo',sub:'Encuentre consuelo, esperanza y compañía.',tags:['paz','esperanza','fortaleza','amor']},
-    {id:'paz',icon:'🕊️',title:'Necesito paz',sub:'Deténgase y descanse en la presencia de Dios.',tags:['paz','descanso','confianza']},
-    {id:'fortaleza',icon:'💪🏾',title:'Necesito fortaleza',sub:'Reciba ánimo para continuar el camino.',tags:['fortaleza','esperanza','confianza','proteccion']},
-    {id:'gratitud',icon:'🤲🏾',title:'Quiero dar gracias',sub:'Eleve el corazón en gratitud y alabanza.',tags:['gratitud','alabanza','creacion']},
-    {id:'perdon',icon:'🙏🏾',title:'Necesito perdón',sub:'Acérquese a Dios con arrepentimiento y confianza.',tags:['arrepentimiento','santidad','salvacion']},
-    {id:'direccion',icon:'🧭',title:'Necesito dirección',sub:'Busque sabiduría y la voluntad de Dios.',tags:['guia','sabiduria','confianza','espiritu']},
-    {id:'proteccion',icon:'🫂',title:'Necesito protección',sub:'Refúgiese bajo el cuidado y la soberanía de Dios.',tags:['proteccion','confianza','fortaleza','reino']},
-    {id:'familia',icon:'👨‍👩‍👧‍👦',title:'Por mi familia',sub:'Ore por amor, unión, protección y guía.',tags:['familia','amor','proteccion','guia']},
-    {id:'sanacion',icon:'💙',title:'Necesito sanación',sub:'Presente a Dios su dolor y reciba esperanza.',tags:['sanacion','paz','esperanza','confianza']},
-    {id:'alabanza',icon:'🙌🏾',title:'Quiero alabar a Dios',sub:'Contemple su grandeza y adore su nombre.',tags:['alabanza','gratitud','reino','creacion']}
+    {id:'alabanza',icon:'👑',title:'Alabanza y adoración',sub:'Contemple la grandeza de Dios y adore su santo nombre.',tags:['alabanza']},
+    {id:'gratitud',icon:'🙏🏾',title:'Gratitud',sub:'Reconozca con alegría las bendiciones y la fidelidad de Dios.',tags:['gratitud']},
+    {id:'fe',icon:'✨',title:'Fe y esperanza',sub:'Renueve su confianza en Dios y en sus promesas.',tags:['fe']},
+    {id:'salvacion',icon:'✝️',title:'Salvación y vida eterna',sub:'Recuerde la gracia de Cristo y la esperanza de la vida eterna.',tags:['salvacion']},
+    {id:'agradar',icon:'🤍',title:'Agradar a Dios',sub:'Busque vivir conforme a la voluntad de Dios.',tags:['agradar']},
+    {id:'confianza',icon:'💚',title:'Confianza y entrega',sub:'Ponga su vida y sus preocupaciones en las manos de Dios.',tags:['confianza']},
+    {id:'amor',icon:'❤️',title:'Amor',sub:'Crezca en el amor a Dios y hacia los demás.',tags:['amor']},
+    {id:'proteccion',icon:'🫂',title:'Protección',sub:'Refúgiese bajo el cuidado de Dios.',tags:['proteccion']},
+    {id:'fortaleza',icon:'💪🏾',title:'Fortaleza',sub:'Reciba ánimo y fuerzas para continuar el camino.',tags:['fortaleza']},
+    {id:'sabiduria',icon:'📖',title:'Sabiduría',sub:'Pida entendimiento para vivir y decidir correctamente.',tags:['sabiduria']},
+    {id:'guia',icon:'🧭',title:'Guía y voluntad de Dios',sub:'Busque dirección y aprenda a reconocer la voluntad de Dios.',tags:['guia']},
+    {id:'espiritu',icon:'🔥',title:'Espíritu Santo',sub:'Pida la presencia, la guía y la obra del Espíritu Santo.',tags:['espiritu']},
+    {id:'servicio',icon:'🤝🏾',title:'Servicio y misericordia',sub:'Disponga su corazón para servir y amar al prójimo.',tags:['servicio']},
+    {id:'familia',icon:'👨🏾‍👩🏾‍👧🏾‍👦🏾',title:'Familia',sub:'Ore por amor, unión, protección y guía para su familia.',tags:['familia']},
+    {id:'sanacion',icon:'🌿',title:'Sanación',sub:'Presente a Dios el dolor y reciba consuelo y esperanza.',tags:['sanacion']},
+    {id:'paz',icon:'🕊️',title:'Paz y consuelo',sub:'Descanse en la presencia de Dios y reciba su consuelo.',tags:['paz']},
+    {id:'arrepentimiento',icon:'🤲🏾',title:'Arrepentimiento y perdón',sub:'Acérquese a Dios con sinceridad y confianza en su misericordia.',tags:['arrepentimiento']},
+    {id:'lucha',icon:'🪨',title:'Lucha espiritual',sub:'Permanezca firme ante la tentación y toda dificultad espiritual.',tags:['lucha']},
+    {id:'ansiedad',icon:'😰',title:'Preocupación o ansiedad',sub:'Reciba paz y vuelva a confiar sus cargas a Dios.',tags:['ansiedad']},
+    {id:'tristeza',icon:'😔',title:'Tristeza y desánimo',sub:'Encuentre consuelo, esperanza y compañía en Dios.',tags:['tristeza']},
+    {id:'intercesion',icon:'🌍',title:'Intercesión por el mundo',sub:'Ore por los pueblos, quienes sufren y las necesidades del mundo.',tags:['intercesion']}
   ];
 
   var RECENT_KEY='oraciones_v3_moments_recent_v31102';
   var CUSTOM_KEY='oraciones_v3_custom_moments_v31106';
+  var SETTINGS_KEY='oraciones_v3_moment_fixed_content_v31115';
   var currentMoment=null, route=[], routeIndex=0;
   var customMode=false, currentCustomId=null, customPrayerChoice={};
   var addDraft=[];
+  var addCategoryDraftV31111=[];
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function items(type){try{return Array.isArray(state[type])?state[type]:[];}catch(e){return [];}}
   function titleOf(it,type){return type==='verses'?(it.reference||it.title||'Versículo'):(it.title||it.reference||(type==='psalms'?'Salmo':'Oración'));}
   function typeMeta(type){return type==='prayers'?{icon:'🙏🏾',name:'Oración'}:type==='psalms'?{icon:'♫',name:'Salmo'}:type==='verses'?{icon:'✨',name:'Versículo'}:{icon:'🕯️',name:'Grupo de oraciones'};}
   function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+  function categoryLabelV31117(value){
+    var id=String(value==null?'':value);
+    try{
+      var cats=(typeof state!=='undefined'&&state&&Array.isArray(state.verseCategories))?state.verseCategories:[];
+      var found=cats.find(function(c){return String(c.id)===id;});
+      if(found&&found.label)return found.label;
+    }catch(e){}
+    return id;
+  }
   function inferredTags(it){
     var raw=[];
     if(Array.isArray(it.momentCategoriesV31102)) raw=it.momentCategoriesV31102.slice();
-    if(raw.length) return raw.map(String);
-    var source=[];if(Array.isArray(it.categories))source=source.concat(it.categories);if(it.category)source.push(it.category);
-    var map={fe:'esperanza',esperanza:'esperanza',fortaleza:'fortaleza',amor:'amor',descanso:'descanso',sabiduria:'sabiduria',alabanza:'alabanza',santidad:'santidad',reino:'reino',espiritu:'espiritu',salvacion:'salvacion',juicio:'justicia',matrimonio:'familia',familia:'familia',proteccion:'proteccion',paz:'paz',consuelo:'paz',gratitud:'gratitud',perdon:'arrepentimiento',arrepentimiento:'arrepentimiento',guia:'guia',sanacion:'sanacion',creacion:'creacion',confianza:'confianza'};
-    source.forEach(function(x){var n=norm(x);Object.keys(map).forEach(function(k){if(n===k||n.indexOf(k)>=0)raw.push(map[k]);});});
-    return Array.from(new Set(raw));
+    if(!raw.length){if(Array.isArray(it.categories))raw=raw.concat(it.categories);if(it.category)raw.push(it.category);}
+    var aliases={
+      alabanza_adoracion:'alabanza',alabanza_y_adoracion:'alabanza',adoracion:'alabanza',dios:'alabanza',reino_de_dios:'alabanza',reino:'alabanza',
+      gratitud_accion_de_gracias:'gratitud',accion_de_gracias:'gratitud',agradecimiento:'gratitud',
+      esperanza:'fe',fe_esperanza:'fe',fe_y_esperanza:'fe',
+      salvacion_vida_eterna:'salvacion',salvacion_y_vida_eterna:'salvacion',vida_eterna:'salvacion',cristo_jesus_es_dios:'salvacion',segunda_venida:'salvacion',
+      santidad:'agradar',consagracion:'agradar',consagracion_santidad:'agradar',agradar_a_dios:'agradar',
+      confianza_entrega:'confianza',confianza_y_entrega:'confianza',
+      proteccion_amparo:'proteccion',amparo:'proteccion',
+      fortaleza_animo:'fortaleza',animo:'fortaleza',
+      sabiduria_ensenanza:'sabiduria',sabiduria_y_ensenanza:'sabiduria',ensenanza:'sabiduria',
+      guia_voluntad:'guia',guia_y_voluntad_de_dios:'guia',direccion:'guia',
+      espiritu_santo:'espiritu',
+      servicio_misericordia:'servicio',servicio_y_misericordia:'servicio',misericordia:'servicio',
+      familia_matrimonio:'familia',familia_hogar:'familia',matrimonio:'familia',
+      sanacion_salud:'sanacion',salud:'sanacion',
+      paz_consuelo:'paz',paz_y_consuelo:'paz',descanso:'paz',
+      arrepentimiento_perdon:'arrepentimiento',arrepentimiento_y_perdon:'arrepentimiento',perdon:'arrepentimiento',
+      lucha_espiritual:'lucha',tentacion:'lucha',
+      preocupacion_ansiedad:'ansiedad',preocupacion_o_ansiedad:'ansiedad',
+      tristeza_desanimo:'tristeza',tristeza_y_desanimo:'tristeza',
+      intercesion_mundo:'intercesion',intercesion_por_el_mundo:'intercesion',mundo:'intercesion',
+      manana_nuevo_dia:'manana',manana_y_nuevo_dia:'manana',
+      noche_descanso:'noche',noche_y_descanso:'noche',
+      oracion:'fe'
+    };
+    var valid={};TAGS.forEach(function(t){valid[t.id]=true;});
+    var out=[];
+    raw.forEach(function(x){
+      var direct=norm(x),fromLabel=norm(categoryLabelV31117(x));
+      [direct,fromLabel].forEach(function(n){var mapped=aliases[n]||n;if(valid[mapped]&&out.indexOf(mapped)<0)out.push(mapped);});
+    });
+    return out;
   }
+
+  var AUTO_CATALOG_KEY_V31120='oraciones_v3_moments_auto_catalog_v31120';
+  var AUTO_CATALOG_PROMPT_KEY_V31121='oraciones_v3_moments_auto_catalog_prompt_v31121';
+  function itemTextV31120(it,type){
+    var parts=[it&&it.title,it&&it.reference,it&&it.content,it&&it.text,it&&it.body,it&&it.notes];
+    if(type==='verses') parts.push(categoryLabelV31117(it&&it.category));
+    if(it&&Array.isArray(it.categories)) parts=parts.concat(it.categories.map(categoryLabelV31117));
+    return norm(parts.filter(Boolean).join(' ')).replace(/_/g,' ');
+  }
+  /* V3.1.123 — motor de catalogación mejorado.
+     Prioridad: categorías previas > expresiones claras > palabras aisladas.
+     Los cambios manuales nunca se sobrescriben. */
+  var RULES_V31123={
+    alabanza:[['alabad',4],['alabare',4],['alabanza',4],['adorad',5],['adoracion',5],['glorific',4],['exaltad',4],['majestad',3],['cantad a jah',5],['bendecid a jah',5],['santo santo santo',6],['grande es jah',5]],
+    gratitud:[['dad gracias',6],['doy gracias',6],['te dare gracias',6],['accion de gracias',6],['gratitud',5],['agrade',4],['beneficios',3]],
+    fe:[['por fe',6],['fe',4],['esperanza',5],['creer',4],['creo',4],['promesa',4],['esperare',4],['aguarda a jah',6],['no temas',3]],
+    salvacion:[['salvacion',6],['salvador',6],['vida eterna',7],['redencion',6],['redentor',6],['cristo',5],['jesus',5],['resurreccion',5],['libro de la vida',7]],
+    agradar:[['agradar a dios',7],['agradar a jah',7],['santidad',5],['consagr',5],['obedec',4],['mandamientos',4],['integridad',4],['corazon limpio',6],['temor de jah',5]],
+    confianza:[['confio',6],['confiare',6],['confianza',5],['encomienda',5],['en tus manos',6],['espera en jah',6],['descansa en jah',6],['mi roca',3]],
+    amor:[['amor',5],['amar',5],['amados',4],['bondad',3],['benignidad',4],['compasion',3],['misericordia para siempre',5]],
+    proteccion:[['protege',5],['proteccion',5],['guardame',6],['guardara',5],['amparo',5],['refugio',5],['escudo',5],['librame',6],['defiendeme',6],['bajo sus alas',7],['abrigo del altisimo',8]],
+    fortaleza:[['fortalec',6],['fortaleza',5],['mi fuerza',5],['esfuerzate',6],['valentia',5],['sostiene',4],['levanta',3],['poder',2]],
+    sabiduria:[['sabiduria',6],['entendimiento',5],['instruye',5],['ensen',4],['conocimiento',4],['prudencia',5],['preceptos',4],['estatutos',3]],
+    guia:[['guiame',7],['guia',5],['dirige mis pasos',7],['muestrame tu camino',7],['ensenarme tu camino',7],['sendas',4],['voluntad de dios',6],['voluntad de jah',6],['camino que debo',6]],
+    espiritu:[['espiritu santo',8],['tu espiritu',6],['espiritu de dios',7],['santo espiritu',8],['renueva un espiritu',6]],
+    servicio:[['servir',5],['servicio',5],['projimo',5],['necesitado',4],['huerfano',4],['viuda',4],['dar al pobre',6],['hacer misericordia',6]],
+    familia:[['familia',6],['hogar',5],['hijos',5],['padre y madre',6],['esposa',5],['esposo',5],['matrimonio',6],['generacion',3],['mi casa',4]],
+    sanacion:[['saname',8],['sana',6],['sanacion',7],['salud',5],['enfermedad',5],['dolencia',5],['heridas',4],['quebranto',3]],
+    paz:[['paz',6],['consuelo',6],['consolar',5],['descanso',5],['reposo',5],['quietud',4],['en paz me acostare',8],['alma mia reposa',7]],
+    arrepentimiento:[['perdoname',8],['perdona',7],['arrepent',7],['confieso',6],['pecado',5],['iniquidad',5],['limpiame',7],['corazon contrito',8],['ten misericordia de mi',8]],
+    lucha:[['tentacion',6],['maligno',6],['batalla',5],['guerra espiritual',8],['adversario',5],['enemigos',3],['perseguidores',4],['acechan',4],['libra mi alma',5]],
+    ansiedad:[['ansiedad',8],['preocup',6],['afanes',6],['angustia',6],['congoja',6],['echa tu carga',8],['miedo',4],['temor',2]],
+    tristeza:[['tristeza',7],['desanimo',7],['abatido',6],['abatida',6],['llanto',5],['lagrimas',5],['quebrantado',4],['afliccion',5],['soledad',5]],
+    intercesion:[['naciones',5],['pueblos',4],['gobernantes',6],['oprimidos',5],['tierra toda',5],['jerusalen',3],['por todos',4],['por el mundo',7]],
+    manana:[['por la manana',7],['de madrugada',7],['al alba',6],['amanecer',6],['nuevo dia',5]],
+    noche:[['en paz me acostare',8],['al anochecer',6],['vigilia',5],['dormir',5],['acostare',6],['noche',4]]
+  };
+  function occurrenceCountV31123(text,needle){
+    var n=0,pos=0;while((pos=text.indexOf(needle,pos))>=0){n++;pos+=needle.length;}return n;
+  }
+  function mappedTagsV31123(it){
+    var saved=Array.isArray(it&&it.momentCategoriesV31102)?it.momentCategoriesV31102.slice():[];
+    if(saved.length&&it&&it.momentCatalogManualV31120)return saved;
+    var clone={};
+    if(it)Object.keys(it).forEach(function(k){if(k!=='momentCategoriesV31102')clone[k]=it[k];});
+    return inferredTags(clone);
+  }
+  function scoredTagsV31123(it,type){
+    var text=itemTextV31120(it,type),scores={},mapped=mappedTagsV31123(it);
+    mapped.forEach(function(tag){scores[tag]=(scores[tag]||0)+12;});
+    Object.keys(RULES_V31123).forEach(function(tag){
+      RULES_V31123[tag].forEach(function(rule){
+        var phrase=rule[0],weight=rule[1],hits=occurrenceCountV31123(text,phrase);
+        if(hits)scores[tag]=(scores[tag]||0)+weight+Math.min(2,hits-1);
+      });
+    });
+    /* Evita asociaciones demasiado generales sin una segunda señal. */
+    var ranked=Object.keys(scores).filter(function(tag){return scores[tag]>=4||mapped.indexOf(tag)>=0;}).sort(function(a,b){
+      var d=scores[b]-scores[a];return d||TAGS.findIndex(function(t){return t.id===a;})-TAGS.findIndex(function(t){return t.id===b;});
+    });
+    var limit=type==='psalms'?5:3;
+    var chosen=ranked.slice(0,limit);
+    /* Si existe una categoría antigua clara, siempre se conserva dentro del límite. */
+    mapped.forEach(function(tag){if(chosen.indexOf(tag)<0){if(chosen.length>=limit)chosen.pop();chosen.push(tag);}});
+    return chosen.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,limit);
+  }
+  function autoTagsForV31120(it,type){return scoredTagsV31123(it,type);}
+  function autoCatalogMomentsV31120(showNotice){
+    try{
+      if(typeof state==='undefined'||!state)return {psalms:0,verses:0};
+      var counts={psalms:0,verses:0};
+      ['psalms','verses'].forEach(function(type){
+        (Array.isArray(state[type])?state[type]:[]).forEach(function(it){
+          if(!it||it.momentCatalogManualV31120)return;
+          if(Array.isArray(it.momentCategoriesV31102)&&it.momentCategoriesV31102.length)return;
+          var tags=autoTagsForV31120(it,type);
+          if(tags.length){it.momentCategoriesV31102=tags;it.momentCatalogAutoV31120=true;counts[type]++;}
+        });
+      });
+      if(counts.psalms||counts.verses){
+        if(typeof saveState==='function')saveState();
+        try{localStorage.setItem(AUTO_CATALOG_KEY_V31120,JSON.stringify({at:Date.now(),psalms:counts.psalms,verses:counts.verses}));}catch(e){}
+        if(showNotice&&typeof toast==='function')toast('Catalogación automática: '+counts.psalms+' Salmos y '+counts.verses+' versículos');
+      }
+      return counts;
+    }catch(e){console.error('Catalogación automática de Momentos',e);return {psalms:0,verses:0};}
+  }
+  function uncatalogedCountsV31121(){
+    var out={psalms:0,verses:0};
+    if(typeof state==='undefined'||!state)return out;
+    ['psalms','verses'].forEach(function(type){
+      (Array.isArray(state[type])?state[type]:[]).forEach(function(it){
+        if(it&&!it.momentCatalogManualV31120&&(!Array.isArray(it.momentCategoriesV31102)||!it.momentCategoriesV31102.length))out[type]++;
+      });
+    });
+    return out;
+  }
+  function markPromptDoneV31121(){try{localStorage.setItem(AUTO_CATALOG_PROMPT_KEY_V31121,'1');}catch(e){}}
+  function promptWasHandledV31121(){
+    try{return localStorage.getItem(AUTO_CATALOG_PROMPT_KEY_V31121)==='1'||!!localStorage.getItem(AUTO_CATALOG_KEY_V31120);}catch(e){return false;}
+  }
+  function ensureAutoCatalogPromptV31121(){
+    var m=document.getElementById('momentAutoCatalogModalV31121');if(m)return m;
+    m=document.createElement('div');m.id='momentAutoCatalogModalV31121';m.className='routine-modal-v3192 hidden';
+    m.innerHTML='<div class="routine-modal-sheet-v3192 moment-auto-catalog-sheet-v31121"><div class="routine-modal-title-v3192">🏷️ Catalogación de Momentos</div><p class="moment-settings-help-v31115">Se ha detectado contenido sin catalogar para Momentos. La aplicación puede asignar automáticamente categorías a los Salmos y versículos.</p><div class="moment-catalog-actions-v31102"><button class="btn soft" type="button" onclick="laterAutoCatalogV31121()">Más tarde</button><button class="btn primary" type="button" onclick="acceptAutoCatalogV31121()">✓ Catalogar ahora</button></div></div>';
+    document.body.appendChild(m);return m;
+  }
+  window.acceptAutoCatalogV31121=function(){
+    var m=ensureAutoCatalogPromptV31121();m.classList.add('hidden');
+    var r=autoCatalogMomentsV31120(false);markPromptDoneV31121();
+    alert('🎉 Catalogación completada\n\nSe han catalogado automáticamente los Salmos y los versículos para Momentos.\n\nSalmos catalogados: '+r.psalms+'\nVersículos catalogados: '+r.verses+'\n\nYa puede utilizar los Momentos sin necesidad de clasificarlos manualmente.');
+    if(typeof renderHub==='function')renderHub();
+  };
+  window.laterAutoCatalogV31121=function(){ensureAutoCatalogPromptV31121().classList.add('hidden');markPromptDoneV31121();};
+  window.recatalogMomentsV31121=function(){
+    if(!confirm('¿Desea volver a generar automáticamente las categorías de Momentos?\n\nLas categorías asignadas manualmente se conservarán.'))return;
+    if(typeof state==='undefined'||!state)return;
+    var r=recatalogWithImprovedEngineV31123();markPromptDoneV31121();
+    alert('Recatalogación completada.\n\nSalmos catalogados: '+r.psalms+'\nVersículos catalogados: '+r.verses+'\n\nLas categorías manuales se han conservado.');
+    if(typeof renderHub==='function')renderHub();
+  };
+  window.autoCatalogMomentsV31120=function(){var r=autoCatalogMomentsV31120(true);if(typeof renderHub==='function')renderHub();return r;};
+  var IMPROVED_CATALOG_KEY_V31123='oraciones_v3_moments_catalog_engine_v31123';
+  function recatalogWithImprovedEngineV31123(){
+    ['psalms','verses'].forEach(function(type){(Array.isArray(state[type])?state[type]:[]).forEach(function(it){if(it&&!it.momentCatalogManualV31120){it.momentCategoriesV31102=[];it.momentCatalogAutoV31120=false;}});});
+    return autoCatalogMomentsV31120(false);
+  }
+  function maybeOfferImprovedCatalogV31123(){
+    try{if(localStorage.getItem(IMPROVED_CATALOG_KEY_V31123)==='1')return;localStorage.setItem(IMPROVED_CATALOG_KEY_V31123,'1');}catch(e){}
+    var hasAuto=['psalms','verses'].some(function(type){return (Array.isArray(state[type])?state[type]:[]).some(function(it){return it&&it.momentCatalogAutoV31120&&!it.momentCatalogManualV31120;});});
+    if(!hasAuto)return;
+    setTimeout(function(){
+      if(confirm('La catalogación automática de Momentos ha sido mejorada.\n\nAhora analiza mejor el tema principal, conserva las categorías manuales y limita las asignaciones para evitar resultados excesivos.\n\n¿Desea recatalogar ahora los Salmos y versículos?')){
+        var r=recatalogWithImprovedEngineV31123();markPromptDoneV31121();
+        alert('Catalogación mejorada completada.\n\nSalmos recatalogados: '+r.psalms+'\nVersículos recatalogados: '+r.verses+'\n\nLas categorías manuales se han conservado.');
+        if(typeof renderHub==='function')renderHub();
+      }
+    },350);
+  }
+
   function getRecent(){try{return JSON.parse(localStorage.getItem(RECENT_KEY)||'{}')||{};}catch(e){return {};}}
   function remember(ref){if(customMode)return;var r=getRecent(),key=currentMoment.id+'_'+ref.type;r[key]=[String(ref.id)].concat(r[key]||[]).filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,6);try{localStorage.setItem(RECENT_KEY,JSON.stringify(r));}catch(e){}}
   function candidates(type,moment){return items(type).map(function(it){var tags=inferredTags(it),score=tags.reduce(function(n,t){return n+(moment.tags.indexOf(t)>=0?1:0);},0);return {item:it,score:score};}).filter(function(x){return x.score>0;}).sort(function(a,b){return b.score-a.score;});}
@@ -66,25 +268,55 @@
   window.openMomentsV31102=function(){renderHub();showOnly('momentsHubV31102');};
   window.closeMomentsV31102=function(){removeNav();document.body.classList.remove('moments-fullscreen-v31102','moment-reading-v31102');['momentsHubV31102','momentPreviewV31102'].forEach(function(x){var e=document.getElementById(x);if(e)e.classList.add('hidden');});if(typeof showHomeV9019==='function')showHomeV9019();};
 
+  function availabilityV31119(type,moment){
+    if(type==='prayers')return candidates(type,moment).length>0;
+    var cfg=settingForV31115(moment.id),part=(cfg&&cfg[type])||{mode:'auto',id:''};
+    if(part.mode==='fixed'&&part.id){
+      return items(type).some(function(x){return String(x.id)===String(part.id);});
+    }
+    return candidates(type,moment).length>0;
+  }
+  function availabilityTextV31119(moment){
+    var missing=[];
+    if(!availabilityV31119('prayers',moment))missing.push('oración');
+    if(!availabilityV31119('psalms',moment))missing.push('Salmo');
+    if(!availabilityV31119('verses',moment))missing.push('versículo');
+    if(!missing.length)return {ready:true,text:'Contenido disponible'};
+    if(missing.length===1)return {ready:false,text:'Falta '+missing[0]};
+    if(missing.length===2)return {ready:false,text:'Faltan '+missing[0]+' y '+missing[1]};
+    return {ready:false,text:'Faltan oración, Salmo y versículo'};
+  }
   function renderHub(){
+    autoCatalogMomentsV31120(false);
     var box=document.getElementById('momentsGridV31102');if(!box)return;box.innerHTML='';
-    MOMENTS.forEach(function(m){var counts=['prayers','psalms','verses'].map(function(t){return candidates(t,m).length;}),ready=counts.every(function(n){return n>0;}),b=document.createElement('button');b.type='button';b.className='moment-card-v31102'+(ready?'':' incomplete-v31102');b.innerHTML='<span>'+m.icon+'</span><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.sub)+'</small><em>'+(ready?'Contenido disponible':'Falta catalogar algún tipo de contenido')+'</em></div>';b.onclick=function(){prepareMoment(m);};box.appendChild(b);});
+    MOMENTS.forEach(function(m){var availability=availabilityTextV31119(m),ready=availability.ready,b=document.createElement('button');b.type='button';b.className='moment-card-v31102'+(ready?'':' incomplete-v31102');b.innerHTML='<span>'+m.icon+'</span><div><strong>'+esc(m.title)+'</strong><small>'+esc(m.sub)+'</small><em>'+esc(availability.text)+'</em></div>';b.onclick=function(){prepareMoment(m);};box.appendChild(b);});
     var sep=document.createElement('div');sep.className='custom-moments-heading-v31106';sep.innerHTML='<div><strong>✨ Mis momentos</strong><small>Cree recorridos personales con oraciones, Salmos, versículos y grupos.</small></div><button class="btn primary" type="button" onclick="createCustomMomentV31106()">➕ Crear momento</button>';box.appendChild(sep);
     var customs=customData();
     if(!customs.length){var empty=document.createElement('div');empty.className='custom-moments-empty-v31106';empty.innerHTML='<strong>Aún no ha creado ningún momento personal</strong><span>Pulse «Crear momento» para preparar uno a su manera.</span>';box.appendChild(empty);}
     customs.forEach(function(m){var b=document.createElement('button');b.type='button';b.className='moment-card-v31102 custom-v31106';b.innerHTML='<span>'+(m.icon||'🌿')+'</span><div><strong>'+esc(m.title)+'</strong><small>'+(m.items.length?m.items.length+' elementos':'Sin configurar')+'</small><em>Momento personal</em></div>';b.onclick=function(){openCustomEditorV31106(m.id);};box.appendChild(b);});
   }
 
-  function prepareMoment(m){customMode=false;currentMoment=m;route=['prayers','psalms','verses'].map(function(t){return chooseOne(t,m);}).filter(Boolean);renderPreview();showOnly('momentPreviewV31102');}
+  function readMomentSettingsV31115(){try{return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')||{};}catch(e){return {};}}
+  function writeMomentSettingsV31115(data){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(data||{}));}catch(e){}}
+  function settingForV31115(momentId){var all=readMomentSettingsV31115();return all[String(momentId)]||{psalms:{mode:'auto',id:''},verses:{mode:'auto',id:''}};}
+  function fixedOrRandomV31115(type,moment){var cfg=settingForV31115(moment.id),part=cfg[type]||{mode:'auto',id:''};if(part.mode==='fixed'&&part.id){var it=items(type).find(function(x){return String(x.id)===String(part.id);});if(it)return {type:type,id:String(it.id)};}return chooseOne(type,moment);}
+  function buildMomentRouteV31115(moment){return [chooseOne('prayers',moment),fixedOrRandomV31115('psalms',moment),fixedOrRandomV31115('verses',moment)].filter(Boolean);}
+  function ensureMomentSettingsModalV31115(){var m=document.getElementById('momentSettingsModalV31115');if(m)return m;m=document.createElement('div');m.id='momentSettingsModalV31115';m.className='routine-modal-v3192 hidden';m.innerHTML='<div class="routine-modal-sheet-v3192 moment-settings-sheet-v31115"><div class="routine-modal-head-v3192"><button class="btn soft" type="button" onclick="closeMomentContentSettingsV31115()">← Cerrar</button></div><div class="routine-modal-title-v3192">⚙️ Salmo y versículo</div><p class="moment-settings-help-v31115">Puede mantener la elección automática por categoría o fijar un contenido concreto para este Momento.</p><div class="moment-setting-block-v31115"><strong>📖 Salmo</strong><label><input type="radio" name="momentPsalmModeV31115" value="auto"> Automático por categoría</label><label><input type="radio" name="momentPsalmModeV31115" value="fixed"> Fijo</label><select id="momentPsalmFixedV31115" class="search"></select></div><div class="moment-setting-block-v31115"><strong>✨ Versículo</strong><label><input type="radio" name="momentVerseModeV31115" value="auto"> Automático por categoría</label><label><input type="radio" name="momentVerseModeV31115" value="fixed"> Fijo</label><select id="momentVerseFixedV31115" class="search"></select></div><div class="moment-catalog-actions-v31102"><button class="btn soft" type="button" onclick="closeMomentContentSettingsV31115()">Cancelar</button><button class="btn primary" type="button" onclick="saveMomentContentSettingsV31115()">✓ Guardar</button></div></div>';document.body.appendChild(m);return m;}
+  function fillFixedSelectV31115(id,type,moment){var sel=document.getElementById(id);if(!sel)return;sel.innerHTML='';var list=candidates(type,moment).map(function(x){return x.item;});if(!list.length)list=items(type).slice();list.forEach(function(it){var o=document.createElement('option');o.value=String(it.id);o.textContent=titleOf(it,type);sel.appendChild(o);});}
+  window.openMomentContentSettingsV31115=function(){if(!currentMoment||customMode)return;var m=ensureMomentSettingsModalV31115(),cfg=settingForV31115(currentMoment.id);fillFixedSelectV31115('momentPsalmFixedV31115','psalms',currentMoment);fillFixedSelectV31115('momentVerseFixedV31115','verses',currentMoment);var pm=(cfg.psalms&&cfg.psalms.mode)||'auto',vm=(cfg.verses&&cfg.verses.mode)||'auto';var pr=m.querySelector('input[name="momentPsalmModeV31115"][value="'+pm+'"]'),vr=m.querySelector('input[name="momentVerseModeV31115"][value="'+vm+'"]');if(pr)pr.checked=true;if(vr)vr.checked=true;var ps=document.getElementById('momentPsalmFixedV31115'),vs=document.getElementById('momentVerseFixedV31115');if(ps&&cfg.psalms&&cfg.psalms.id)ps.value=String(cfg.psalms.id);if(vs&&cfg.verses&&cfg.verses.id)vs.value=String(cfg.verses.id);m.classList.remove('hidden');};
+  window.closeMomentContentSettingsV31115=function(){var m=document.getElementById('momentSettingsModalV31115');if(m)m.classList.add('hidden');};
+  window.saveMomentContentSettingsV31115=function(){if(!currentMoment)return;var all=readMomentSettingsV31115(),pm=document.querySelector('input[name="momentPsalmModeV31115"]:checked'),vm=document.querySelector('input[name="momentVerseModeV31115"]:checked'),ps=document.getElementById('momentPsalmFixedV31115'),vs=document.getElementById('momentVerseFixedV31115');all[String(currentMoment.id)]={psalms:{mode:pm?pm.value:'auto',id:ps?ps.value:''},verses:{mode:vm?vm.value:'auto',id:vs?vs.value:''}};writeMomentSettingsV31115(all);route=buildMomentRouteV31115(currentMoment);closeMomentContentSettingsV31115();renderPreview();if(typeof toast==='function')toast('Configuración del Momento guardada');};
+
+  function prepareMoment(m){customMode=false;currentMoment=m;route=buildMomentRouteV31115(m);renderPreview();showOnly('momentPreviewV31102');}
   function renderPreview(){
     var t=document.getElementById('momentPreviewTitleV31102'),s=document.getElementById('momentPreviewSubV31102'),box=document.getElementById('momentRouteV31102'),start=document.getElementById('momentStartV31102'),actions=document.querySelector('.moment-preview-actions-v31102');
     if(customMode){renderCustomEditor();return;}
     t.textContent=currentMoment.icon+' '+currentMoment.title;s.textContent='La aplicación ha preparado este recorrido para usted.';box.innerHTML='';
     ['prayers','psalms','verses'].forEach(function(type){var ref=route.find(function(r){return r.type===type;}),it=ref&&findRef(ref),tm=typeMeta(type),row=document.createElement('div');row.className='moment-route-item-v31102';row.innerHTML='<span>'+tm.icon+'</span><div><small>'+tm.name+'</small><strong>'+esc(it?titleOf(it,type):'No hay contenido catalogado')+'</strong></div>';box.appendChild(row);});
-    if(actions)actions.innerHTML='<button id="momentRegenerateV31105" class="btn primary" type="button" onclick="regenerateMomentV31102()">💚 Otra propuesta al azar</button>';
+    if(actions)actions.innerHTML='<button id="momentRegenerateV31105" class="btn primary" type="button" onclick="regenerateMomentV31102()">💚 Otra propuesta al azar</button><button class="btn soft" type="button" onclick="openMomentContentSettingsV31115()">⚙️ Salmo y versículo</button>';
     start.disabled=route.length<3;start.textContent='▶ Comenzar momento';start.onclick=window.startMomentV31102;
   }
-  window.regenerateMomentV31102=function(){if(!currentMoment)return;route=['prayers','psalms','verses'].map(function(t){return chooseOne(t,currentMoment);}).filter(Boolean);renderPreview();};
+  window.regenerateMomentV31102=function(){if(!currentMoment)return;route=buildMomentRouteV31115(currentMoment);renderPreview();};
   window.backMomentsHubV31102=function(){customMode=false;renderHub();showOnly('momentsHubV31102');};
   window.startMomentV31102=function(){routeIndex=0;customPrayerChoice={};openMomentStep();};
 
@@ -116,8 +348,34 @@
   window.backCustomAddTypeV31106=function(){document.getElementById('customAddTypeV31106').classList.remove('hidden');document.getElementById('customAddChoicesV31106').classList.add('hidden');};
   window.chooseCustomAddTypeV31106=function(type){document.getElementById('customAddTypeV31106').classList.add('hidden');document.getElementById('customAddChoicesV31106').classList.remove('hidden');if(type==='prayerChoice')renderCustomPrayerGroup();else renderCustomItemChoices(type);};
   function renderCustomItemChoices(type){var title=document.getElementById('customAddTitleV31106'),box=document.getElementById('customAddListV31106'),tm=typeMeta(type);title.textContent=tm.icon+' Elegir '+tm.name.toLowerCase();title.onclick=null;box.innerHTML='';items(type).forEach(function(it){var b=document.createElement('button');b.type='button';b.className='routine-item-choice-v3192';b.innerHTML='<span>'+tm.icon+'</span><div><strong>'+esc(titleOf(it,type))+'</strong><small>Añadir al momento</small></div>';b.onclick=function(){var m=getCustom(currentCustomId);m.items.push({type:type,id:String(it.id)});updateCustom(m);closeCustomAddV31106();renderCustomEditor();};box.appendChild(b);});if(!box.children.length)box.innerHTML='<div class="routine-modal-empty-v3192">No hay contenido disponible.</div>';}
-  function renderCustomPrayerGroup(){addDraft=[];renderPrayerGroupList();}
-  function renderPrayerGroupList(){var title=document.getElementById('customAddTitleV31106'),box=document.getElementById('customAddListV31106');title.textContent='🕯️ Grupo de oraciones · '+addDraft.length+' elegidas';title.onclick=null;box.innerHTML='';var save=document.createElement('button');save.className='btn primary routine-choice-save-v3198';save.disabled=addDraft.length<2;save.textContent=addDraft.length<2?'Seleccione al menos 2 oraciones':'✓ Añadir grupo ('+addDraft.length+')';save.onclick=saveCustomPrayerGroup;box.appendChild(save);items('prayers').forEach(function(it){var selected=addDraft.indexOf(String(it.id))>=0,b=document.createElement('button');b.type='button';b.className='routine-item-choice-v3192 prayer-choice-toggle-v3198'+(selected?' selected-v3198':'');b.innerHTML='<span>'+(selected?'✓':'🙏🏾')+'</span><div><strong>'+esc(titleOf(it,'prayers'))+'</strong><small>'+(selected?'Seleccionada · pulse para quitar':'Pulse para seleccionar')+'</small></div>';b.onclick=function(){var id=String(it.id),i=addDraft.indexOf(id);if(i>=0)addDraft.splice(i,1);else addDraft.push(id);renderPrayerGroupList();};box.appendChild(b);});}
+  function prayerCatsV31109(it){return Array.isArray(it.categories)?it.categories.map(String):(it.category?[String(it.category)]:[]);}
+  function prayerCategoriesV31109(){try{return (window.PSALM_CATEGORIES_V3177||[]).filter(function(c){return c.id;}).map(function(c){return {id:String(c.id),icon:c.icon||'🙏🏾',label:c.label||c.id};});}catch(e){return [];}}
+  function renderCustomPrayerGroup(){addDraft=[];addCategoryDraftV31111=[];renderCustomPrayerCategoriesV31111();}
+  function customCategorySelectedV31111(id){return addCategoryDraftV31111.indexOf(String(id))>=0;}
+  function toggleCustomCategoryV31111(id){id=String(id);var i=addCategoryDraftV31111.indexOf(id);if(i>=0)addCategoryDraftV31111.splice(i,1);else addCategoryDraftV31111.push(id);renderCustomPrayerCategoriesV31111();}
+  function renderCustomPrayerCategoriesV31111(){
+    var title=document.getElementById('customAddTitleV31106'),box=document.getElementById('customAddListV31106');
+    title.textContent='🕯️ Elegir categorías';title.onclick=null;box.innerHTML='';
+    var info=document.createElement('div');info.className='routine-multicat-info-v31110';info.innerHTML='<strong>Seleccione una o varias categorías</strong><span>Después verá juntas todas sus oraciones.</span>';box.appendChild(info);
+    var next=document.createElement('button');next.type='button';next.className='btn primary routine-choice-save-v3198';next.disabled=!addCategoryDraftV31111.length;next.textContent=addCategoryDraftV31111.length?'➡️ Continuar ('+addCategoryDraftV31111.length+')':'Seleccione al menos una categoría';next.onclick=renderCustomCombinedItemsV31111;box.appendChild(next);
+    var counts={};items('prayers').forEach(function(it){var cs=prayerCatsV31109(it);if(!cs.length)cs=[''];cs.forEach(function(c){counts[c]=(counts[c]||0)+1;});});
+    prayerCategoriesV31109().filter(function(c){return counts[c.id]>0;}).forEach(function(c){var selected=customCategorySelectedV31111(c.id),b=document.createElement('button');b.type='button';b.className='routine-choice-v3192 routine-category-toggle-v31110'+(selected?' selected-v3198':'');b.innerHTML='<span>'+(selected?'✓':esc(c.icon))+'</span><strong>'+esc(c.label)+'</strong><small>'+counts[c.id]+' disponibles'+(selected?' · seleccionada':'')+'</small>';b.onclick=function(){toggleCustomCategoryV31111(c.id);};box.appendChild(b);});
+    if(counts['']){var selected=customCategorySelectedV31111(''),b=document.createElement('button');b.type='button';b.className='routine-choice-v3192 routine-category-toggle-v31110'+(selected?' selected-v3198':'');b.innerHTML='<span>'+(selected?'✓':'📁')+'</span><strong>Sin categoría</strong><small>'+counts['']+' disponibles'+(selected?' · seleccionada':'')+'</small>';b.onclick=function(){toggleCustomCategoryV31111('');};box.appendChild(b);}
+  }
+  function customCombinedItemsV31111(){return items('prayers').filter(function(it){var cs=prayerCatsV31109(it);return addCategoryDraftV31111.some(function(cat){return cat?cs.indexOf(cat)>=0:cs.length===0;});});}
+  function renderCustomCombinedItemsV31111(){
+    if(!addCategoryDraftV31111.length){renderCustomPrayerCategoriesV31111();return;}
+    var title=document.getElementById('customAddTitleV31106'),box=document.getElementById('customAddListV31106');title.textContent='← Elegir oraciones · '+addDraft.length+' elegidas';title.onclick=renderCustomPrayerCategoriesV31111;box.innerHTML='';
+    var save=document.createElement('button');save.className='btn primary routine-choice-save-v3198';save.disabled=addDraft.length<2;save.textContent=addDraft.length<2?'Seleccione al menos 2 oraciones':'✓ Aceptar grupo ('+addDraft.length+')';save.onclick=saveCustomPrayerGroup;box.appendChild(save);
+    if(addDraft.length){var review=document.createElement('button');review.className='btn soft routine-choice-review-v31109';review.textContent='☑ Ver selección ('+addDraft.length+')';review.onclick=renderCustomPrayerReviewV31111;box.appendChild(review);}
+    var list=customCombinedItemsV31111();list.forEach(function(it){var selected=addDraft.indexOf(String(it.id))>=0,b=document.createElement('button');b.type='button';b.className='routine-item-choice-v3192 prayer-choice-toggle-v3198'+(selected?' selected-v3198':'');b.innerHTML='<span>'+(selected?'✓':'🙏🏾')+'</span><div><strong>'+esc(titleOf(it,'prayers'))+'</strong><small>'+(selected?'Seleccionada · pulse para quitar':'Pulse para seleccionar')+'</small></div>';b.onclick=function(){var id=String(it.id),i=addDraft.indexOf(id);if(i>=0)addDraft.splice(i,1);else addDraft.push(id);renderCustomCombinedItemsV31111();};box.appendChild(b);});
+    if(!list.length)box.innerHTML+='<div class="routine-modal-empty-v3192">No hay oraciones en las categorías seleccionadas.</div>';
+  }
+  function renderCustomPrayerReviewV31111(){
+    var title=document.getElementById('customAddTitleV31106'),box=document.getElementById('customAddListV31106');title.textContent='← Selección completa · '+addDraft.length;title.onclick=renderCustomCombinedItemsV31111;box.innerHTML='';
+    var save=document.createElement('button');save.className='btn primary routine-choice-save-v3198';save.disabled=addDraft.length<2;save.textContent=addDraft.length<2?'Seleccione al menos 2 oraciones':'✓ Aceptar grupo ('+addDraft.length+')';save.onclick=saveCustomPrayerGroup;box.appendChild(save);
+    items('prayers').filter(function(it){return addDraft.indexOf(String(it.id))>=0;}).forEach(function(it){var b=document.createElement('button');b.type='button';b.className='routine-item-choice-v3192 prayer-choice-toggle-v3198 selected-v3198';b.innerHTML='<span>✓</span><div><strong>'+esc(titleOf(it,'prayers'))+'</strong><small>Pulse para quitar de la selección</small></div>';b.onclick=function(){var i=addDraft.indexOf(String(it.id));if(i>=0)addDraft.splice(i,1);renderCustomPrayerReviewV31111();};box.appendChild(b);});
+  }
   function saveCustomPrayerGroup(){if(addDraft.length<2)return;var m=getCustom(currentCustomId);m.items.push({type:'prayerChoice',id:'choice-'+Date.now(),title:'Grupo de oraciones',options:addDraft.slice()});updateCustom(m);closeCustomAddV31106();renderCustomEditor();}
 
   window.startCustomMomentV31106=function(){var m=getCustom(currentCustomId);if(!m||!m.items.length)return;currentMoment={id:m.id,icon:m.icon||'🌿',title:m.title};route=m.items.slice();routeIndex=0;customPrayerChoice={};openMomentStep();};
@@ -132,8 +390,21 @@
 
   window.openMomentCatalogV31102=function(){var it=typeof currentItem==='function'?currentItem():null;if(!it||['prayers','psalms','verses'].indexOf(section)<0){if(typeof toast==='function')toast('Esta sección no se utiliza en Momentos');return;}var selected=inferredTags(it),box=document.getElementById('momentCatalogListV31102');box.innerHTML='';TAGS.forEach(function(tag){var label=document.createElement('label');label.className='moment-tag-option-v31102';label.innerHTML='<input type="checkbox" value="'+tag.id+'" '+(selected.indexOf(tag.id)>=0?'checked':'')+'><span>'+esc(tag.label)+'</span>';box.appendChild(label);});document.getElementById('momentCatalogModalV31102').classList.remove('hidden');};
   window.closeMomentCatalogV31102=function(){document.getElementById('momentCatalogModalV31102').classList.add('hidden');};
-  window.saveMomentCatalogV31102=function(){var it=typeof currentItem==='function'?currentItem():null;if(!it)return;var vals=Array.from(document.querySelectorAll('#momentCatalogListV31102 input:checked')).map(function(x){return x.value;});it.momentCategoriesV31102=vals;it.updatedAt=Date.now();if(typeof saveState==='function')saveState();closeMomentCatalogV31102();if(typeof toast==='function')toast(vals.length?'Catalogado para Momentos':'Quitado de Momentos');};
+  window.saveMomentCatalogV31102=function(){var it=typeof currentItem==='function'?currentItem():null;if(!it)return;var vals=Array.from(document.querySelectorAll('#momentCatalogListV31102 input:checked')).map(function(x){return x.value;});it.momentCategoriesV31102=vals;it.momentCatalogManualV31120=true;it.momentCatalogAutoV31120=false;it.updatedAt=Date.now();if(typeof saveState==='function')saveState();closeMomentCatalogV31102();if(typeof window.updateMomentCatalogButtonV31116==='function')window.updateMomentCatalogButtonV31116();if(typeof toast==='function')toast(vals.length?'Catalogado para Momentos':'Quitado de Momentos');};
 
   function init(){var b=document.getElementById('btnMomentsV31102');if(b)b.classList.remove('hidden');}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else setTimeout(init,0);
+
+  setTimeout(function(){
+    var tries=0,timer=setInterval(function(){
+      tries++;
+      if(typeof state!=='undefined'&&state&&Array.isArray(state.psalms)&&Array.isArray(state.verses)){
+        clearInterval(timer);
+        var pending=uncatalogedCountsV31121();
+        if((pending.psalms||pending.verses)&&!promptWasHandledV31121())ensureAutoCatalogPromptV31121().classList.remove('hidden');
+        else autoCatalogMomentsV31120(false);
+        maybeOfferImprovedCatalogV31123();
+      }else if(tries>20)clearInterval(timer);
+    },250);
+  },300);
 })();
