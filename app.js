@@ -4913,10 +4913,8 @@ setInterval(updateVersePositionCounter, 1000);
         const s=choosePrayer();
         if(s){
           box.innerHTML =
-            '<div class="reader-recommendations-content-v31127" aria-hidden="true">'+
-              '<div class="reader-next-label">🌿 Puede continuar con...</div>'+
-              '<div class="reader-next-link" data-v59d-next="'+esc(s.id)+'">'+esc(s.title||"Oración")+'</div>'+
-            '</div>'+
+            '<div class="reader-next-label">🌿 Puede continuar con...</div>'+
+            '<div class="reader-next-link" data-v59d-next="'+esc(s.id)+'">'+esc(s.title||"Oración")+'</div>'+
             '<div class="reader-top-link" data-v59d-top="1">↑ Volver al inicio</div>';
         }else{
           box.innerHTML='<div class="reader-top-link" data-v59d-top="1">↑ Volver al inicio</div>';
@@ -10319,9 +10317,9 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
         ? window.formatPsalmRecommendationTitleV3181(psalm)
         : (psalm.title||'Salmo');
 
-      var content=box.querySelector('.reader-recommendations-content-v31127')||box;
-      content.appendChild(label);
-      content.appendChild(button);
+      var insertBefore=top||null;
+      box.insertBefore(label,insertBefore);
+      box.insertBefore(button,insertBefore);
 
       function activate(){openPsalm(button.dataset.v3182Psalm)}
       button.addEventListener('click',activate);
@@ -10543,8 +10541,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       button.setAttribute('role','button');button.setAttribute('tabindex','0');
       button.dataset.v3188Verse=verse.id;
       button.textContent=(meta.icon||'📖')+' '+(verse.reference||verse.title||'Versículo');
-      var content=box.querySelector('.reader-recommendations-content-v31127')||box;
-      content.appendChild(label);content.appendChild(button);
+      box.insertBefore(label,top||null);box.insertBefore(button,top||null);
       function activate(){
         var id=button.dataset.v3188Verse;
         var recent=readRecentV3188().filter(function(x){return String(x)!==String(id);});
@@ -10815,14 +10812,14 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   function schedule(delay){
     clearTimeout(pending);
-    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:25);
+    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:700);
   }
 
   /* Espera a que se creen oración, Salmo y versículo antes de plegarlos. */
-  var observer=new MutationObserver(function(){if(!arranging)schedule(25);});
+  var observer=new MutationObserver(function(){if(!arranging)schedule(650);});
   function init(){
     try{observer.observe(document.body,{childList:true,subtree:true});}catch(e){}
-    schedule(25);
+    schedule(1000);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
@@ -10832,12 +10829,10 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     window.__v31128RenderWrapped=true;
     window.renderReader=function(){
       var result=previousRender.apply(this,arguments);
-      schedule(25);
+      schedule(1100);
       return result;
     };
     try{renderReader=window.renderReader;}catch(e){}
   }
 })();
 
-
-/* ===== V3.1.129 - Desplegable de recomendaciones preparado desde el primer render ===== */
