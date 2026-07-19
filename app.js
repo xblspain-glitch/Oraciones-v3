@@ -10875,28 +10875,25 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   if(window.__v31139NoteNumberMigrationInstalled) return;
   window.__v31139NoteNumberMigrationInstalled=true;
 
-  var MIGRATION_KEY='oraciones_note_keycap_migration_v3139';
+  var MIGRATION_KEY='oraciones_note_symbols_migration_v3140';
   var KEYCAP_RUN=/((?:[0-9]\uFE0F?\u20E3)+)(?=\s)/g;
   var KEYCAP_DIGIT=/([0-9])\uFE0F?\u20E3/g;
 
   function hasLegacyNumber(text){
+    var s=String(text||'');
     KEYCAP_RUN.lastIndex=0;
-    return KEYCAP_RUN.test(String(text||''));
+    return KEYCAP_RUN.test(s)||s.indexOf('👉')!==-1||s.indexOf('➡️')!==-1;
   }
 
   function convertLegacyNumbers(text){
-    text=String(text||'').replace(/👉|➡️/g,'→');
     KEYCAP_RUN.lastIndex=0;
-    return String(text||'').replace(KEYCAP_RUN,function(run){
-      var digits=run.replace(KEYCAP_DIGIT,'$1');
-      return '**'+digits+'.**';
-    });
+    return String(text||'').replace(KEYCAP_RUN,function(run){var digits=run.replace(KEYCAP_DIGIT,'$1');return '**'+digits+'.**';}).replace(/👉/g,'→').replace(/➡️/g,'→');
   }
 
   function notesWithLegacyNumbers(){
     if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
     return state.notes.filter(function(note){
-      return note && (hasLegacyNumber(note.content)||/👉|➡️/.test(String(note.content||'')));
+      return note && hasLegacyNumber(note.content);
     });
   }
 
@@ -10914,8 +10911,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var accept=window.confirm(
       'Se ha detectado una numeración antigua en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
-      '¿Desea actualizar automáticamente la numeración y las flechas al nuevo formato?\n\n'+
-      'Ejemplos:\n1️⃣ → 1.\n👉 → →\n➡️ → →'
+      '¿Desea sustituir automáticamente los números emoji por números con punto y en negrita?\n\n'+
+      'Ejemplo: 1️⃣  →  1.'
     );
 
     if(!accept){
