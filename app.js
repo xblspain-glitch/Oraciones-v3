@@ -10890,9 +10890,12 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   function notesWithLegacyArrows(){
     if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
-    return state.notes.filter(function(note){
-      return note && hasLegacyArrow(note.content);
-    });
+    var out=[];
+    state.notes.filter(function(note){ if(note&&hasLegacyArrow(note.content)){ note.__mig='notes'; out.push(note);} });
+    if(Array.isArray(state.guides)){
+      state.guides.filter(function(note){ if(note&&hasLegacyArrow(note.content)){ note.__mig='guides'; out.push(note);} });
+    }
+    return out;
   }
 
   function markHandled(value){
@@ -10930,7 +10933,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     if(changed){
       try{if(typeof saveState==='function') saveState();}catch(e){console.error('No se pudo guardar la migración de flechas',e);}
       try{
-        if(typeof section!=='undefined' && section==='notes'){
+        if(typeof section!=='undefined' && (section==='notes'||section==='guides')){
           if(typeof renderList==='function') renderList();
           if(typeof renderReader==='function') renderReader();
         }
