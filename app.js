@@ -10997,7 +10997,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
  else setTimeout(run,500);
 })();
 
-/* ===== V3.1.144 - Emergente conserva el scroll real de .content ===== */
+/* ===== V3.1.143 - Posición estable sin pequeño salto ===== */
 (function(){
   if(window.__v31143ScrollStable) return;
   window.__v31143ScrollStable = true;
@@ -11005,19 +11005,14 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   function captureV31143(){
     var root=document.scrollingElement || document.documentElement;
     var reader=document.getElementById('readerText');
-    var content=document.querySelector('.content');
     return {
       x: window.pageXOffset || root.scrollLeft || 0,
       y: window.pageYOffset || root.scrollTop || 0,
       reader: reader,
       readerTop: reader && reader.scrollHeight>reader.clientHeight ? reader.scrollTop : null,
-      content: content,
-      contentTop: content ? content.scrollTop : null,
-      contentLeft: content ? content.scrollLeft : null,
       rootAnchor: root.style.overflowAnchor,
       bodyAnchor: document.body ? document.body.style.overflowAnchor : '',
-      readerAnchor: reader ? reader.style.overflowAnchor : '',
-      contentAnchor: content ? content.style.overflowAnchor : ''
+      readerAnchor: reader ? reader.style.overflowAnchor : ''
     };
   }
 
@@ -11026,19 +11021,12 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{ root.style.overflowAnchor='none'; }catch(e){}
     try{ if(document.body) document.body.style.overflowAnchor='none'; }catch(e){}
     try{ if(pos && pos.reader) pos.reader.style.overflowAnchor='none'; }catch(e){}
-    try{ if(pos && pos.content) pos.content.style.overflowAnchor='none'; }catch(e){}
   }
 
   function putBackV31143(pos){
     if(!pos) return;
     try{ window.scrollTo(pos.x,pos.y); }catch(e){ try{window.scrollTo(0,pos.y);}catch(e2){} }
     try{ if(pos.reader && pos.readerTop!==null) pos.reader.scrollTop=pos.readerTop; }catch(e){}
-    try{
-      if(pos.content && pos.contentTop!==null){
-        pos.content.scrollTop=pos.contentTop;
-        if(pos.contentLeft!==null) pos.content.scrollLeft=pos.contentLeft;
-      }
-    }catch(e){}
   }
 
   function unlockAnchoringV31143(pos){
@@ -11046,7 +11034,6 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{ root.style.overflowAnchor=pos.rootAnchor||''; }catch(e){}
     try{ if(document.body) document.body.style.overflowAnchor=pos.bodyAnchor||''; }catch(e){}
     try{ if(pos.reader) pos.reader.style.overflowAnchor=pos.readerAnchor||''; }catch(e){}
-    try{ if(pos.content) pos.content.style.overflowAnchor=pos.contentAnchor||''; }catch(e){}
   }
 
   function settleV31143(pos){
@@ -11097,4 +11084,146 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     wrapV31143('openReaderPopupBlockV908');
     wrapV31143('closeReaderPopupBlockV908');
   },300);
+})();
+
+/* ===== V3.1.144 - Emergentes: conservar posición desde pointerdown ===== */
+(function(){
+  if(window.__v31144PopupPointerScrollFix) return;
+  window.__v31144PopupPointerScrollFix = true;
+
+  var pendingSnapshot = null;
+  var activeSnapshot = null;
+  var restoreTimers = [];
+
+  function scrollHost(){
+    var content=document.querySelector('.content');
+    if(content && content.scrollHeight>content.clientHeight) return content;
+    return document.scrollingElement || document.documentElement;
+  }
+
+  function capture(){
+    var host=scrollHost();
+    var root=document.scrollingElement || document.documentElement;
+    return {
+      at:Date.now(),
+      host:host,
+      hostTop:host ? host.scrollTop : 0,
+      hostLeft:host ? host.scrollLeft : 0,
+      winX:window.pageXOffset || root.scrollLeft || 0,
+      winY:window.pageYOffset || root.scrollTop || 0,
+      hostOverflow:host && host.style ? host.style.overflow : '',
+      hostAnchor:host && host.style ? host.style.overflowAnchor : '',
+      rootAnchor:root.style.overflowAnchor || '',
+      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
+    };
+  }
+
+  function restore(pos){
+    if(!pos) return;
+    try{
+      if(pos.host){
+        pos.host.scrollLeft=pos.hostLeft;
+        pos.host.scrollTop=pos.hostTop;
+      }
+    }catch(e){}
+    try{window.scrollTo(pos.winX,pos.winY);}catch(e){}
+  }
+
+  function clearTimers(){
+    while(restoreTimers.length){
+      try{clearTimeout(restoreTimers.pop());}catch(e){}
+    }
+  }
+
+  function lock(pos){
+    if(!pos) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor='none';}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
+    try{
+      if(pos.host && pos.host.style){
+        pos.host.style.overflowAnchor='none';
+        pos.host.style.overflow='hidden';
+      }
+    }catch(e){}
+  }
+
+  function unlock(pos){
+    if(!pos) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor=pos.rootAnchor;}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor=pos.bodyAnchor;}catch(e){}
+    try{
+      if(pos.host && pos.host.style){
+        pos.host.style.overflow=pos.hostOverflow;
+        pos.host.style.overflowAnchor=pos.hostAnchor;
+      }
+    }catch(e){}
+  }
+
+  function keepPosition(pos){
+    clearTimers();
+    restore(pos);
+    [0,16,50,120,250,500,800].forEach(function(ms){
+      restoreTimers.push(setTimeout(function(){restore(pos);},ms));
+    });
+  }
+
+  function preCapture(ev){
+    try{
+      var btn=ev.target && ev.target.closest ? ev.target.closest('.reader-popup-title') : null;
+      if(!btn) return;
+      pendingSnapshot=capture();
+    }catch(e){}
+  }
+  document.addEventListener('pointerdown',preCapture,true);
+  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
+  document.addEventListener('mousedown',preCapture,true);
+
+  window.openReaderPopupBlockV908=function(idx){
+    try{
+      var pos=(pendingSnapshot && Date.now()-pendingSnapshot.at<1800) ? pendingSnapshot : capture();
+      pendingSnapshot=null;
+      activeSnapshot=pos;
+      lock(pos);
+
+      var text='';
+      try{text=getCurrentContentTextV865();}catch(e){text='';}
+      var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
+      var b=blocks[idx];
+      if(!b){unlock(pos);activeSnapshot=null;alert('No se ha encontrado este bloque emergente.');return;}
+
+      var old=document.getElementById('readerPopupOverlayV908');
+      if(old) old.remove();
+
+      var wrap=document.createElement('div');
+      wrap.id='readerPopupOverlayV908';
+      wrap.className='reader-popup-overlay-v908';
+      wrap.onclick=function(ev){if(ev.target===wrap)window.closeReaderPopupBlockV908();};
+      var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
+      var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
+      wrap.innerHTML='<div class="reader-popup-card-v908"><h3>'+title+'</h3><div class="reader-popup-content-v908">'+body+'</div><div class="reader-popup-actions-v913"><button class="btn soft" type="button" onclick="closeReaderPopupBlockV908(); editPopupBlockV908('+idx+')">✏️ Editar</button><button class="btn soft danger" type="button" onclick="closeReaderPopupBlockV908(); deletePopupBlockV908('+idx+')">🗑️ Eliminar</button><button class="btn primary" type="button" onclick="closeReaderPopupBlockV908()">Cerrar</button></div></div>';
+      document.body.appendChild(wrap);
+      keepPosition(pos);
+    }catch(e){
+      console.error('openReaderPopupBlockV31144',e);
+      if(activeSnapshot){unlock(activeSnapshot);restore(activeSnapshot);activeSnapshot=null;}
+    }
+  };
+
+  window.closeReaderPopupBlockV908=function(){
+    var pos=activeSnapshot;
+    clearTimers();
+    var el=document.getElementById('readerPopupOverlayV908');
+    if(el)el.remove();
+    if(pos){
+      unlock(pos);
+      restore(pos);
+      requestAnimationFrame(function(){restore(pos);requestAnimationFrame(function(){restore(pos);});});
+    }
+    activeSnapshot=null;
+  };
+
+  try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
+  try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();
