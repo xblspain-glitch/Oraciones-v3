@@ -438,10 +438,12 @@ function highlightBibleReferencesV49(text){
     "gi"
   );
 
-  return safe.replace(re,function(_,pre,icon,ref){
+  const rendered=safe.replace(re,function(_,pre,icon,ref){
     const cleanRef=String(ref||"").replace(/\s+/g," ").trim();
     return pre+'<span class="bible-ref-highlight">📖 '+cleanRef+'</span>';
   });
+  // V3.1.139: permite destacar la numeración migrada, por ejemplo **1.**
+  return rendered.replace(/\*\*(\d{1,3}\.)\*\*/g,'<strong class="note-number-v3139">$1</strong>');
 }
 function renderCollapsibleBlocksV864(text){
   const raw = String(text || "");
@@ -1467,8 +1469,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.138";
-const APP_VERSION_ZIP = "oraciones_v3_1_138_icono_dia_noche_version_actualizada.zip";
+const APP_VERSION_LABEL = "v3.1.139";
+const APP_VERSION_ZIP = "oraciones_v3_1_139_numeracion_notas_negrita.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -10865,4 +10867,86 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     };
     try{renderReader=window.renderReader;}catch(e){}
   }
+})();
+
+
+/* ===== V3.1.139 - Migración única de números emoji en Notas ===== */
+(function(){
+  if(window.__v31139NoteNumberMigrationInstalled) return;
+  window.__v31139NoteNumberMigrationInstalled=true;
+
+  var MIGRATION_KEY='oraciones_note_keycap_migration_v3139';
+  var KEYCAP_RUN=/((?:[0-9]\uFE0F?\u20E3)+)(?=\s)/g;
+  var KEYCAP_DIGIT=/([0-9])\uFE0F?\u20E3/g;
+
+  function hasLegacyNumber(text){
+    KEYCAP_RUN.lastIndex=0;
+    return KEYCAP_RUN.test(String(text||''));
+  }
+
+  function convertLegacyNumbers(text){
+    KEYCAP_RUN.lastIndex=0;
+    return String(text||'').replace(KEYCAP_RUN,function(run){
+      var digits=run.replace(KEYCAP_DIGIT,'$1');
+      return '**'+digits+'.**';
+    });
+  }
+
+  function notesWithLegacyNumbers(){
+    if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
+    return state.notes.filter(function(note){
+      return note && hasLegacyNumber(note.content);
+    });
+  }
+
+  function markHandled(value){
+    try{localStorage.setItem(MIGRATION_KEY,value);}catch(e){}
+  }
+
+  function runMigrationPrompt(){
+    try{
+      if(localStorage.getItem(MIGRATION_KEY)) return;
+    }catch(e){}
+
+    var affected=notesWithLegacyNumbers();
+    if(!affected.length) return;
+
+    var accept=window.confirm(
+      'Se ha detectado una numeración antigua en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
+      '¿Desea sustituir automáticamente los números emoji por números con punto y en negrita?\n\n'+
+      'Ejemplo: 1️⃣  →  1.'
+    );
+
+    if(!accept){
+      markHandled('cancelled');
+      return;
+    }
+
+    var changed=0;
+    affected.forEach(function(note){
+      var converted=convertLegacyNumbers(note.content);
+      if(converted!==String(note.content||'')){
+        note.content=converted;
+        note.updatedAt=Date.now();
+        changed++;
+      }
+    });
+
+    if(changed){
+      try{if(typeof saveState==='function') saveState();}catch(e){console.error('No se pudo guardar la migración de notas',e);}
+      try{
+        if(typeof section!=='undefined' && section==='notes'){
+          if(typeof renderList==='function') renderList();
+          if(typeof renderReader==='function') renderReader();
+        }
+      }catch(e){}
+    }
+
+    markHandled('updated');
+    window.alert('✓ Se han actualizado correctamente '+changed+' nota'+(changed===1?'':'s')+'.');
+  }
+
+  function init(){window.setTimeout(runMigrationPrompt,350);}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
