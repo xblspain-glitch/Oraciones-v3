@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_159_emergente_sin_paneo_foco.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_160_emergente_anclado_contenedor.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -6431,7 +6431,7 @@ setInterval(updateVersePositionCounter, 1000);
         dIdx++;
       }else{
         out += '<div class="reader-popup-block" data-popup-index="'+pIdx+'">' +
-          '<button class="reader-popup-title" type="button" data-popup-open-index="'+pIdx+'">'+title+'</button>' +
+          '<button class="reader-popup-title" type="button" onclick="openReaderPopupBlockV908('+pIdx+')">'+title+'</button>' +
           '<div class="block-controls-v865">' +
           '<button class="block-mini-v865" type="button" onclick="event.preventDefault();event.stopPropagation();editPopupBlockV908('+pIdx+')">✏️ Editar</button>' +
           '<button class="block-mini-v865 danger" type="button" onclick="event.preventDefault();event.stopPropagation();deletePopupBlockV908('+pIdx+')">🗑️ Eliminar</button>' +
@@ -11228,120 +11228,49 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();
 
-/* ===== V3.1.153 - Emergente persistente con fondo inmóvil sin overflow:hidden ===== */
+/* ===== V3.1.160 - Emergente anclado al contenedor, independiente del viewport visual ===== */
 (function(){
-  if(window.__v31148StablePopup) return;
-  window.__v31148StablePopup=true;
+  if(window.__v31160ContainerPopup) return;
+  window.__v31160ContainerPopup=true;
 
-  var pending=null;
-  var active=null;
-  var timers=[];
   var overlay=null;
   var currentIndex=-1;
+  var mountedHost=null;
+  var oldHostPosition='';
+  var lastTouchY=null;
 
-  function host(){
+  function getHost(){
     var content=document.querySelector('.content');
     if(content && content.scrollHeight>content.clientHeight) return content;
     return document.scrollingElement || document.documentElement;
   }
 
-  function snap(){
-    var h=host();
-    var root=document.scrollingElement || document.documentElement;
-    return {
-      at:Date.now(), host:h,
-      top:h ? h.scrollTop : 0,
-      left:h ? h.scrollLeft : 0,
-      x:window.pageXOffset || root.scrollLeft || 0,
-      y:window.pageYOffset || root.scrollTop || 0,
-      overflow:h && h.style ? h.style.overflow : '',
-      anchor:h && h.style ? h.style.overflowAnchor : '',
-      rootAnchor:root.style.overflowAnchor || '',
-      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
-    };
-  }
-
-  function cancelTimers(){
-    while(timers.length){ try{clearTimeout(timers.pop());}catch(e){} }
-  }
-
-  function differs(p){
-    if(!p) return false;
-    try{
-      if(p.host && (Math.abs(p.host.scrollTop-p.top)>1 || Math.abs(p.host.scrollLeft-p.left)>1)) return true;
-      var root=document.scrollingElement || document.documentElement;
-      var x=window.pageXOffset || root.scrollLeft || 0;
-      var y=window.pageYOffset || root.scrollTop || 0;
-      return Math.abs(x-p.x)>1 || Math.abs(y-p.y)>1;
-    }catch(e){ return true; }
-  }
-
-  function restoreOnlyIfNeeded(p){
-    if(!p || !differs(p)) return;
-    try{ if(p.host){p.host.scrollTop=p.top;p.host.scrollLeft=p.left;} }catch(e){}
-    try{window.scrollTo(p.x,p.y);}catch(e){}
-  }
-
-  function lock(p){
-    if(!p) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor='none';}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
-    try{
-      if(p.host && p.host.style){
-        p.host.style.overflowAnchor='none';
-        /* V3.1.152: no tocar overflow del contenedor raíz. En Android,
-           overflow:hidden iniciaba un desplazamiento nativo diferido que
-           luego era corregido por el temporizador, produciendo el temblor. */
-      }
-    }catch(e){}
-  }
-
-  function unlock(p){
-    if(!p) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor=p.rootAnchor;}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor=p.bodyAnchor;}catch(e){}
-    try{
-      if(p.host && p.host.style){
-        p.host.style.overflow=p.overflow;
-        p.host.style.overflowAnchor=p.anchor;
-      }
-    }catch(e){}
-  }
-
-  function stabilize(p){
-    cancelTimers();
-    restoreOnlyIfNeeded(p);
-    requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},90));
-    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},260));
+  function isRoot(h){
+    return h===document.documentElement || h===document.body || h===document.scrollingElement;
   }
 
   function ensureOverlay(){
     if(overlay && overlay.isConnected) return overlay;
-    overlay=document.getElementById('readerPopupOverlayV908');
-    if(!overlay){
-      overlay=document.createElement('div');
-      overlay.id='readerPopupOverlayV908';
-      document.body.appendChild(overlay);
-    }
-    overlay.className='reader-popup-overlay-v908 v31148-persistent';
+    var old=document.getElementById('readerPopupOverlayV908');
+    if(old) old.remove();
+    overlay=document.createElement('div');
+    overlay.id='readerPopupOverlayV908';
+    overlay.className='reader-popup-overlay-v908 v31160-container-popup';
     overlay.setAttribute('aria-hidden','true');
     overlay.innerHTML='<div class="reader-popup-card-v908" role="dialog" aria-modal="true">'+
-      '<h3 class="v31148-popup-title"></h3>'+
-      '<div class="reader-popup-content-v908 v31148-popup-content"></div>'+
+      '<h3 class="v31160-popup-title"></h3>'+
+      '<div class="reader-popup-content-v908 v31160-popup-content"></div>'+
       '<div class="reader-popup-actions-v913">'+
-      '<button class="btn soft v31148-edit" type="button">✏️ Editar</button>'+
-      '<button class="btn soft danger v31148-delete" type="button">🗑️ Eliminar</button>'+
-      '<button class="btn primary v31148-close" type="button">Cerrar</button>'+
+      '<button class="btn soft v31160-edit" type="button">✏️ Editar</button>'+
+      '<button class="btn soft danger v31160-delete" type="button">🗑️ Eliminar</button>'+
+      '<button class="btn primary v31160-close" type="button">Cerrar</button>'+
       '</div></div>';
     overlay.addEventListener('click',function(ev){
-      if(ev.target===overlay || ev.target.closest('.v31148-close')) window.closeReaderPopupBlockV908();
-      else if(ev.target.closest('.v31148-edit')){
+      if(ev.target===overlay || ev.target.closest('.v31160-close')) window.closeReaderPopupBlockV908();
+      else if(ev.target.closest('.v31160-edit')){
         var i=currentIndex; window.closeReaderPopupBlockV908();
         if(typeof window.editPopupBlockV908==='function') window.editPopupBlockV908(i);
-      }else if(ev.target.closest('.v31148-delete')){
+      }else if(ev.target.closest('.v31160-delete')){
         var j=currentIndex; window.closeReaderPopupBlockV908();
         if(typeof window.deletePopupBlockV908==='function') window.deletePopupBlockV908(j);
       }
@@ -11349,26 +11278,34 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     return overlay;
   }
 
-  function preCapture(ev){
-    try{
-      if(ev.target && ev.target.closest && ev.target.closest('.reader-popup-title')) pending=snap();
-    }catch(e){}
+  function mountOverVisibleArea(){
+    var el=ensureOverlay();
+    var h=getHost();
+    mountedHost=h;
+    if(!isRoot(h)){
+      oldHostPosition=h.style.position || '';
+      if(getComputedStyle(h).position==='static') h.style.position='relative';
+      if(el.parentNode!==h) h.appendChild(el);
+      el.style.top=h.scrollTop+'px';
+      el.style.left=h.scrollLeft+'px';
+      el.style.width=h.clientWidth+'px';
+      el.style.height=h.clientHeight+'px';
+    }else{
+      if(el.parentNode!==document.body) document.body.appendChild(el);
+      var root=document.scrollingElement || document.documentElement;
+      el.style.top=(window.pageYOffset || root.scrollTop || 0)+'px';
+      el.style.left=(window.pageXOffset || root.scrollLeft || 0)+'px';
+      el.style.width=document.documentElement.clientWidth+'px';
+      el.style.height=document.documentElement.clientHeight+'px';
+    }
   }
-  document.addEventListener('pointerdown',preCapture,true);
-  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
-  document.addEventListener('mousedown',preCapture,true);
-
-  /* V3.1.153: bloquear únicamente los gestos que intentarían desplazar el
-     documento situado detrás del emergente. No se cambia overflow, position,
-     height ni scrollTop del fondo, por lo que su posición permanece intacta. */
-  var lastTouchY=null;
 
   function popupVisible(){
-    return !!(overlay && overlay.classList.contains('v31148-visible'));
+    return !!(overlay && overlay.classList.contains('v31160-visible'));
   }
 
   function popupScrollerFrom(target){
-    try{return target && target.closest ? target.closest('.v31148-popup-content') : null;}catch(e){return null;}
+    try{return target && target.closest ? target.closest('.v31160-popup-content') : null;}catch(e){return null;}
   }
 
   document.addEventListener('touchstart',function(ev){
@@ -11381,155 +11318,48 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     if(!popupVisible()) return;
     var t=ev.touches && ev.touches[0];
     var scroller=popupScrollerFrom(ev.target);
-    if(!t || !scroller){
-      ev.preventDefault();
-      return;
-    }
-
-    var y=t.clientY;
-    var dy=(lastTouchY===null) ? 0 : y-lastTouchY;
+    if(!t || !scroller){ev.preventDefault();return;}
+    var y=t.clientY, dy=(lastTouchY===null)?0:y-lastTouchY;
     lastTouchY=y;
     var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
-    var atTop=scroller.scrollTop<=0;
-    var atBottom=scroller.scrollTop>=max-1;
-
-    /* Permitir el desplazamiento interno del texto, pero cortar el gesto al
-       llegar a sus extremos para que no se encadene con la página de fondo. */
-    if(max<=1 || (dy>0 && atTop) || (dy<0 && atBottom)){
-      ev.preventDefault();
-    }
+    if(max<=1 || (dy>0 && scroller.scrollTop<=0) || (dy<0 && scroller.scrollTop>=max-1)) ev.preventDefault();
   },{capture:true,passive:false});
-
   document.addEventListener('touchend',function(){lastTouchY=null;},{capture:true,passive:true});
   document.addEventListener('touchcancel',function(){lastTouchY=null;},{capture:true,passive:true});
 
-  document.addEventListener('wheel',function(ev){
-    if(!popupVisible()) return;
-    var scroller=popupScrollerFrom(ev.target);
-    if(!scroller){ev.preventDefault();return;}
-    var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
-    if(max<=1 || (ev.deltaY<0 && scroller.scrollTop<=0) ||
-       (ev.deltaY>0 && scroller.scrollTop>=max-1)){
-      ev.preventDefault();
-    }
-  },{capture:true,passive:false});
-
   function install(){
     ensureOverlay();
-
     window.openReaderPopupBlockV908=function(idx){
-      var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
-      pending=null; active=p; currentIndex=idx; lock(p);
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
-        var el=ensureOverlay();
+        if(!b){alert('No se ha encontrado este bloque emergente.');return;}
+        currentIndex=idx;
+        mountOverVisibleArea();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
-        el.querySelector('.v31148-popup-title').innerHTML=title;
-        el.querySelector('.v31148-popup-content').innerHTML=body;
-        el.querySelector('.v31148-popup-content').scrollTop=0;
-        el.classList.add('v31148-visible');
-        el.setAttribute('aria-hidden','false');
-        stabilize(p);
-      }catch(e){
-        console.error('openReaderPopupBlockV31148',e);
-        unlock(p);restoreOnlyIfNeeded(p);active=null;
-      }
+        overlay.querySelector('.v31160-popup-title').innerHTML=title;
+        overlay.querySelector('.v31160-popup-content').innerHTML=body;
+        overlay.querySelector('.v31160-popup-content').scrollTop=0;
+        overlay.classList.add('v31160-visible');
+        overlay.setAttribute('aria-hidden','false');
+      }catch(e){console.error('openReaderPopupBlockV31160',e);}
     };
 
     window.closeReaderPopupBlockV908=function(){
-      var p=active;
-      cancelTimers();
       var el=ensureOverlay();
-      el.classList.remove('v31148-visible');
+      el.classList.remove('v31160-visible');
       el.setAttribute('aria-hidden','true');
-      if(p){
-        unlock(p);
-        restoreOnlyIfNeeded(p);
-        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-      }
-      active=null;
+      if(mountedHost && !isRoot(mountedHost)) mountedHost.style.position=oldHostPosition;
+      mountedHost=null;
     };
 
     try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
     try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,380);},{once:true});
-  else setTimeout(install,380);
-})();
-
-
-/* ===== V3.1.159 - Activación táctil sin foco ni paneo del viewport visual ===== */
-(function(){
-  if(window.__v31159PopupNoFocusPan) return;
-  window.__v31159PopupNoFocusPan=true;
-
-  var gesture=null;
-
-  function popupButton(target){
-    try{return target && target.closest ? target.closest('.reader-popup-title[data-popup-open-index]') : null;}
-    catch(e){return null;}
-  }
-
-  function popupIndex(btn){
-    var n=parseInt(btn.getAttribute('data-popup-open-index'),10);
-    return Number.isFinite(n) ? n : -1;
-  }
-
-  /* Cancelar el comportamiento predeterminado desde pointerdown es la parte
-     esencial: Android/WebView no llega a enfocar el botón ni a desplazar el
-     visualViewport para colocarlo. La apertura se realiza manualmente al
-     terminar un toque corto. */
-  document.addEventListener('pointerdown',function(ev){
-    if(ev.pointerType==='mouse') return;
-    var btn=popupButton(ev.target);
-    if(!btn) return;
-    ev.preventDefault();
-    ev.stopPropagation();
-    gesture={
-      id:ev.pointerId,
-      btn:btn,
-      index:popupIndex(btn),
-      x:ev.clientX,
-      y:ev.clientY,
-      moved:false
-    };
-    try{btn.setPointerCapture(ev.pointerId);}catch(e){}
-  },true);
-
-  document.addEventListener('pointermove',function(ev){
-    if(!gesture || ev.pointerId!==gesture.id) return;
-    if(Math.abs(ev.clientX-gesture.x)>10 || Math.abs(ev.clientY-gesture.y)>10) gesture.moved=true;
-    ev.preventDefault();
-  },true);
-
-  document.addEventListener('pointerup',function(ev){
-    if(!gesture || ev.pointerId!==gesture.id) return;
-    var g=gesture; gesture=null;
-    ev.preventDefault();
-    ev.stopPropagation();
-    try{g.btn.releasePointerCapture(ev.pointerId);}catch(e){}
-    if(!g.moved && g.index>=0 && typeof window.openReaderPopupBlockV908==='function'){
-      window.openReaderPopupBlockV908(g.index);
-    }
-  },true);
-
-  document.addEventListener('pointercancel',function(ev){
-    if(gesture && ev.pointerId===gesture.id) gesture=null;
-  },true);
-
-  /* Ratón y teclado conservan click normal, pero sin onclick inline. */
-  document.addEventListener('click',function(ev){
-    var btn=popupButton(ev.target);
-    if(!btn) return;
-    ev.preventDefault();
-    ev.stopPropagation();
-    var idx=popupIndex(btn);
-    if(idx>=0 && typeof window.openReaderPopupBlockV908==='function') window.openReaderPopupBlockV908(idx);
-  },true);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
+  else install();
 })();
