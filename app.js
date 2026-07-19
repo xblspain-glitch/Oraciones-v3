@@ -1,95 +1,3 @@
-(function(){
-  if(window.__scrollSpyV156) return;
-  window.__scrollSpyV156=true;
-  var entries=[];
-  var seq=0;
-  var t0=performance.now();
-
-  function describe(el){
-    if(!el) return 'null';
-    try{
-      var out=(el.tagName||el.nodeName||'object').toLowerCase();
-      if(el.id) out+='#'+el.id;
-      if(el.className && typeof el.className==='string') out+='.'+el.className.trim().replace(/\s+/g,'.');
-      return out;
-    }catch(e){return 'object';}
-  }
-  function stack(){
-    try{return String(new Error().stack||'').split('\n').slice(2,9).join(' <- ');}catch(e){return '';}
-  }
-  function add(type,detail,withStack){
-    var root=document.scrollingElement||document.documentElement;
-    var active=document.activeElement;
-    var line=(++seq)+' | '+(performance.now()-t0).toFixed(1)+'ms | '+type+
-      ' | wy='+(window.scrollY||root.scrollTop||0).toFixed(1)+
-      ' root='+(root.scrollTop||0).toFixed(1)+
-      ' | focus='+describe(active)+
-      (detail?' | '+detail:'')+
-      (withStack?' | STACK: '+stack():'');
-    entries.push(line);
-    if(entries.length>2500) entries.splice(0,entries.length-2500);
-    try{console.log('[SCROLLSPY]',line);}catch(e){}
-    refresh();
-  }
-  window.__scrollSpyEntries=entries;
-  window.__scrollSpyAdd=add;
-
-  try{
-    var nativeScrollTo=window.scrollTo.bind(window);
-    window.scrollTo=function(){add('CALL window.scrollTo',JSON.stringify(Array.prototype.slice.call(arguments)),true);return nativeScrollTo.apply(window,arguments);};
-  }catch(e){add('HOOK_ERROR','window.scrollTo '+e,false);}
-
-  try{
-    var nativeScrollBy=window.scrollBy.bind(window);
-    window.scrollBy=function(){add('CALL window.scrollBy',JSON.stringify(Array.prototype.slice.call(arguments)),true);return nativeScrollBy.apply(window,arguments);};
-  }catch(e){add('HOOK_ERROR','window.scrollBy '+e,false);}
-
-  try{
-    var nativeSIV=Element.prototype.scrollIntoView;
-    if(nativeSIV) Element.prototype.scrollIntoView=function(){add('CALL scrollIntoView','target='+describe(this)+' args='+JSON.stringify(Array.prototype.slice.call(arguments)),true);return nativeSIV.apply(this,arguments);};
-  }catch(e){add('HOOK_ERROR','scrollIntoView '+e,false);}
-
-  try{
-    var proto=Element.prototype;
-    var d=Object.getOwnPropertyDescriptor(proto,'scrollTop');
-    if(d&&d.get&&d.set&&d.configurable){
-      Object.defineProperty(proto,'scrollTop',{configurable:true,enumerable:d.enumerable,get:d.get,set:function(v){add('SET scrollTop','target='+describe(this)+' value='+v,true);return d.set.call(this,v);}});
-    }
-  }catch(e){add('HOOK_ERROR','scrollTop '+e,false);}
-
-  window.addEventListener('scroll',function(){add('SCROLL_WINDOW','',false);},{passive:true,capture:true});
-  document.addEventListener('pointerdown',function(e){if(e.target&&e.target.closest&&e.target.closest('.reader-popup-title')) add('POPUP pointerdown','target='+describe(e.target),false);},true);
-  document.addEventListener('click',function(e){
-    if(e.target&&e.target.closest&&e.target.closest('.reader-popup-title')) add('POPUP click','target='+describe(e.target),false);
-    if(e.target&&e.target.closest&&e.target.closest('.v31148-close')) add('POPUP close click','target='+describe(e.target),false);
-  },true);
-
-  var btn,panel,pre;
-  function refresh(){if(pre&&!panel.hidden) pre.textContent=entries.join('\n');}
-  function makeUI(){
-    if(document.getElementById('scrollSpyDiagButton')) return;
-    btn=document.createElement('button');
-    btn.id='scrollSpyDiagButton'; btn.type='button'; btn.textContent='DIAG';
-    btn.style.cssText='position:fixed;right:12px;bottom:74px;z-index:2147483647;padding:10px 13px;border:0;border-radius:999px;background:#173d70;color:white;font-weight:800;box-shadow:0 3px 12px #0007;font-size:13px;';
-    panel=document.createElement('div'); panel.id='scrollSpyDiagPanel'; panel.hidden=true;
-    panel.style.cssText='position:fixed;inset:3vh 3vw;z-index:2147483647;background:#fff;color:#111;border:2px solid #173d70;border-radius:14px;padding:10px;display:flex;flex-direction:column;box-shadow:0 8px 30px #0009;';
-    panel.innerHTML='<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><strong style="flex:1">Diagnóstico de scroll V3.1.156</strong><button type="button" data-copy>📋 Copiar</button><button type="button" data-clear>Limpiar</button><button type="button" data-close>✕</button></div><pre style="flex:1;overflow:auto;white-space:pre-wrap;word-break:break-word;margin:0;padding:8px;background:#f3f5f7;border-radius:8px;font-size:11px"></pre>';
-    pre=panel.querySelector('pre');
-    btn.onclick=function(){panel.hidden=false;refresh();};
-    panel.querySelector('[data-close]').onclick=function(){panel.hidden=true;};
-    panel.querySelector('[data-clear]').onclick=function(){entries.length=0;seq=0;t0=performance.now();add('LOG_CLEARED','',false);};
-    panel.querySelector('[data-copy]').onclick=async function(){
-      var text=entries.join('\n');
-      try{await navigator.clipboard.writeText(text);this.textContent='✅ Copiado';}
-      catch(e){var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();this.textContent='✅ Copiado';}
-      var self=this;setTimeout(function(){self.textContent='📋 Copiar';},1400);
-    };
-    document.body.appendChild(btn);document.body.appendChild(panel);
-    add('DIAG_READY','button visible',false);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',makeUI,{once:true}); else makeUI();
-})();
-
 /* Oraciones V3 LAB - app.js paso 45: limpieza render de versículos */
 
 /* ===== PWA / INSTALACIÓN ===== */
@@ -11511,38 +11419,39 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     window.openReaderPopupBlockV908=function(idx){
       var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
-      pending=null; active=p; currentIndex=idx;
+      pending=null; active=p; currentIndex=idx; lock(p);
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){active=null;alert('No se ha encontrado este bloque emergente.');return;}
+        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
         var el=ensureOverlay();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
         el.querySelector('.v31148-popup-title').innerHTML=title;
         el.querySelector('.v31148-popup-content').innerHTML=body;
         el.querySelector('.v31148-popup-content').scrollTop=0;
-        /* V3.1.154: prueba final totalmente neutra. El overlay ya existe desde
-           la carga y al abrir no se modifica overflow, position, height,
-           scrollTop ni se ejecuta ninguna restauración del documento. Solo se
-           actualiza el contenido y se cambia la clase de visibilidad. */
         el.classList.add('v31148-visible');
         el.setAttribute('aria-hidden','false');
+        stabilize(p);
       }catch(e){
-        console.error('openReaderPopupBlockV31154',e);
-        active=null;
+        console.error('openReaderPopupBlockV31148',e);
+        unlock(p);restoreOnlyIfNeeded(p);active=null;
       }
     };
 
     window.closeReaderPopupBlockV908=function(){
-      /* Al cerrar tampoco se corrige ni se restaura el scroll: únicamente se
-         vuelve invisible el overlay que permanece siempre montado en el DOM. */
+      var p=active;
       cancelTimers();
       var el=ensureOverlay();
       el.classList.remove('v31148-visible');
       el.setAttribute('aria-hidden','true');
+      if(p){
+        unlock(p);
+        restoreOnlyIfNeeded(p);
+        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
+      }
       active=null;
     };
 
