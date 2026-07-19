@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_153_emergente_fondo_inmovil.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_167_rescate_emergentes_guardados.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -11461,4 +11461,69 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,380);},{once:true});
   else setTimeout(install,380);
+})();
+
+/* ===== V3.1.167 - MODO RESCATE DE EMERGENTES GUARDADOS ===== */
+(function(){
+  'use strict';
+  function getCurrentTextSafe(){
+    try{
+      var item=(typeof currentItem==='function') ? currentItem() : null;
+      if(!item) return '';
+      return String(section==='verses' ? (item.text||item.content||'') : (item.content||''));
+    }catch(e){ return ''; }
+  }
+  function parseSafe(text){
+    var raw=String(text||''), blocks=[];
+    var re=/\[emergente\s+titulo="([^"]*)"\]([\s\S]*?)\[\/emergente\]/gi, m, guard=0;
+    while((m=re.exec(raw)) && guard++<500){
+      blocks.push({title:m[1]||'Emergente',body:m[2]||''});
+      if(re.lastIndex===m.index) re.lastIndex++;
+    }
+    return blocks;
+  }
+  function removeOverlay(){
+    var old=document.getElementById('readerPopupOverlayV908');
+    if(old && old.parentNode) old.parentNode.removeChild(old);
+  }
+  window.closeReaderPopupBlockV908=function(){ removeOverlay(); };
+  window.openReaderPopupBlockV908=function(idx){
+    try{
+      var before=window.scrollY||document.documentElement.scrollTop||0;
+      var blocks=parseSafe(getCurrentTextSafe());
+      var b=blocks[Number(idx)];
+      if(!b){ alert('No se ha encontrado este bloque emergente.'); return; }
+      removeOverlay();
+      var overlay=document.createElement('div');
+      overlay.id='readerPopupOverlayV908';
+      overlay.className='reader-popup-overlay-v908 v31148-persistent v31167-rescue';
+      var card=document.createElement('div');
+      card.className='reader-popup-card-v908';
+      card.setAttribute('role','dialog');
+      card.setAttribute('aria-modal','true');
+      var h=document.createElement('h3');
+      h.textContent=String(b.title||'Emergente');
+      var content=document.createElement('div');
+      content.className='reader-popup-content-v908 v31148-popup-content';
+      content.style.whiteSpace='pre-wrap';
+      content.style.overflowWrap='anywhere';
+      content.textContent=String(b.body||'');
+      var actions=document.createElement('div');
+      actions.className='reader-popup-actions-v913';
+      var close=document.createElement('button');
+      close.className='btn primary'; close.type='button'; close.textContent='Cerrar';
+      close.addEventListener('click',window.closeReaderPopupBlockV908,{once:true});
+      actions.appendChild(close); card.appendChild(h); card.appendChild(content); card.appendChild(actions); overlay.appendChild(card);
+      overlay.addEventListener('click',function(ev){if(ev.target===overlay) window.closeReaderPopupBlockV908();});
+      document.body.appendChild(overlay);
+      overlay.classList.add('v31148-visible');
+      requestAnimationFrame(function(){
+        var now=window.scrollY||document.documentElement.scrollTop||0;
+        if(Math.abs(now-before)>0.5) window.scrollTo(0,before);
+      });
+    }catch(e){
+      console.error('V3.1.167 rescue popup',e);
+      alert('No se pudo abrir este emergente. Puede estar dañado, pero sus datos no se han borrado.');
+    }
+  };
 })();

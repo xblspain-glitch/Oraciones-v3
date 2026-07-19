@@ -1,8 +1,8 @@
 {
-  "name": "Oraciones V3 Prueba Aislada",
-  "short_name": "Oraciones Prueba",
-  "id": "./oraciones-v3-prueba-aislada-166",
-  "start_url": "./?v=oraciones-v3-1-166-prueba-aislada",
+  "name": "Oraciones V3",
+  "short_name": "Oraciones V3",
+  "id": "./oraciones-v3-lab",
+  "start_url": "./?v=oraciones-v3-1-110-category-first-groups",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
