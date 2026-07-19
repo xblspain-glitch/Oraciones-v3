@@ -8797,7 +8797,7 @@ setInterval(updateVersePositionCounter, 1000);
       if(lines.length===1 && /^#{1,3}\s+/.test(line)){
         return '<h2>'+inlineFormatV3166(line.replace(/^#{1,3}\s+/,""))+'</h2>';
       }
-      if(lines.length===1 && /^(📖|🙏|📝|🌿|✝️|🌱|💡|📜|❤️|🕊️|🌍|⭐|👉|→)\s*/.test(line) && line.length<120){
+      if(lines.length===1 && /^(📖|🙏|📝|🌿|✝️|🌱|💡|📜|❤️|🕊️|🌍|⭐|👉)\s*/.test(line) && line.length<120){
         return '<h2>'+inlineFormatV3166(line)+'</h2>';
       }
       if(lines.every(function(x){return /^\s*[-•]\s+/.test(x)})){
@@ -10885,6 +10885,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   }
 
   function convertLegacyNumbers(text){
+    text=String(text||'').replace(/👉|➡️/g,'→');
     KEYCAP_RUN.lastIndex=0;
     return String(text||'').replace(KEYCAP_RUN,function(run){
       var digits=run.replace(KEYCAP_DIGIT,'$1');
@@ -10895,7 +10896,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   function notesWithLegacyNumbers(){
     if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
     return state.notes.filter(function(note){
-      return note && hasLegacyNumber(note.content);
+      return note && (hasLegacyNumber(note.content)||/👉|➡️/.test(String(note.content||'')));
     });
   }
 
@@ -10913,8 +10914,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var accept=window.confirm(
       'Se ha detectado una numeración antigua en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
-      '¿Desea actualizar automáticamente la numeración y las flechas antiguas?\n\n'+
-      'Se convertirán 1️⃣→1. y 👉/➡️→→'
+      '¿Desea actualizar automáticamente la numeración y las flechas al nuevo formato?\n\n'+
+      'Ejemplos:\n1️⃣ → 1.\n👉 → →\n➡️ → →'
     );
 
     if(!accept){
@@ -10924,7 +10925,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var changed=0;
     affected.forEach(function(note){
-      var converted=convertLegacyNumbers(note.content).replace(/➡️/g,"→").replace(/👉/g,"→");
+      var converted=convertLegacyNumbers(note.content);
       if(converted!==String(note.content||'')){
         note.content=converted;
         note.updatedAt=Date.now();
