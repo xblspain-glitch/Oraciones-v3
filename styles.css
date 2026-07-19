@@ -3826,23 +3826,3 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
 }
-
-/* ===== V3.1.158 - Sin restauradores de scroll ni ajuste de anclaje ===== */
-#readerPopupOverlayV908.v31148-persistent{
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  transform:none !important;
-  contain:none !important;
-  transition:none !important;
-  animation:none !important;
-}
-#readerPopupOverlayV908.v31148-persistent.v31148-visible{
-  transition:none !important;
-}
-#readerPopupOverlayV908.v31148-persistent .reader-popup-card-v908{
-  transform:none !important;
-  contain:none !important;
-  transition:none !important;
-  animation:none !important;
-  will-change:auto !important;
-}

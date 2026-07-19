@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_158_emergente_sin_restauradores.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_159_emergente_sin_paneo_foco.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -6431,7 +6431,7 @@ setInterval(updateVersePositionCounter, 1000);
         dIdx++;
       }else{
         out += '<div class="reader-popup-block" data-popup-index="'+pIdx+'">' +
-          '<button class="reader-popup-title" type="button" onclick="openReaderPopupBlockV908('+pIdx+')">'+title+'</button>' +
+          '<button class="reader-popup-title" type="button" data-popup-open-index="'+pIdx+'">'+title+'</button>' +
           '<div class="block-controls-v865">' +
           '<button class="block-mini-v865" type="button" onclick="event.preventDefault();event.stopPropagation();editPopupBlockV908('+pIdx+')">✏️ Editar</button>' +
           '<button class="block-mini-v865 danger" type="button" onclick="event.preventDefault();event.stopPropagation();deletePopupBlockV908('+pIdx+')">🗑️ Eliminar</button>' +
@@ -11418,45 +11418,41 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     ensureOverlay();
 
     window.openReaderPopupBlockV908=function(idx){
-      /* V3.1.158: no capturar ni restaurar scroll. La V3.1.153 guardaba la
-         posición en pointerdown y después la imponía de nuevo al abrir. En
-         Android/WebView el botón recibe foco al completar el toque y el
-         contenedor puede ajustarse unos píxeles; los restauradores de la 153
-         peleaban contra ese ajuste nativo y producían el movimiento visible. */
-      pending=null;
-      active=null;
-      currentIndex=idx;
-      cancelTimers();
+      var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
+      pending=null; active=p; currentIndex=idx; lock(p);
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){alert('No se ha encontrado este bloque emergente.');return;}
+        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
         var el=ensureOverlay();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
         el.querySelector('.v31148-popup-title').innerHTML=title;
         el.querySelector('.v31148-popup-content').innerHTML=body;
         el.querySelector('.v31148-popup-content').scrollTop=0;
-        try{
-          var focused=document.activeElement;
-          if(focused && focused.classList && focused.classList.contains('reader-popup-title')) focused.blur();
-        }catch(e){}
         el.classList.add('v31148-visible');
         el.setAttribute('aria-hidden','false');
+        stabilize(p);
       }catch(e){
-        console.error('openReaderPopupBlockV31158',e);
+        console.error('openReaderPopupBlockV31148',e);
+        unlock(p);restoreOnlyIfNeeded(p);active=null;
       }
     };
 
     window.closeReaderPopupBlockV908=function(){
+      var p=active;
       cancelTimers();
       var el=ensureOverlay();
       el.classList.remove('v31148-visible');
       el.setAttribute('aria-hidden','true');
+      if(p){
+        unlock(p);
+        restoreOnlyIfNeeded(p);
+        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
+      }
       active=null;
-      pending=null;
     };
 
     try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
@@ -11465,4 +11461,75 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,380);},{once:true});
   else setTimeout(install,380);
+})();
+
+
+/* ===== V3.1.159 - Activación táctil sin foco ni paneo del viewport visual ===== */
+(function(){
+  if(window.__v31159PopupNoFocusPan) return;
+  window.__v31159PopupNoFocusPan=true;
+
+  var gesture=null;
+
+  function popupButton(target){
+    try{return target && target.closest ? target.closest('.reader-popup-title[data-popup-open-index]') : null;}
+    catch(e){return null;}
+  }
+
+  function popupIndex(btn){
+    var n=parseInt(btn.getAttribute('data-popup-open-index'),10);
+    return Number.isFinite(n) ? n : -1;
+  }
+
+  /* Cancelar el comportamiento predeterminado desde pointerdown es la parte
+     esencial: Android/WebView no llega a enfocar el botón ni a desplazar el
+     visualViewport para colocarlo. La apertura se realiza manualmente al
+     terminar un toque corto. */
+  document.addEventListener('pointerdown',function(ev){
+    if(ev.pointerType==='mouse') return;
+    var btn=popupButton(ev.target);
+    if(!btn) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    gesture={
+      id:ev.pointerId,
+      btn:btn,
+      index:popupIndex(btn),
+      x:ev.clientX,
+      y:ev.clientY,
+      moved:false
+    };
+    try{btn.setPointerCapture(ev.pointerId);}catch(e){}
+  },true);
+
+  document.addEventListener('pointermove',function(ev){
+    if(!gesture || ev.pointerId!==gesture.id) return;
+    if(Math.abs(ev.clientX-gesture.x)>10 || Math.abs(ev.clientY-gesture.y)>10) gesture.moved=true;
+    ev.preventDefault();
+  },true);
+
+  document.addEventListener('pointerup',function(ev){
+    if(!gesture || ev.pointerId!==gesture.id) return;
+    var g=gesture; gesture=null;
+    ev.preventDefault();
+    ev.stopPropagation();
+    try{g.btn.releasePointerCapture(ev.pointerId);}catch(e){}
+    if(!g.moved && g.index>=0 && typeof window.openReaderPopupBlockV908==='function'){
+      window.openReaderPopupBlockV908(g.index);
+    }
+  },true);
+
+  document.addEventListener('pointercancel',function(ev){
+    if(gesture && ev.pointerId===gesture.id) gesture=null;
+  },true);
+
+  /* Ratón y teclado conservan click normal, pero sin onclick inline. */
+  document.addEventListener('click',function(ev){
+    var btn=popupButton(ev.target);
+    if(!btn) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    var idx=popupIndex(btn);
+    if(idx>=0 && typeof window.openReaderPopupBlockV908==='function') window.openReaderPopupBlockV908(idx);
+  },true);
 })();
