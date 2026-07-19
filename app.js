@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_162_diagnostico_apertura_real.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_163_emergente_sin_boton_nativo.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -6431,7 +6431,7 @@ setInterval(updateVersePositionCounter, 1000);
         dIdx++;
       }else{
         out += '<div class="reader-popup-block" data-popup-index="'+pIdx+'">' +
-          '<button class="reader-popup-title" type="button" onclick="openReaderPopupBlockV908('+pIdx+')">'+title+'</button>' +
+          '<span class="reader-popup-title" role="button" tabindex="0" data-popup-index="'+pIdx+'">'+title+'</span>' +
           '<div class="block-controls-v865">' +
           '<button class="block-mini-v865" type="button" onclick="event.preventDefault();event.stopPropagation();editPopupBlockV908('+pIdx+')">✏️ Editar</button>' +
           '<button class="block-mini-v865 danger" type="button" onclick="event.preventDefault();event.stopPropagation();deletePopupBlockV908('+pIdx+')">🗑️ Eliminar</button>' +
@@ -11464,57 +11464,78 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.162 - Diagnóstico exacto de apertura/cierre del emergente ===== */
+/* ===== V3.1.163 - Disparador no nativo y apertura sin alterar window ===== */
 (function(){
-  if(window.__v31162Diag) return;
-  window.__v31162Diag=true;
-  var rows=[], seq=0, openNo=0, closeNo=0, active=false, rafLeft=0, interval=null;
-  function n(v){return typeof v==='number'&&isFinite(v)?Math.round(v*100)/100:null;}
-  function anchor(){
-    var els=document.elementsFromPoint(Math.max(10,innerWidth/2),Math.max(80,innerHeight*.42));
-    return els.find(function(el){return el && !el.closest('#readerPopupOverlayV908') && el.matches && el.matches('p,div.reader-text,div.reader-title,h1,h2,h3,li');}) || null;
+  if(window.__v31163PopupTrigger) return;
+  window.__v31163PopupTrigger=true;
+
+  function triggerFrom(target){
+    try{return target && target.closest ? target.closest('.reader-popup-title[data-popup-index]') : null;}
+    catch(e){return null;}
   }
-  function shot(label,ev){
-    if(!active && !/^trigger/.test(label)) return;
-    var ov=document.getElementById('readerPopupOverlayV908');
-    var card=ov&&ov.querySelector('.reader-popup-card-v908');
-    var a=anchor(), ar=a&&a.getBoundingClientRect(), or=ov&&ov.getBoundingClientRect(), cr=card&&card.getBoundingClientRect();
-    var root=document.scrollingElement||document.documentElement;
-    rows.push({i:++seq,t:Math.round(performance.now()),label:label,event:ev||'',openNo:openNo,closeNo:closeNo,
-      winY:n(window.scrollY),rootTop:n(root.scrollTop),innerH:n(innerHeight),vvTop:window.visualViewport?n(visualViewport.offsetTop):null,vvH:window.visualViewport?n(visualViewport.height):null,
-      overlayClass:ov?ov.className:'none',overlayVisibility:ov?getComputedStyle(ov).visibility:null,overlayOpacity:ov?getComputedStyle(ov).opacity:null,
-      overlayTop:or?n(or.top):null,cardTop:cr?n(cr.top):null,cardBottom:cr?n(cr.bottom):null,
-      focus:document.activeElement?(document.activeElement.tagName.toLowerCase()+'#'+(document.activeElement.id||'')+'.'+(document.activeElement.className||'')):null,
-      anchor:a?(a.tagName.toLowerCase()+'#'+(a.id||'')+'.'+(a.className||'')):null,anchorTop:ar?n(ar.top):null,anchorBottom:ar?n(ar.bottom):null});
+  function openTrigger(el){
+    if(!el) return;
+    var idx=parseInt(el.getAttribute('data-popup-index'),10);
+    if(Number.isFinite(idx) && typeof window.openReaderPopupBlockV908==='function') window.openReaderPopupBlockV908(idx);
   }
-  function burst(prefix){
-    rafLeft=24;
-    function f(){ if(!active&&rafLeft<20)return; shot(prefix+':raf'+(25-rafLeft),'raf'); if(--rafLeft>0) requestAnimationFrame(f); }
-    requestAnimationFrame(f);
-    [0,20,50,90,120,180,260,400].forEach(function(ms){setTimeout(function(){shot(prefix+':t'+ms,'timeout');},ms);});
-  }
-  function start(){
-    if(openNo===0){rows=[];seq=0;closeNo=0;}
-    openNo++; active=true; shot('trigger:popup-button','pointer/click'); burst('open'+openNo);
-    clearInterval(interval); interval=setInterval(function(){shot('sample','interval');},35);
-  }
-  function finish(){
-    if(!active)return; closeNo++; shot('trigger:close','click'); burst('close'+closeNo);
-    setTimeout(function(){
-      active=false; clearInterval(interval); interval=null; shot('capture-end','');
-      if(closeNo>=2){
-        var head='V3.1.162 DIAGNOSTICO APERTURA REAL\nUA: '+navigator.userAgent+'\nDPR: '+devicePixelRatio+'\nFecha: '+new Date().toISOString()+'\n';
-        var txt=head+rows.map(function(r){return JSON.stringify(r);}).join('\n');
-        navigator.clipboard&&navigator.clipboard.writeText(txt).then(function(){alert('Diagnóstico exacto copiado');},function(){prompt('Copia el diagnóstico:',txt);});
+
+  document.addEventListener('click',function(ev){
+    var el=triggerFrom(ev.target); if(!el) return;
+    ev.preventDefault(); ev.stopPropagation(); openTrigger(el);
+  },true);
+  document.addEventListener('keydown',function(ev){
+    var el=triggerFrom(ev.target); if(!el || (ev.key!=='Enter' && ev.key!==' ')) return;
+    ev.preventDefault(); ev.stopPropagation(); openTrigger(el);
+  },true);
+
+  function install(){
+    var currentIndex=-1;
+    function ensure(){
+      var el=document.getElementById('readerPopupOverlayV908');
+      if(!el){
+        el=document.createElement('div');
+        el.id='readerPopupOverlayV908';
+        document.body.appendChild(el);
       }
-    },500);
+      el.className='reader-popup-overlay-v908 v31148-persistent';
+      el.setAttribute('aria-hidden','true');
+      if(!el.querySelector('.v31148-popup-content')){
+        el.innerHTML='<div class="reader-popup-card-v908" role="dialog" aria-modal="true">'+
+          '<h3 class="v31148-popup-title"></h3><div class="reader-popup-content-v908 v31148-popup-content"></div>'+
+          '<div class="reader-popup-actions-v913"><button class="btn soft v31148-edit" type="button">✏️ Editar</button>'+
+          '<button class="btn soft danger v31148-delete" type="button">🗑️ Eliminar</button>'+
+          '<button class="btn primary v31148-close" type="button">Cerrar</button></div></div>';
+      }
+      if(!el.__v31163Bound){
+        el.__v31163Bound=true;
+        el.addEventListener('click',function(ev){
+          if(ev.target===el || ev.target.closest('.v31148-close')) window.closeReaderPopupBlockV908();
+          else if(ev.target.closest('.v31148-edit')){var i=currentIndex;window.closeReaderPopupBlockV908();if(typeof window.editPopupBlockV908==='function')window.editPopupBlockV908(i);}
+          else if(ev.target.closest('.v31148-delete')){var j=currentIndex;window.closeReaderPopupBlockV908();if(typeof window.deletePopupBlockV908==='function')window.deletePopupBlockV908(j);}
+        });
+      }
+      return el;
+    }
+
+    window.openReaderPopupBlockV908=function(idx){
+      currentIndex=idx;
+      var text=''; try{text=getCurrentContentTextV865();}catch(e){}
+      var blocks=(typeof parsePopupBlocksV908==='function')?parsePopupBlocksV908(text):[];
+      var b=blocks[idx]; if(!b){alert('No se ha encontrado este bloque emergente.');return;}
+      var el=ensure();
+      var title=(typeof escapeHtml==='function')?escapeHtml(b.title||'Emergente'):String(b.title||'Emergente');
+      var body=(typeof highlightBibleReferencesV49==='function')?highlightBibleReferencesV49(b.body||''):((typeof escapeHtml==='function')?escapeHtml(b.body||''):String(b.body||''));
+      el.querySelector('.v31148-popup-title').innerHTML=title;
+      var content=el.querySelector('.v31148-popup-content'); content.innerHTML=body; content.scrollTop=0;
+      el.classList.add('v31148-visible'); el.setAttribute('aria-hidden','false');
+    };
+    window.closeReaderPopupBlockV908=function(){
+      var el=ensure(); el.classList.remove('v31148-visible'); el.setAttribute('aria-hidden','true');
+    };
+    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
+    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
+    ensure();
   }
-  document.addEventListener('pointerdown',function(e){if(e.target&&e.target.closest&&e.target.closest('.reader-popup-title')) start();},true);
-  document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('#readerPopupOverlayV908 .v31148-close')) finish();},true);
-  window.addEventListener('scroll',function(){shot('window:scroll','scroll');},true);
-  window.addEventListener('resize',function(){shot('window:resize','resize');},true);
-  if(window.visualViewport){visualViewport.addEventListener('scroll',function(){shot('vv:scroll','scroll');});visualViewport.addEventListener('resize',function(){shot('vv:resize','resize');});}
-  var mo=new MutationObserver(function(ms){ms.forEach(function(m){if(m.target&&m.target.id==='readerPopupOverlayV908')shot('overlay:mutation:'+m.attributeName,'mutation');});});
-  function observe(){var ov=document.getElementById('readerPopupOverlayV908');if(ov)mo.observe(ov,{attributes:true,attributeFilter:['class','style','aria-hidden']});else setTimeout(observe,100);}
-  observe();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,520);},{once:true});
+  else setTimeout(install,520);
 })();

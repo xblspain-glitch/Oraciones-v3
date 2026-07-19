@@ -3826,3 +3826,8 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
 }
+
+
+/* V3.1.163 - el disparador ya no es un botón nativo */
+span.reader-popup-title[role="button"]{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+span.reader-popup-title[role="button"]:focus-visible{outline:2px solid currentColor!important;outline-offset:2px;}
