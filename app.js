@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_148_emergente_persistente.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_153_emergente_fondo_inmovil.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -11228,7 +11228,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();
 
-/* ===== V3.1.152 - Emergente persistente sin bloqueo overflow del scroll raíz ===== */
+/* ===== V3.1.153 - Emergente persistente con fondo inmóvil sin overflow:hidden ===== */
 (function(){
   if(window.__v31148StablePopup) return;
   window.__v31148StablePopup=true;
@@ -11357,6 +11357,62 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   document.addEventListener('pointerdown',preCapture,true);
   document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
   document.addEventListener('mousedown',preCapture,true);
+
+  /* V3.1.153: bloquear únicamente los gestos que intentarían desplazar el
+     documento situado detrás del emergente. No se cambia overflow, position,
+     height ni scrollTop del fondo, por lo que su posición permanece intacta. */
+  var lastTouchY=null;
+
+  function popupVisible(){
+    return !!(overlay && overlay.classList.contains('v31148-visible'));
+  }
+
+  function popupScrollerFrom(target){
+    try{return target && target.closest ? target.closest('.v31148-popup-content') : null;}catch(e){return null;}
+  }
+
+  document.addEventListener('touchstart',function(ev){
+    if(!popupVisible()) return;
+    var t=ev.touches && ev.touches[0];
+    lastTouchY=t ? t.clientY : null;
+  },{capture:true,passive:true});
+
+  document.addEventListener('touchmove',function(ev){
+    if(!popupVisible()) return;
+    var t=ev.touches && ev.touches[0];
+    var scroller=popupScrollerFrom(ev.target);
+    if(!t || !scroller){
+      ev.preventDefault();
+      return;
+    }
+
+    var y=t.clientY;
+    var dy=(lastTouchY===null) ? 0 : y-lastTouchY;
+    lastTouchY=y;
+    var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+    var atTop=scroller.scrollTop<=0;
+    var atBottom=scroller.scrollTop>=max-1;
+
+    /* Permitir el desplazamiento interno del texto, pero cortar el gesto al
+       llegar a sus extremos para que no se encadene con la página de fondo. */
+    if(max<=1 || (dy>0 && atTop) || (dy<0 && atBottom)){
+      ev.preventDefault();
+    }
+  },{capture:true,passive:false});
+
+  document.addEventListener('touchend',function(){lastTouchY=null;},{capture:true,passive:true});
+  document.addEventListener('touchcancel',function(){lastTouchY=null;},{capture:true,passive:true});
+
+  document.addEventListener('wheel',function(ev){
+    if(!popupVisible()) return;
+    var scroller=popupScrollerFrom(ev.target);
+    if(!scroller){ev.preventDefault();return;}
+    var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+    if(max<=1 || (ev.deltaY<0 && scroller.scrollTop<=0) ||
+       (ev.deltaY>0 && scroller.scrollTop>=max-1)){
+      ev.preventDefault();
+    }
+  },{capture:true,passive:false});
 
   function install(){
     ensureOverlay();
