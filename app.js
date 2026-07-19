@@ -8797,7 +8797,7 @@ setInterval(updateVersePositionCounter, 1000);
       if(lines.length===1 && /^#{1,3}\s+/.test(line)){
         return '<h2>'+inlineFormatV3166(line.replace(/^#{1,3}\s+/,""))+'</h2>';
       }
-      if(lines.length===1 && /^(📖|🙏|📝|🌿|✝️|🌱|💡|📜|❤️|🕊️|🌍|⭐|👉)\s*/.test(line) && line.length<120){
+      if(lines.length===1 && /^(📖|🙏|📝|🌿|✝️|🌱|💡|📜|❤️|🕊️|🌍|⭐|👉|→)\s*/.test(line) && line.length<120){
         return '<h2>'+inlineFormatV3166(line)+'</h2>';
       }
       if(lines.every(function(x){return /^\s*[-•]\s+/.test(x)})){
@@ -10913,8 +10913,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var accept=window.confirm(
       'Se ha detectado una numeración antigua en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
-      '¿Desea sustituir automáticamente los números emoji por números con punto y en negrita?\n\n'+
-      'Ejemplo: 1️⃣  →  1.'
+      '¿Desea actualizar automáticamente la numeración y las flechas antiguas?\n\n'+
+      'Se convertirán 1️⃣→1. y 👉/➡️→→'
     );
 
     if(!accept){
@@ -10924,7 +10924,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var changed=0;
     affected.forEach(function(note){
-      var converted=convertLegacyNumbers(note.content);
+      var converted=convertLegacyNumbers(note.content).replace(/➡️/g,"→").replace(/👉/g,"→");
       if(converted!==String(note.content||'')){
         note.content=converted;
         note.updatedAt=Date.now();
