@@ -3784,30 +3784,25 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
   .reader-recommendations-content-v31127,.reader-recommendations-arrow-v31127{transition:none!important}
 }
 
-/* ===== V3.1.148 - Emergente persistente y composición estable ===== */
-#readerPopupOverlayV908.v31148-persistent{
+/* ===== V3.1.149 - Popup persistente sin animación ni filtro de composición ===== */
+#readerPopupOverlayV908.v31149-persistent{
   visibility:hidden;
   opacity:0;
   pointer-events:none;
-  transition:opacity 120ms ease-out, visibility 0s linear 120ms !important;
   animation:none !important;
-  contain:layout paint style;
-  transform:translateZ(0);
-  backface-visibility:hidden;
+  transition:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  background:rgba(12,33,56,.42) !important;
 }
-#readerPopupOverlayV908.v31148-persistent.v31148-visible{
+#readerPopupOverlayV908.v31149-persistent.v31149-visible{
   visibility:visible;
   opacity:1;
   pointer-events:auto;
-  transition:opacity 120ms ease-out !important;
 }
-#readerPopupOverlayV908.v31148-persistent .reader-popup-card-v908{
+#readerPopupOverlayV908.v31149-persistent .reader-popup-card-v908{
   animation:none !important;
-  transform:translateZ(0) !important;
+  transition:none !important;
+  transform:none !important;
   will-change:auto !important;
-  backface-visibility:hidden;
-  contain:layout paint;
-}
-@media (prefers-reduced-motion:reduce){
-  #readerPopupOverlayV908.v31148-persistent{transition:none !important;}
 }

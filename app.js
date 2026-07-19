@@ -11078,329 +11078,110 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{ eval(name+'=window["'+name+'"]'); }catch(e){}
   }
 
-  wrapV31143('openReaderPopupBlockV908');
-  wrapV31143('closeReaderPopupBlockV908');
-  setTimeout(function(){
-    wrapV31143('openReaderPopupBlockV908');
-    wrapV31143('closeReaderPopupBlockV908');
-  },300);
 })();
 
-/* ===== V3.1.144 - Emergentes: conservar posición desde pointerdown ===== */
+/* ===== V3.1.149 - Emergente: secuencia única sin foco, scroll ni relayout forzado ===== */
 (function(){
-  if(window.__v31144PopupPointerScrollFix) return;
-  window.__v31144PopupPointerScrollFix = true;
+  if(window.__v31149PopupCleanFlow) return;
+  window.__v31149PopupCleanFlow=true;
 
-  var pendingSnapshot = null;
-  var activeSnapshot = null;
-  var restoreTimers = [];
-
-  function scrollHost(){
-    var content=document.querySelector('.content');
-    if(content && content.scrollHeight>content.clientHeight) return content;
-    return document.scrollingElement || document.documentElement;
-  }
-
-  function capture(){
-    var host=scrollHost();
-    var root=document.scrollingElement || document.documentElement;
-    return {
-      at:Date.now(),
-      host:host,
-      hostTop:host ? host.scrollTop : 0,
-      hostLeft:host ? host.scrollLeft : 0,
-      winX:window.pageXOffset || root.scrollLeft || 0,
-      winY:window.pageYOffset || root.scrollTop || 0,
-      hostOverflow:host && host.style ? host.style.overflow : '',
-      hostAnchor:host && host.style ? host.style.overflowAnchor : '',
-      rootAnchor:root.style.overflowAnchor || '',
-      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
-    };
-  }
-
-  function restore(pos){
-    if(!pos) return;
-    try{
-      if(pos.host){
-        pos.host.scrollLeft=pos.hostLeft;
-        pos.host.scrollTop=pos.hostTop;
-      }
-    }catch(e){}
-    try{window.scrollTo(pos.winX,pos.winY);}catch(e){}
-  }
-
-  function clearTimers(){
-    while(restoreTimers.length){
-      try{clearTimeout(restoreTimers.pop());}catch(e){}
-    }
-  }
-
-  function lock(pos){
-    if(!pos) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor='none';}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
-    try{
-      if(pos.host && pos.host.style){
-        pos.host.style.overflowAnchor='none';
-        pos.host.style.overflow='hidden';
-      }
-    }catch(e){}
-  }
-
-  function unlock(pos){
-    if(!pos) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor=pos.rootAnchor;}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor=pos.bodyAnchor;}catch(e){}
-    try{
-      if(pos.host && pos.host.style){
-        pos.host.style.overflow=pos.hostOverflow;
-        pos.host.style.overflowAnchor=pos.hostAnchor;
-      }
-    }catch(e){}
-  }
-
-  function keepPosition(pos){
-    clearTimers();
-    restore(pos);
-    [0,16,50,120,250,500,800].forEach(function(ms){
-      restoreTimers.push(setTimeout(function(){restore(pos);},ms));
-    });
-  }
-
-  function preCapture(ev){
-    try{
-      var btn=ev.target && ev.target.closest ? ev.target.closest('.reader-popup-title') : null;
-      if(!btn) return;
-      pendingSnapshot=capture();
-    }catch(e){}
-  }
-  document.addEventListener('pointerdown',preCapture,true);
-  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
-  document.addEventListener('mousedown',preCapture,true);
-
-  window.openReaderPopupBlockV908=function(idx){
-    try{
-      var pos=(pendingSnapshot && Date.now()-pendingSnapshot.at<1800) ? pendingSnapshot : capture();
-      pendingSnapshot=null;
-      activeSnapshot=pos;
-      lock(pos);
-
-      var text='';
-      try{text=getCurrentContentTextV865();}catch(e){text='';}
-      var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
-      var b=blocks[idx];
-      if(!b){unlock(pos);activeSnapshot=null;alert('No se ha encontrado este bloque emergente.');return;}
-
-      var old=document.getElementById('readerPopupOverlayV908');
-      if(old) old.remove();
-
-      var wrap=document.createElement('div');
-      wrap.id='readerPopupOverlayV908';
-      wrap.className='reader-popup-overlay-v908';
-      wrap.onclick=function(ev){if(ev.target===wrap)window.closeReaderPopupBlockV908();};
-      var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
-      var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
-      wrap.innerHTML='<div class="reader-popup-card-v908"><h3>'+title+'</h3><div class="reader-popup-content-v908">'+body+'</div><div class="reader-popup-actions-v913"><button class="btn soft" type="button" onclick="closeReaderPopupBlockV908(); editPopupBlockV908('+idx+')">✏️ Editar</button><button class="btn soft danger" type="button" onclick="closeReaderPopupBlockV908(); deletePopupBlockV908('+idx+')">🗑️ Eliminar</button><button class="btn primary" type="button" onclick="closeReaderPopupBlockV908()">Cerrar</button></div></div>';
-      document.body.appendChild(wrap);
-      keepPosition(pos);
-    }catch(e){
-      console.error('openReaderPopupBlockV31144',e);
-      if(activeSnapshot){unlock(activeSnapshot);restore(activeSnapshot);activeSnapshot=null;}
-    }
-  };
-
-  window.closeReaderPopupBlockV908=function(){
-    var pos=activeSnapshot;
-    clearTimers();
-    var el=document.getElementById('readerPopupOverlayV908');
-    if(el)el.remove();
-    if(pos){
-      unlock(pos);
-      restore(pos);
-      requestAnimationFrame(function(){restore(pos);requestAnimationFrame(function(){restore(pos);});});
-    }
-    activeSnapshot=null;
-  };
-
-  try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
-  try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
-})();
-
-/* ===== V3.1.148 - Emergente persistente, sin reconstrucción ni restauraciones visibles ===== */
-(function(){
-  if(window.__v31148StablePopup) return;
-  window.__v31148StablePopup=true;
-
-  var pending=null;
-  var active=null;
-  var timers=[];
   var overlay=null;
   var currentIndex=-1;
 
-  function host(){
-    var content=document.querySelector('.content');
-    if(content && content.scrollHeight>content.clientHeight) return content;
-    return document.scrollingElement || document.documentElement;
+  function htmlEscapeV31149(value){
+    if(typeof escapeHtml==='function') return escapeHtml(value);
+    return String(value==null?'':value)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
   }
 
-  function snap(){
-    var h=host();
-    var root=document.scrollingElement || document.documentElement;
-    return {
-      at:Date.now(), host:h,
-      top:h ? h.scrollTop : 0,
-      left:h ? h.scrollLeft : 0,
-      x:window.pageXOffset || root.scrollLeft || 0,
-      y:window.pageYOffset || root.scrollTop || 0,
-      overflow:h && h.style ? h.style.overflow : '',
-      anchor:h && h.style ? h.style.overflowAnchor : '',
-      rootAnchor:root.style.overflowAnchor || '',
-      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
-    };
-  }
-
-  function cancelTimers(){
-    while(timers.length){ try{clearTimeout(timers.pop());}catch(e){} }
-  }
-
-  function differs(p){
-    if(!p) return false;
-    try{
-      if(p.host && (Math.abs(p.host.scrollTop-p.top)>1 || Math.abs(p.host.scrollLeft-p.left)>1)) return true;
-      var root=document.scrollingElement || document.documentElement;
-      var x=window.pageXOffset || root.scrollLeft || 0;
-      var y=window.pageYOffset || root.scrollTop || 0;
-      return Math.abs(x-p.x)>1 || Math.abs(y-p.y)>1;
-    }catch(e){ return true; }
-  }
-
-  function restoreOnlyIfNeeded(p){
-    if(!p || !differs(p)) return;
-    try{ if(p.host){p.host.scrollTop=p.top;p.host.scrollLeft=p.left;} }catch(e){}
-    try{window.scrollTo(p.x,p.y);}catch(e){}
-  }
-
-  function lock(p){
-    if(!p) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor='none';}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
-    try{
-      if(p.host && p.host.style){
-        p.host.style.overflowAnchor='none';
-        p.host.style.overflow='hidden';
-      }
-    }catch(e){}
-  }
-
-  function unlock(p){
-    if(!p) return;
-    var root=document.scrollingElement || document.documentElement;
-    try{root.style.overflowAnchor=p.rootAnchor;}catch(e){}
-    try{if(document.body)document.body.style.overflowAnchor=p.bodyAnchor;}catch(e){}
-    try{
-      if(p.host && p.host.style){
-        p.host.style.overflow=p.overflow;
-        p.host.style.overflowAnchor=p.anchor;
-      }
-    }catch(e){}
-  }
-
-  function stabilize(p){
-    cancelTimers();
-    restoreOnlyIfNeeded(p);
-    requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},90));
-    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},260));
-  }
-
-  function ensureOverlay(){
+  function ensureOverlayV31149(){
     if(overlay && overlay.isConnected) return overlay;
     overlay=document.getElementById('readerPopupOverlayV908');
-    if(!overlay){
-      overlay=document.createElement('div');
-      overlay.id='readerPopupOverlayV908';
-      document.body.appendChild(overlay);
-    }
-    overlay.className='reader-popup-overlay-v908 v31148-persistent';
+    if(overlay) overlay.remove();
+
+    overlay=document.createElement('div');
+    overlay.id='readerPopupOverlayV908';
+    overlay.className='reader-popup-overlay-v908 v31149-persistent';
     overlay.setAttribute('aria-hidden','true');
-    overlay.innerHTML='<div class="reader-popup-card-v908" role="dialog" aria-modal="true">'+
-      '<h3 class="v31148-popup-title"></h3>'+
-      '<div class="reader-popup-content-v908 v31148-popup-content"></div>'+
+    overlay.innerHTML='<div class="reader-popup-card-v908" role="dialog">'+
+      '<h3 class="v31149-popup-title"></h3>'+
+      '<div class="reader-popup-content-v908 v31149-popup-content"></div>'+
       '<div class="reader-popup-actions-v913">'+
-      '<button class="btn soft v31148-edit" type="button">✏️ Editar</button>'+
-      '<button class="btn soft danger v31148-delete" type="button">🗑️ Eliminar</button>'+
-      '<button class="btn primary v31148-close" type="button">Cerrar</button>'+
+      '<button class="btn soft v31149-edit" type="button">✏️ Editar</button>'+
+      '<button class="btn soft danger v31149-delete" type="button">🗑️ Eliminar</button>'+
+      '<button class="btn primary v31149-close" type="button">Cerrar</button>'+
       '</div></div>';
+    document.body.appendChild(overlay);
+
     overlay.addEventListener('click',function(ev){
-      if(ev.target===overlay || ev.target.closest('.v31148-close')) window.closeReaderPopupBlockV908();
-      else if(ev.target.closest('.v31148-edit')){
-        var i=currentIndex; window.closeReaderPopupBlockV908();
+      if(ev.target===overlay || ev.target.closest('.v31149-close')){
+        window.closeReaderPopupBlockV908();
+      }else if(ev.target.closest('.v31149-edit')){
+        var i=currentIndex;
+        window.closeReaderPopupBlockV908();
         if(typeof window.editPopupBlockV908==='function') window.editPopupBlockV908(i);
-      }else if(ev.target.closest('.v31148-delete')){
-        var j=currentIndex; window.closeReaderPopupBlockV908();
+      }else if(ev.target.closest('.v31149-delete')){
+        var j=currentIndex;
+        window.closeReaderPopupBlockV908();
         if(typeof window.deletePopupBlockV908==='function') window.deletePopupBlockV908(j);
       }
     });
     return overlay;
   }
 
-  function preCapture(ev){
+  function removeButtonFocusV31149(ev){
+    var button=ev.target && ev.target.closest ? ev.target.closest('.reader-popup-title') : null;
+    if(!button) return;
+    try{button.blur();}catch(_e){}
+  }
+  // Captura justo antes del onclick inline. No cancela ni duplica el click.
+  document.addEventListener('click',removeButtonFocusV31149,true);
+
+  window.openReaderPopupBlockV908=function(idx){
     try{
-      if(ev.target && ev.target.closest && ev.target.closest('.reader-popup-title')) pending=snap();
-    }catch(e){}
-  }
-  document.addEventListener('pointerdown',preCapture,true);
-  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
-  document.addEventListener('mousedown',preCapture,true);
+      currentIndex=idx;
+      var text='';
+      try{text=getCurrentContentTextV865();}catch(_e){}
+      var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
+      var block=blocks[idx];
+      if(!block){alert('No se ha encontrado este bloque emergente.');return;}
 
-  function install(){
-    ensureOverlay();
+      var el=ensureOverlayV31149();
+      var titleNode=el.querySelector('.v31149-popup-title');
+      var contentNode=el.querySelector('.v31149-popup-content');
 
-    window.openReaderPopupBlockV908=function(idx){
-      var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
-      pending=null; active=p; currentIndex=idx; lock(p);
-      try{
-        var text='';
-        try{text=getCurrentContentTextV865();}catch(e){}
-        var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
-        var b=blocks[idx];
-        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
-        var el=ensureOverlay();
-        var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
-        var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
-        el.querySelector('.v31148-popup-title').innerHTML=title;
-        el.querySelector('.v31148-popup-content').innerHTML=body;
-        el.querySelector('.v31148-popup-content').scrollTop=0;
-        el.classList.add('v31148-visible');
-        el.setAttribute('aria-hidden','false');
-        stabilize(p);
-      }catch(e){
-        console.error('openReaderPopupBlockV31148',e);
-        unlock(p);restoreOnlyIfNeeded(p);active=null;
-      }
-    };
+      // El contenido se prepara fuera del DOM visible y se sustituye una sola vez.
+      var template=document.createElement('template');
+      var bodyHtml=(typeof highlightBibleReferencesV49==='function')
+        ? highlightBibleReferencesV49(block.body||'')
+        : htmlEscapeV31149(block.body||'');
+      template.innerHTML=bodyHtml;
 
-    window.closeReaderPopupBlockV908=function(){
-      var p=active;
-      cancelTimers();
-      var el=ensureOverlay();
-      el.classList.remove('v31148-visible');
-      el.setAttribute('aria-hidden','true');
-      if(p){
-        unlock(p);
-        restoreOnlyIfNeeded(p);
-        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-      }
-      active=null;
-    };
+      titleNode.textContent=block.title||'Emergente';
+      contentNode.replaceChildren(template.content.cloneNode(true));
+      contentNode.scrollTop=0;
 
-    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
-    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
+      // Única escritura que hace visible el popup. No se toca body, lector ni scroll.
+      el.classList.add('v31149-visible');
+      el.setAttribute('aria-hidden','false');
+    }catch(e){
+      console.error('openReaderPopupBlockV31149',e);
+    }
+  };
+
+  window.closeReaderPopupBlockV908=function(){
+    var el=ensureOverlayV31149();
+    el.classList.remove('v31149-visible');
+    el.setAttribute('aria-hidden','true');
+  };
+
+  function installV31149(){
+    ensureOverlayV31149();
+    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(_e){}
+    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(_e){}
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,380);},{once:true});
-  else setTimeout(install,380);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',installV31149,{once:true});
+  else installV31149();
 })();
