@@ -10870,12 +10870,13 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.140 - Migración única de flechas antiguas en Notas ===== */
+/* ===== V3.1.140 - Migración única de flechas antiguas en Notas y Guía ===== */
 (function(){
-  if(window.__v31140NoteArrowMigrationInstalled) return;
-  window.__v31140NoteArrowMigrationInstalled=true;
+  if(window.__v31140NoteGuideArrowMigrationInstalled) return;
+  window.__v31140NoteGuideArrowMigrationInstalled=true;
 
-  var MIGRATION_KEY='oraciones_note_arrows_migration_v3140_definitiva';
+  /* Clave nueva: permite ejecutar esta ampliación aunque la migración anterior de Notas ya se completara. */
+  var MIGRATION_KEY='oraciones_note_guide_arrows_migration_v3140_definitiva';
   var LEGACY_ARROW=/(?:👉|➡\uFE0F?)/g;
 
   function hasLegacyArrow(text){
@@ -10888,14 +10889,20 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     return String(text||'').replace(LEGACY_ARROW,'→');
   }
 
-  function notesWithLegacyArrows(){
-    if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
-    var out=[];
-    state.notes.filter(function(note){ if(note&&hasLegacyArrow(note.content)){ note.__mig='notes'; out.push(note);} });
-    if(Array.isArray(state.guides)){
-      state.guides.filter(function(note){ if(note&&hasLegacyArrow(note.content)){ note.__mig='guides'; out.push(note);} });
+  function collectAffected(){
+    var affected=[];
+    if(typeof state==='undefined' || !state) return affected;
+
+    function addItems(items,kind){
+      if(!Array.isArray(items)) return;
+      items.forEach(function(item){
+        if(item && hasLegacyArrow(item.content)) affected.push({item:item,kind:kind});
+      });
     }
-    return out;
+
+    addItems(state.notes,'nota');
+    addItems(state.guides,'guía');
+    return affected;
   }
 
   function markHandled(value){
@@ -10907,11 +10914,17 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       if(localStorage.getItem(MIGRATION_KEY)) return;
     }catch(e){}
 
-    var affected=notesWithLegacyArrows();
+    var affected=collectAffected();
     if(!affected.length) return;
 
+    var noteCount=affected.filter(function(x){return x.kind==='nota';}).length;
+    var guideCount=affected.filter(function(x){return x.kind==='guía';}).length;
+    var parts=[];
+    if(noteCount) parts.push(noteCount+' nota'+(noteCount===1?'':'s'));
+    if(guideCount) parts.push(guideCount+' guía'+(guideCount===1?'':'s'));
+
     var accept=window.confirm(
-      'Se han detectado flechas antiguas en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
+      'Se han detectado flechas antiguas en '+parts.join(' y ')+'.\n\n'+
       '¿Desea sustituir automáticamente 👉 y ➡️ por la flecha sencilla →?'
     );
 
@@ -10920,20 +10933,23 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       return;
     }
 
-    var changed=0;
-    affected.forEach(function(note){
-      var converted=convertLegacyArrows(note.content);
-      if(converted!==String(note.content||'')){
-        note.content=converted;
-        note.updatedAt=Date.now();
-        changed++;
+    var changedNotes=0;
+    var changedGuides=0;
+    affected.forEach(function(entry){
+      var item=entry.item;
+      var converted=convertLegacyArrows(item.content);
+      if(converted!==String(item.content||'')){
+        item.content=converted;
+        item.updatedAt=Date.now();
+        if(entry.kind==='nota') changedNotes++;
+        else changedGuides++;
       }
     });
 
-    if(changed){
+    if(changedNotes || changedGuides){
       try{if(typeof saveState==='function') saveState();}catch(e){console.error('No se pudo guardar la migración de flechas',e);}
       try{
-        if(typeof section!=='undefined' && (section==='notes'||section==='guides')){
+        if(typeof section!=='undefined' && (section==='notes' || section==='guides')){
           if(typeof renderList==='function') renderList();
           if(typeof renderReader==='function') renderReader();
         }
@@ -10941,7 +10957,10 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     }
 
     markHandled('updated');
-    window.alert('✓ Se han actualizado correctamente '+changed+' nota'+(changed===1?'':'s')+'.');
+    var updatedParts=[];
+    if(changedNotes) updatedParts.push(changedNotes+' nota'+(changedNotes===1?'':'s'));
+    if(changedGuides) updatedParts.push(changedGuides+' guía'+(changedGuides===1?'':'s'));
+    window.alert('✓ Se han actualizado correctamente '+updatedParts.join(' y ')+'.');
   }
 
   function init(){window.setTimeout(runMigrationPrompt,700);}
