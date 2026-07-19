@@ -3783,18 +3783,3 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
 @media (prefers-reduced-motion:reduce){
   .reader-recommendations-content-v31127,.reader-recommendations-arrow-v31127{transition:none!important}
 }
-
-
-/* ===== V3.1.145 - Emergentes sin temblor ocasional ===== */
-.reader-popup-overlay-v908{
-  animation:popupOverlayFadeV90183 120ms ease-out both !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  contain:layout paint style;
-}
-.reader-popup-overlay-v908 .reader-popup-card-v908{
-  animation:popupOverlayFadeV90183 120ms ease-out both !important;
-  transform:none !important;
-  will-change:auto !important;
-  contain:layout paint;
-}

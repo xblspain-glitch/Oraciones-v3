@@ -11093,7 +11093,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   var pendingSnapshot = null;
   var activeSnapshot = null;
-  var restoreFrame = 0;
+  var restoreTimers = [];
 
   function scrollHost(){
     var content=document.querySelector('.content');
@@ -11111,6 +11111,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       hostLeft:host ? host.scrollLeft : 0,
       winX:window.pageXOffset || root.scrollLeft || 0,
       winY:window.pageYOffset || root.scrollTop || 0,
+      hostOverflow:host && host.style ? host.style.overflow : '',
       hostAnchor:host && host.style ? host.style.overflowAnchor : '',
       rootAnchor:root.style.overflowAnchor || '',
       bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
@@ -11129,9 +11130,8 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   }
 
   function clearTimers(){
-    if(restoreFrame){
-      try{cancelAnimationFrame(restoreFrame);}catch(e){}
-      restoreFrame=0;
+    while(restoreTimers.length){
+      try{clearTimeout(restoreTimers.pop());}catch(e){}
     }
   }
 
@@ -11143,6 +11143,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{
       if(pos.host && pos.host.style){
         pos.host.style.overflowAnchor='none';
+        pos.host.style.overflow='hidden';
       }
     }catch(e){}
   }
@@ -11154,19 +11155,17 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{if(document.body)document.body.style.overflowAnchor=pos.bodyAnchor;}catch(e){}
     try{
       if(pos.host && pos.host.style){
+        pos.host.style.overflow=pos.hostOverflow;
         pos.host.style.overflowAnchor=pos.hostAnchor;
       }
     }catch(e){}
   }
 
   function keepPosition(pos){
-    // Una restauración inmediata y otra al terminar el primer layout.
-    // Evita la cadena de correcciones tardías que podía producir un temblor visible.
     clearTimers();
     restore(pos);
-    restoreFrame=requestAnimationFrame(function(){
-      restoreFrame=0;
-      restore(pos);
+    [0,16,50,120,250,500,800].forEach(function(ms){
+      restoreTimers.push(setTimeout(function(){restore(pos);},ms));
     });
   }
 
