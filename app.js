@@ -11078,10 +11078,88 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{ eval(name+'=window["'+name+'"]'); }catch(e){}
   }
 
-  wrapV31143('openReaderPopupBlockV908');
-  wrapV31143('closeReaderPopupBlockV908');
-  setTimeout(function(){
-    wrapV31143('openReaderPopupBlockV908');
-    wrapV31143('closeReaderPopupBlockV908');
-  },300);
+  // Los emergentes usan un bloqueo específico del documento en V3.1.144.
+  // No se envuelven aquí porque al fijar el body el scroll de la ventana pasa
+  // temporalmente a 0 y la restauración genérica podía llevar la lectura arriba.
+})();
+
+/* ===== V3.1.144 - Emergente sin mover la lectura ===== */
+(function(){
+  if(window.__v31144PopupScrollLock) return;
+  window.__v31144PopupScrollLock=true;
+
+  var saved=null;
+
+  function lockPageV31144(){
+    if(saved) return;
+    var root=document.scrollingElement || document.documentElement;
+    var y=window.pageYOffset || root.scrollTop || 0;
+    var x=window.pageXOffset || root.scrollLeft || 0;
+    var body=document.body;
+    saved={
+      x:x,y:y,
+      position:body.style.position,
+      top:body.style.top,
+      left:body.style.left,
+      right:body.style.right,
+      width:body.style.width,
+      overflow:body.style.overflow,
+      paddingRight:body.style.paddingRight
+    };
+    var scrollbar=Math.max(0,window.innerWidth-document.documentElement.clientWidth);
+    body.style.position='fixed';
+    body.style.top=(-y)+'px';
+    body.style.left=(-x)+'px';
+    body.style.right='0';
+    body.style.width='auto';
+    body.style.overflow='hidden';
+    if(scrollbar) body.style.paddingRight=scrollbar+'px';
+  }
+
+  function unlockPageV31144(){
+    if(!saved) return;
+    var pos=saved;
+    saved=null;
+    var body=document.body;
+    body.style.position=pos.position;
+    body.style.top=pos.top;
+    body.style.left=pos.left;
+    body.style.right=pos.right;
+    body.style.width=pos.width;
+    body.style.overflow=pos.overflow;
+    body.style.paddingRight=pos.paddingRight;
+    try{window.scrollTo(pos.x,pos.y);}catch(e){try{window.scrollTo(0,pos.y);}catch(e2){}}
+    requestAnimationFrame(function(){
+      try{window.scrollTo(pos.x,pos.y);}catch(e){try{window.scrollTo(0,pos.y);}catch(e2){}}
+    });
+  }
+
+  function installV31144(){
+    var openFn=window.openReaderPopupBlockV908;
+    var closeFn=window.closeReaderPopupBlockV908;
+    if(typeof openFn!=='function' || typeof closeFn!=='function') return false;
+    if(openFn.__v31144Wrapped) return true;
+
+    var openWrapped=function(){
+      lockPageV31144();
+      try{return openFn.apply(this,arguments);}
+      catch(err){unlockPageV31144();throw err;}
+    };
+    openWrapped.__v31144Wrapped=true;
+
+    var closeWrapped=function(){
+      try{return closeFn.apply(this,arguments);}
+      finally{unlockPageV31144();}
+    };
+    closeWrapped.__v31144Wrapped=true;
+
+    window.openReaderPopupBlockV908=openWrapped;
+    window.closeReaderPopupBlockV908=closeWrapped;
+    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
+    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
+    return true;
+  }
+
+  installV31144();
+  setTimeout(installV31144,350);
 })();
