@@ -10996,3 +10996,75 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,500);});
  else setTimeout(run,500);
 })();
+
+/* ===== V3.1.142 - Conservar posición al abrir bloques y emergentes ===== */
+(function(){
+  if(window.__v31142ScrollPreserved) return;
+  window.__v31142ScrollPreserved = true;
+
+  function getScrollStateV31142(){
+    var root=document.scrollingElement || document.documentElement;
+    var reader=document.getElementById('readerText');
+    return {
+      x: window.pageXOffset || root.scrollLeft || 0,
+      y: window.pageYOffset || root.scrollTop || 0,
+      readerTop: reader ? reader.scrollTop : 0,
+      readerLeft: reader ? reader.scrollLeft : 0
+    };
+  }
+
+  function restoreScrollStateV31142(pos){
+    if(!pos) return;
+    var restore=function(){
+      try{ window.scrollTo(pos.x,pos.y); }catch(e){}
+      try{
+        var reader=document.getElementById('readerText');
+        if(reader){ reader.scrollTop=pos.readerTop; reader.scrollLeft=pos.readerLeft; }
+      }catch(e){}
+    };
+    restore();
+    requestAnimationFrame(function(){
+      restore();
+      requestAnimationFrame(restore);
+    });
+    setTimeout(restore,40);
+    setTimeout(restore,120);
+  }
+
+  // Los desplegables se abren manualmente para impedir que el navegador
+  // recoloque la lectura al principio al cambiar su altura.
+  document.addEventListener('click',function(ev){
+    var summary=ev.target && ev.target.closest ? ev.target.closest('.reader-collapse-block > summary') : null;
+    if(!summary) return;
+    var details=summary.parentElement;
+    if(!details || details.tagName!=='DETAILS') return;
+    ev.preventDefault();
+    var pos=getScrollStateV31142();
+    details.open=!details.open;
+    restoreScrollStateV31142(pos);
+  },true);
+
+  function wrapPreservingScrollV31142(name){
+    var original=window[name];
+    if(typeof original!=='function' || original.__v31142Wrapped) return;
+    var wrapped=function(){
+      var pos=getScrollStateV31142();
+      var result=original.apply(this,arguments);
+      restoreScrollStateV31142(pos);
+      return result;
+    };
+    wrapped.__v31142Wrapped=true;
+    window[name]=wrapped;
+    try{ eval(name+'=window["'+name+'"]'); }catch(e){}
+  }
+
+  // Apertura y cierre de los emergentes de lectura.
+  wrapPreservingScrollV31142('openReaderPopupBlockV908');
+  wrapPreservingScrollV31142('closeReaderPopupBlockV908');
+
+  // Refuerzo por si otro parche redefine las funciones tras cargar este bloque.
+  setTimeout(function(){
+    wrapPreservingScrollV31142('openReaderPopupBlockV908');
+    wrapPreservingScrollV31142('closeReaderPopupBlockV908');
+  },300);
+})();
