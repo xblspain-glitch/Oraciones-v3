@@ -11037,15 +11037,10 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   }
 
   function settleV31143(pos){
-    // Se restaura en el mismo ciclo y una vez tras el recálculo de diseño.
-    // Se evita la cadena de temporizadores que producía el pequeño “bote”.
     putBackV31143(pos);
     requestAnimationFrame(function(){
       putBackV31143(pos);
-      requestAnimationFrame(function(){
-        putBackV31143(pos);
-        unlockAnchoringV31143(pos);
-      });
+      unlockAnchoringV31143(pos);
     });
   }
 
