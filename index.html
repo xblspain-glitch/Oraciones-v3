@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<link rel="stylesheet" href="styles.css?v=v3-1-170-v2-186-mejoras">
+<link rel="stylesheet" href="styles.css?v=v3-1-173-portada-v2-191">
 <link rel="stylesheet" href="themes.css?v=v3-1-63-share-history-persist">
 
 <style>
@@ -83,8 +83,7 @@
       <button id="btnTheme" class="btn soft theme-btn-v66" type="button" onclick="toggleTheme()">🌙</button>
     </div>
     <button id="btnMainFav" data-fav-btn="1" class="btn soft" type="button" onclick="toggleFavorite()">⭐</button>
-    <button class="btn danger delete-btn-v66" type="button" onclick="moveToTrash()">🗑️ Eliminar</button>
-    <div class="topbar-bottom-row-v66 counter-row-v853">
+        <div class="topbar-bottom-row-v66 counter-row-v853">
       <div id="counterInfo" class="counter counter-v66"></div>
     </div>
     <input id="search" class="search" placeholder="Buscar..." oninput="renderList();renderTitles();renderVerseCategories()">
@@ -222,7 +221,7 @@
 
     <div id="backupView" class="panel hidden">
       <div class="panel-head backup-head-v40">
-        <button class="btn soft" type="button" onclick="showHomeV9019()">← Volver</button>
+        <button class="btn soft" type="button" onclick="closeUtilityScreenV2189()">← Volver</button>
 
         <div class="backup-title-v40">📤 EXPORTAR</div>
         <button class="btn primary" type="button" onclick="downloadBackupJson()">⬇ Descargar JSON</button>
@@ -290,7 +289,8 @@
 
     <div id="trashView" class="panel hidden">
       <div class="panel-head">
-        <button class="btn soft" type="button" onclick="showHomeV9019()">← Volver</button>
+        <button class="btn soft" type="button" onclick="closeUtilityScreenV2189()">← Volver</button>
+        <button class="btn danger" type="button" onclick="moveToTrash()">🗑️ Eliminar</button>
         <button class="btn danger" type="button" onclick="emptyTrash()">Vaciar papelera</button>
       </div>
       <div id="trashList" class="trash-list"></div>
@@ -378,7 +378,7 @@
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=v3-1-172-boton-inferior-sin-salto"></script>
+<script src="app.js?v=v3-1-173-portada-v2-191"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
 <script src="routines.js?v=v3-1-137-ajustes-visuales-editor-grupo"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>

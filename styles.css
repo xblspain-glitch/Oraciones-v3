@@ -4039,3 +4039,181 @@ body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="rou
   text-shadow:0 1px 2px rgba(22,39,78,.38)!important;
   box-shadow:0 5px 12px rgba(66,91,151,.28),inset 0 1px 0 rgba(255,255,255,.42),inset 0 0 14px rgba(255,255,255,.10)!important;
 }
+
+/* V2 LAB 188 · Portada con degradados por función y Eliminar dentro de Papelera.
+   Conserva la identidad cromática de cada sección y da a todos los accesos
+   principales una transición suave equivalente a Día/Noche. */
+body:not(.dark).home-active-v9019 .segment #tabPrayers{
+  background:linear-gradient(110deg,#e9f4ff 0%,#c7e0fa 58%,#a9cbed 100%)!important;
+}
+body:not(.dark).home-active-v9019 .segment #tabNotes{
+  background:linear-gradient(110deg,#fff9e9 0%,#f7e9bd 58%,#ecd68c 100%)!important;
+}
+body:not(.dark).home-active-v9019 .segment #tabGuides{
+  background:linear-gradient(110deg,#fbf0de 0%,#ead4ac 58%,#dcb978 100%)!important;
+}
+body:not(.dark).home-active-v9019 .segment #tabVerses{
+  background:linear-gradient(110deg,#f5ecff 0%,#e1cdf5 58%,#c9a9e8 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="daily"]{
+  background:linear-gradient(110deg,#f8f2ff 0%,#e6d9f7 56%,#ceb9eb 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="moments"]{
+  background:linear-gradient(110deg,#f4faed 0%,#dceecf 56%,#b9d99f 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="global-search"]{
+  background:linear-gradient(110deg,#f8fbfd 0%,#e4edf2 56%,#c8dbe4 100%)!important;
+  border-color:rgba(55,102,119,.28)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="calendar"]{
+  background:linear-gradient(110deg,#fff6f2 0%,#f8ddd4 56%,#efbcae 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="parables"]{
+  background:linear-gradient(110deg,#f4fcec 0%,#dcefcf 56%,#b9dc9e 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="psalms"]{
+  background:linear-gradient(110deg,#fff6eb 0%,#f7dfc3 56%,#edbd88 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-mark-button="1"]{
+  background:linear-gradient(110deg,#fff5f7 0%,#f5dce2 56%,#eeb5c2 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row #btnMainMore{
+  background:linear-gradient(110deg,#ffffff 0%,#edf3f8 56%,#d5e1ec 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row #btnBackup{
+  background:linear-gradient(110deg,#fbfdff 0%,#e7eef4 56%,#cbd9e4 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row #btnTrash{
+  background:linear-gradient(110deg,#fbfffd 0%,#e2f0ea 56%,#bfd9ce 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row #btnTheme{
+  background:linear-gradient(110deg,#f6f3ff 0%,#dfd7f4 56%,#bfb0e5 100%)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft:not([data-view-btn="routines"]),
+body:not(.dark).home-active-v9019 .segment button{
+  box-shadow:0 3px 8px rgba(50,66,86,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;
+}
+body.dark.home-active-v9019 .segment #tabPrayers{background:linear-gradient(110deg,#365f88,#294564 62%,#21374f)!important;}
+body.dark.home-active-v9019 .segment #tabNotes{background:linear-gradient(110deg,#6c5a32,#554621 62%,#403516)!important;}
+body.dark.home-active-v9019 .segment #tabGuides{background:linear-gradient(110deg,#685039,#503d28 62%,#392b1d)!important;}
+body.dark.home-active-v9019 .segment #tabVerses{background:linear-gradient(110deg,#5b4774,#463656 62%,#34283f)!important;}
+body.dark.home-active-v9019 .topbar-row #btnMainMore,
+body.dark.home-active-v9019 .topbar-row #btnBackup,
+body.dark.home-active-v9019 .topbar-row #btnTrash{
+  background:linear-gradient(110deg,#3d4650,#2f3740 62%,#252b32)!important;
+}
+
+/* V2.189 · Backup y Papelera en pantalla independiente */
+body.utility-fullscreen-v2189 .topbar,
+body.utility-fullscreen-v2189 .sidebar{
+  display:none!important;
+}
+body.utility-fullscreen-v2189 .main{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:100vh;
+  padding:0!important;
+  margin:0!important;
+}
+body.utility-fullscreen-v2189 .content{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:100vh;
+  padding:14px!important;
+  box-sizing:border-box;
+}
+body.utility-fullscreen-v2189 #backupView,
+body.utility-fullscreen-v2189 #trashView{
+  width:100%!important;
+  max-width:none!important;
+  min-height:calc(100vh - 28px);
+  margin:0!important;
+}
+
+/* V2 LAB 190 · Degradados reforzados en los seis accesos de contenido.
+   Se mantienen sin cambios Buscar, Más, Backup y Papelera. */
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="daily"]{
+  background:linear-gradient(110deg,#fbf3ff 0%,#dcc8f3 48%,#b995df 100%)!important;
+  border-color:rgba(128,82,171,.28)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="moments"]{
+  background:linear-gradient(110deg,#f8fdec 0%,#d3eabf 48%,#9fcf7d 100%)!important;
+  border-color:rgba(81,132,53,.27)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="calendar"]{
+  background:linear-gradient(110deg,#fff8f2 0%,#f5d1c5 48%,#e99b87 100%)!important;
+  border-color:rgba(159,82,61,.25)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="parables"]{
+  background:linear-gradient(110deg,#f8fdec 0%,#cfe9b8 48%,#98ca72 100%)!important;
+  border-color:rgba(74,128,43,.27)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-view-btn="psalms"]{
+  background:linear-gradient(110deg,#fff8eb 0%,#f3d4ad 48%,#e5a965 100%)!important;
+  border-color:rgba(158,99,35,.25)!important;
+}
+body:not(.dark).home-active-v9019 .topbar-row button.btn.soft[data-mark-button="1"]{
+  background:linear-gradient(110deg,#fff7f9 0%,#f2cdd7 48%,#e797aa 100%)!important;
+  border-color:rgba(154,73,96,.24)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-view-btn="daily"]{
+  background:linear-gradient(110deg,#543c69 0%,#49325e 52%,#352344 100%)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-view-btn="moments"]{
+  background:linear-gradient(110deg,#48623d 0%,#394f31 52%,#293b24 100%)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-view-btn="calendar"]{
+  background:linear-gradient(110deg,#704d43 0%,#5d3e36 52%,#442d28 100%)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-view-btn="parables"]{
+  background:linear-gradient(110deg,#49683e 0%,#395331 52%,#293d24 100%)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-view-btn="psalms"]{
+  background:linear-gradient(110deg,#765638 0%,#60442d 52%,#463120 100%)!important;
+}
+body.dark.home-active-v9019 .topbar-row button.btn.soft[data-mark-button="1"]{
+  background:linear-gradient(110deg,#704653 0%,#5c3743 52%,#432831 100%)!important;
+}
+
+/* =========================================================
+   V2 LAB 191 · retoques finales de portada
+   - Contador inferior con mejor legibilidad y respiración.
+   - Más separación entre botonera y Palabra para este momento.
+   - Referencia bíblica ligeramente más contenida.
+   - Marco exterior principal un poco menos redondeado.
+   - El botón de diagnóstico permanece visible como distintivo LAB.
+   ========================================================= */
+@media (max-width:600px){
+  body.home-active-v9019 .topbar-row{
+    border-radius:17px!important;
+    padding-bottom:10px!important;
+  }
+  body.home-active-v9019 .topbar-bottom-row-v66{
+    margin-top:2px!important;
+    padding:2px 7px 1px!important;
+  }
+  body.home-active-v9019 .counter-v66{
+    color:#526478!important;
+    font-weight:650!important;
+    letter-spacing:.08px!important;
+    line-height:1.35!important;
+    text-shadow:0 1px 0 rgba(255,255,255,.82)!important;
+  }
+  body.home-active-v9019 .content{
+    padding-top:5px!important;
+  }
+  body.home-active-v9019 .home-panel-v9019{
+    padding-top:13px!important;
+  }
+  body.home-active-v9019 .home-ref-v9019{
+    font-size:22.8px!important;
+    line-height:1.18!important;
+    margin-bottom:16px!important;
+  }
+  body.dark.home-active-v9019 .counter-v66{
+    color:#c8d3df!important;
+    text-shadow:0 1px 0 rgba(0,0,0,.36)!important;
+  }
+}
