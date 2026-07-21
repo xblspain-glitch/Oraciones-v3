@@ -1815,19 +1815,7 @@ function renderVerseCategories(){
     const div = document.createElement("div");
 
     div.className = "category-card";
-    const customCategoryIconsV3199={
-      amor:'icon-cat-amor-v3199.png',
-      arrepentimiento:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_perdon:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_y_perdon:'icon-cat-arrepentimiento-v3199.png',
-      justicia:'icon-cat-justicia-v3199.png',
-      justicia_juicio:'icon-cat-justicia-v3199.png'
-    };
-    const customIconV3199=customCategoryIconsV3199[String(cat.id||'')];
-    const cleanCategoryLabelV3199=String(cat.label||'').replace(/^[^\p{L}\p{N}]+\s*/u,'');
-    div.innerHTML = customIconV3199
-      ? '<div class="category-title-v3199"><img class="category-icon-v3199" src="'+customIconV3199+'" alt=""><span>'+escapeHtml(cleanCategoryLabelV3199)+'</span></div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>'
-      : '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
+    div.innerHTML = '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
     div.onclick = ()=>openVerseCategory(cat.id);
 
     box.appendChild(div);
@@ -4045,40 +4033,8 @@ async function shareVerseCard(){
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
     ctx.fillText(fecha,540,655);
 
-    // V3.1.199 — iconos ilustrados de categoría en la tarjeta compartida.
-    const categoryIconAssetsV3199={
-      amor:'icon-cat-amor-v3199.png',
-      arrepentimiento:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_perdon:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_y_perdon:'icon-cat-arrepentimiento-v3199.png',
-      justicia:'icon-cat-justicia-v3199.png',
-      justicia_juicio:'icon-cat-justicia-v3199.png'
-    };
-    const categoryAssetV3199=categoryIconAssetsV3199[String((item&&item.category)||'')];
-    const categoryTextV3199=String(category||'').replace(/^[^\p{L}\p{N}]+\s*/u,'');
     ctx.font="54px Georgia, serif";
-    if(categoryAssetV3199){
-      try{
-        const catImgV3199=await loadCardLogoImage(categoryAssetV3199);
-        const textWidthV3199=ctx.measureText(categoryTextV3199).width;
-        const iconSizeV3199=72;
-        const gapV3199=16;
-        const totalWidthV3199=iconSizeV3199+gapV3199+textWidthV3199;
-        const startXV3199=540-totalWidthV3199/2;
-        ctx.save();
-        ctx.shadowColor='rgba(0,0,0,0.18)';
-        ctx.shadowBlur=8;
-        ctx.drawImage(catImgV3199,startXV3199,684,iconSizeV3199,iconSizeV3199);
-        ctx.restore();
-        ctx.textAlign='left';
-        ctx.fillText(categoryTextV3199,startXV3199+iconSizeV3199+gapV3199,742);
-        ctx.textAlign='center';
-      }catch(e){
-        ctx.fillText(category,540,742);
-      }
-    }else{
-      ctx.fillText(category,540,742);
-    }
+    ctx.fillText(category,540,742);
 
     ctx.font="bold 74px Georgia, serif";
     ctx.fillText(ref,540,875);

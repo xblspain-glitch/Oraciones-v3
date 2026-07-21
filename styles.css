@@ -5119,9 +5119,3 @@ body.view-switching-v3189 #homeView{
 @media(max-width:420px){
   .routine-hub-image-wrap-v3190,.routine-hub-image-v3190{width:104px!important;height:104px!important;}
 }
-
-
-/* ===== V3.1.199 — iconos ilustrados de categorías ===== */
-.category-title-v3199{display:flex;align-items:center;gap:12px;min-width:0}
-.category-icon-v3199{width:48px;height:48px;object-fit:contain;flex:0 0 48px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.20))}
-@media (max-width:600px){.category-icon-v3199{width:44px;height:44px;flex-basis:44px}.category-title-v3199{gap:10px}}
