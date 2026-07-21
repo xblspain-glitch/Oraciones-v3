@@ -19,6 +19,8 @@
 <link rel="preload" as="image" href="icon-dia-noche-v3185.png">
 <link rel="preload" as="image" href="icon-rutina-manana-v3191.png">
 <link rel="preload" as="image" href="icon-rutina-noche-v3191.png">
+<link rel="preload" as="image" href="icon-manana-global-v3193.png">
+<link rel="preload" as="image" href="icon-noche-global-v3193.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -52,6 +54,16 @@
   .routine-editor-icon-wrap-v3192 img{width:40px;height:40px}
   .routine-empty-icon-v3192 .routine-editor-icon-wrap-v3192 img{width:68px;height:68px}
 }
+
+/* V3.1.193 · iconos ilustrados globales en textos, títulos y botones */
+.inline-faith-icon-v3193{display:inline-block;vertical-align:-.16em;width:1.22em;height:1.22em;object-fit:contain;margin:0 .08em;filter:drop-shadow(0 .05em .10em rgba(0,0,0,.14));pointer-events:none}
+.inline-faith-icon-morning-v3193{width:1.28em;height:1.28em}
+.inline-faith-icon-night-v3193{width:1.22em;height:1.22em}
+.inline-faith-cross-v3193{display:inline-block;vertical-align:-.14em;width:1.05em;height:1.20em;margin:0 .08em;background:linear-gradient(180deg,#6d91ca,#416da9);-webkit-mask:url("cross-ethiopian-mask.png") center/contain no-repeat;mask:url("cross-ethiopian-mask.png") center/contain no-repeat;filter:drop-shadow(0 .05em .08em rgba(46,83,138,.24));pointer-events:none}
+.reader-title .inline-faith-icon-v3193,.reader-text .inline-faith-icon-v3193{margin-left:0;margin-right:.10em}
+button .inline-faith-icon-v3193{width:1.18em;height:1.18em;vertical-align:-.18em}
+button .inline-faith-cross-v3193{width:1em;height:1.12em}
+
 </style>
 
 
@@ -116,7 +128,7 @@
     </div>
     <button id="btnNew" data-view-btn="new" class="btn primary" type="button" onclick="newItem()">➕ Nueva</button>
     <button id="btnRead" data-view-btn="read" class="btn soft" type="button" onclick="enterFullscreenReading()">📖 Leer</button>
-    <button id="btnDaily" data-view-btn="daily" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyVerse()"><img src="icon-versiculo-dia-v3185.png" class="home-special-icon-v3184 home-special-icon-daily-v3184" alt="" width="62" height="54" style="display:block;width:62px;height:54px;max-width:62px;max-height:54px;object-fit:contain;flex:0 0 62px"><span>Versículo del día</span></button>
+    <button id="btnDaily" data-view-btn="daily" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyVerse()"><img src="icon-manana-global-v3193.png?v=v3-1-193" class="home-special-icon-v3184 home-special-icon-daily-v3184" alt="" width="62" height="54" style="display:block;width:62px;height:54px;max-width:62px;max-height:54px;object-fit:contain;flex:0 0 62px"><span>Versículo del día</span></button>
     <button id="btnDailyRoutinesV3192" data-view-btn="routines" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyRoutinesV3192()"><img src="icon-dia-noche-v3185.png" class="home-special-icon-v3184 home-special-icon-daynight-v3184" alt="" width="58" height="54" style="display:block;width:58px;height:54px;max-width:58px;max-height:54px;object-fit:contain;flex:0 0 58px"><span>Día/Noche</span></button>
     <button id="btnMomentsV31102" data-view-btn="moments" class="btn soft" type="button" onclick="openMomentsV31102()">🌿 Momentos</button>
     <button id="btnGlobalSearchV3177" data-view-btn="global-search" class="btn soft global-search-main-v3177" type="button" onclick="openGlobalSearchV3177()">🔎 Buscar en toda la app</button>
@@ -433,7 +445,7 @@
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=v3-1-189-transicion-estable"></script>
+<script src="app.js?v=v3-1-193-iconos-globales"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
 <script src="routines.js?v=v3-1-192-icono-manana-global"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>

@@ -4033,8 +4033,20 @@ async function shareVerseCard(){
     ctx.fillRect(390,95,300,300);
     ctx.restore();
 
-    ctx.font="84px Arial";
-    ctx.fillText("🌅",540,245);
+    // V3.1.193 — mismo icono ilustrado de Mañana en la tarjeta compartida.
+    try{
+      const morningIcon=await new Promise((resolve,reject)=>{
+        const im=new Image();
+        im.onload=()=>resolve(im);
+        im.onerror=reject;
+        im.src="icon-manana-global-v3193.png?v=v3-1-193";
+      });
+      const iw=190, ih=190;
+      ctx.drawImage(morningIcon,540-iw/2,150-iw/2,iw,ih);
+    }catch(e){
+      ctx.font="84px Arial";
+      ctx.fillText("🌅",540,245);
+    }
     ctx.font="italic 56px Georgia, serif";
     ctx.fillText("Versículo del día",540,345);
     ctx.font="34px Georgia, serif";
@@ -11758,4 +11770,54 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       });
     }catch(_e){}
   }, true);
+})();
+
+
+/* ===== V3.1.193 — iconos ilustrados globales: Mañana, Noche y Cruz ===== */
+(function(){
+  const ICONS={
+    '🌅':{kind:'img',src:'icon-manana-global-v3193.png?v=v3-1-193',cls:'inline-faith-icon-v3193 inline-faith-icon-morning-v3193',label:'Mañana'},
+    '🌙':{kind:'img',src:'icon-noche-global-v3193.png?v=v3-1-193',cls:'inline-faith-icon-v3193 inline-faith-icon-night-v3193',label:'Noche'},
+    '✝️':{kind:'cross',cls:'inline-faith-cross-v3193',label:'Cruz'},
+    '✝':{kind:'cross',cls:'inline-faith-cross-v3193',label:'Cruz'}
+  };
+  const RX=/(🌅|🌙|✝️|✝)/g;
+  const SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','SELECT','OPTION','CANVAS','NOSCRIPT']);
+  function makeIcon(token){
+    const cfg=ICONS[token];
+    if(!cfg)return document.createTextNode(token);
+    if(cfg.kind==='img'){
+      const img=document.createElement('img');
+      img.src=cfg.src; img.className=cfg.cls; img.alt=''; img.setAttribute('aria-label',cfg.label); img.decoding='async';
+      return img;
+    }
+    const span=document.createElement('span'); span.className=cfg.cls; span.setAttribute('aria-label',cfg.label); return span;
+  }
+  function replaceNode(node){
+    const parent=node.parentElement;
+    if(!parent||SKIP.has(parent.tagName)||parent.closest('.no-global-faith-icons-v3193'))return;
+    const text=node.nodeValue||'';
+    if(!RX.test(text)){RX.lastIndex=0;return;} RX.lastIndex=0;
+    const frag=document.createDocumentFragment(); let last=0,m;
+    while((m=RX.exec(text))){
+      if(m.index>last)frag.appendChild(document.createTextNode(text.slice(last,m.index)));
+      frag.appendChild(makeIcon(m[0])); last=m.index+m[0].length;
+    }
+    if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
+    node.replaceWith(frag);
+  }
+  function scan(root){
+    if(!root)return;
+    if(root.nodeType===3){replaceNode(root);return;}
+    if(root.nodeType!==1&&root.nodeType!==9&&root.nodeType!==11)return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[]; let n; while((n=walker.nextNode()))nodes.push(n);
+    nodes.forEach(replaceNode);
+  }
+  function start(){
+    scan(document.body);
+    const obs=new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(scan)));
+    obs.observe(document.body,{childList:true,subtree:true});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
 })();
