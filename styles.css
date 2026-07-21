@@ -5043,3 +5043,16 @@ body.home-active-v9019 .home-icon-button-v3184 span{
   body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-v3184{width:34px!important;height:31px!important;flex-basis:34px!important;}
   body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{width:36px!important;height:32px!important;flex-basis:36px!important;}
 }
+
+
+/* ===== V3.1.185 — iconos exactos tomados de la muestra aprobada ===== */
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{
+  width:42px!important;height:38px!important;flex-basis:42px!important;object-fit:contain!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{
+  width:40px!important;height:38px!important;flex-basis:40px!important;object-fit:contain!important;
+}
+@media(max-width:420px){
+ body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{width:39px!important;height:35px!important;flex-basis:39px!important;}
+ body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{width:37px!important;height:35px!important;flex-basis:37px!important;}
+}
