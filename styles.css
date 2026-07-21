@@ -4844,3 +4844,38 @@ body.dark-mode .recommendation-verse-v3189 .recommendation-category-v3188{
   background:rgba(67,98,53,.30);
   border-color:rgba(171,210,148,.20);
 }
+
+
+/* ===== V3.1.178 — Compartido de Versículos vuelve a lavanda ===== */
+.item.verse-sent-bg-v3134,
+.title-row.verse-sent-bg-v3134,
+.category-card.verse-sent-bg-v3134{
+  background:#ebe2ff!important;
+  border-color:#cbb8ff!important;
+}
+.title-row.verse-sent-bg-v3134.active{
+  background:#ebe2ff!important;
+}
+body.dark .item.verse-sent-bg-v3134,
+body.dark .title-row.verse-sent-bg-v3134,
+body.dark .category-card.verse-sent-bg-v3134,
+body.dark-mode .item.verse-sent-bg-v3134,
+body.dark-mode .title-row.verse-sent-bg-v3134,
+body.dark-mode .category-card.verse-sent-bg-v3134{
+  background:rgba(150,110,220,.20)!important;
+  border-color:rgba(190,160,245,.38)!important;
+}
+#readerView.reader-sent-bg-v3134{
+  background:#ebe2ff!important;
+  border-color:#cbb8ff!important;
+}
+#readerView.reader-sent-bg-v3134 .reader-code,
+#readerView.reader-sent-bg-v3134 .reader-title,
+#readerView.reader-sent-bg-v3134 .reader-text{
+  background:transparent!important;
+}
+body.dark #readerView.reader-sent-bg-v3134,
+body.dark-mode #readerView.reader-sent-bg-v3134{
+  background:rgba(150,110,220,.20)!important;
+  border-color:rgba(190,160,245,.38)!important;
+}
