@@ -3928,14 +3928,14 @@ async function shareVerseCard(){
     canvas.height=1920;
     const ctx=canvas.getContext("2d");
 
-    // V3.1.195 — fondo completo de cielo creado específicamente para la tarjeta compartida.
+    // V3.1.197 — fondo completo corregido: el azul continúa hasta el borde inferior, sin franja gris.
     // La app conserva por encima todos los elementos dinámicos: borde, marca de agua, textos y pie.
     try{
       const cardBackground=await new Promise((resolve,reject)=>{
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src="card-header-sky-v3196.webp?v=v3-1-196";
+        im.src="card-header-sky-v3197.webp?v=v3-1-197";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){
