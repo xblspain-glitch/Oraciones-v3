@@ -3800,11 +3800,11 @@ applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont(
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;
-  if(n <= 150) return {font:50, line:75, max:8, y:795};
-  if(n <= 240) return {font:48, line:70, max:10, y:785};
-  if(n <= 340) return {font:44, line:64, max:12, y:765};
-  if(n <= 480) return {font:40, line:58, max:15, y:735};
-  return {font:37, line:52, max:18, y:710};
+  if(n <= 150) return {font:50, line:72, max:7, y:1035};
+  if(n <= 240) return {font:46, line:66, max:9, y:1025};
+  if(n <= 340) return {font:42, line:60, max:11, y:1010};
+  if(n <= 480) return {font:38, line:54, max:13, y:995};
+  return {font:35, line:49, max:15, y:980};
 }
 
 function markCurrentVerseCardSentDirect(){
@@ -3928,26 +3928,25 @@ async function shareVerseCard(){
     canvas.height=1920;
     const ctx=canvas.getContext("2d");
 
-    const grad=ctx.createLinearGradient(0,0,0,1920);
-    grad.addColorStop(0,"#2ec9d8");
-    grad.addColorStop(0.52,"#25bdce");
-    grad.addColorStop(1,"#1fb1c1");
-    ctx.fillStyle=grad;
-    ctx.fillRect(0,0,1080,1920);
-
-    // Profundidad muy suave sobre el azul principal
-    const glowTop=ctx.createRadialGradient(540,300,40,540,300,620);
-    glowTop.addColorStop(0,"rgba(255,255,255,0.22)");
-    glowTop.addColorStop(0.42,"rgba(255,255,255,0.08)");
-    glowTop.addColorStop(1,"rgba(255,255,255,0)");
-    ctx.fillStyle=glowTop;
-    ctx.fillRect(0,0,1080,1920);
-
-    const glowBottom=ctx.createRadialGradient(540,1160,80,540,1160,720);
-    glowBottom.addColorStop(0,"rgba(255,255,255,0.10)");
-    glowBottom.addColorStop(1,"rgba(255,255,255,0)");
-    ctx.fillStyle=glowBottom;
-    ctx.fillRect(0,0,1080,1920);
+    // V3.1.195 — fondo completo de cielo creado específicamente para la tarjeta compartida.
+    // La app conserva por encima todos los elementos dinámicos: borde, marca de agua, textos y pie.
+    try{
+      const cardBackground=await new Promise((resolve,reject)=>{
+        const im=new Image();
+        im.onload=()=>resolve(im);
+        im.onerror=reject;
+        im.src="card-header-sky-v3195.webp?v=v3-1-195";
+      });
+      ctx.drawImage(cardBackground,0,0,1080,1920);
+    }catch(e){
+      // Fondo de respaldo si el recurso no pudiera cargarse.
+      const grad=ctx.createLinearGradient(0,0,0,1920);
+      grad.addColorStop(0,"#168fd2");
+      grad.addColorStop(0.45,"#24b8d5");
+      grad.addColorStop(1,"#1596c5");
+      ctx.fillStyle=grad;
+      ctx.fillRect(0,0,1080,1920);
+    }
 
     // Borde interior sutil para dar aspecto de tarjeta cuidada
     ctx.save();
@@ -4024,65 +4023,21 @@ async function shareVerseCard(){
     ctx.shadowBlur=10;
     ctx.shadowOffsetY=3;
 
-    // V3.1.194 — icono de Mañana integrado en la tarjeta, sin aspecto de pegatina.
-    // La cruz de marca de agua permanece completamente intacta.
-    ctx.save();
-    const iconCenterY=165;
-    const iconHalo=ctx.createRadialGradient(540,iconCenterY,8,540,iconCenterY,92);
-    iconHalo.addColorStop(0,"rgba(255,246,209,0.24)");
-    iconHalo.addColorStop(.55,"rgba(255,255,255,0.10)");
-    iconHalo.addColorStop(1,"rgba(255,255,255,0)");
-    ctx.fillStyle=iconHalo;
-    ctx.fillRect(425,iconCenterY-115,230,230);
-    ctx.restore();
-
-    try{
-      const morningIcon=await new Promise((resolve,reject)=>{
-        const im=new Image();
-        im.onload=()=>resolve(im);
-        im.onerror=reject;
-        im.src="icon-manana-global-v3193.png?v=v3-1-194";
-      });
-      const iw=190, ih=190;
-      const off=document.createElement("canvas");
-      off.width=iw; off.height=ih;
-      const octx=off.getContext("2d");
-      octx.drawImage(morningIcon,0,0,iw,ih);
-
-      // Fundido suave de los bordes para que la ilustración nazca del fondo turquesa.
-      octx.globalCompositeOperation="destination-in";
-      const feather=octx.createRadialGradient(iw/2,ih/2,iw*.30,iw/2,ih/2,iw*.51);
-      feather.addColorStop(0,"rgba(0,0,0,1)");
-      feather.addColorStop(.72,"rgba(0,0,0,.98)");
-      feather.addColorStop(.90,"rgba(0,0,0,.72)");
-      feather.addColorStop(1,"rgba(0,0,0,0)");
-      octx.fillStyle=feather;
-      octx.fillRect(0,0,iw,ih);
-
-      ctx.save();
-      ctx.globalAlpha=.98;
-      ctx.shadowColor="rgba(68,103,105,.22)";
-      ctx.shadowBlur=8;
-      ctx.shadowOffsetY=3;
-      ctx.drawImage(off,540-iw/2,iconCenterY-ih/2,iw,ih);
-      ctx.restore();
-    }catch(e){
-      ctx.font="84px Arial";
-      ctx.fillText("🌅",540,260);
-    }
+    // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
+    // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
     ctx.font="italic 56px Georgia, serif";
-    ctx.fillText("Versículo del día",540,345);
+    ctx.fillText("Versículo del día",540,590);
     ctx.font="34px Georgia, serif";
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
-    ctx.fillText(fecha,540,410);
+    ctx.fillText(fecha,540,655);
 
     ctx.font="54px Georgia, serif";
-    ctx.fillText(category,540,495);
+    ctx.fillText(category,540,742);
 
     ctx.font="bold 74px Georgia, serif";
-    ctx.fillText(ref,540,640);
+    ctx.fillText(ref,540,875);
 
     // Línea decorativa azul tenue con cruz central
     ctx.save();
@@ -4091,11 +4046,11 @@ async function shareVerseCard(){
     ctx.shadowOffsetY=0;
     ctx.strokeStyle="rgba(190,238,248,0.58)";
     ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(180,700); ctx.lineTo(500,700); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(580,700); ctx.lineTo(900,700); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(180,935); ctx.lineTo(500,935); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(580,935); ctx.lineTo(900,935); ctx.stroke();
     ctx.fillStyle="rgba(214,249,255,0.78)";
     ctx.font="34px Georgia, serif";
-    ctx.fillText("✝",540,712);
+    ctx.fillText("✝",540,947);
     ctx.restore();
 
     const textLayout=getCardTextLayout(body);
