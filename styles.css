@@ -4910,3 +4910,38 @@ body.dark-mode #tabVerses.tab-verses-heart-v3176.active{
   border-color:rgba(190,225,170,.40)!important;
   color:#f4faef!important;
 }
+
+
+/* ===== V3.1.180 — Botón superior de Versículos realmente verde ===== */
+body.home-active-v9019 .segment #tabVerses,
+body.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176,
+body:not(.dark).home-active-v9019 .segment #tabVerses,
+body:not(.dark).home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176{
+  background:linear-gradient(110deg,#f4fcec 0%,#dcefcf 56%,#b9dc9e 100%)!important;
+  border-color:rgba(91,148,71,.24)!important;
+  color:#243322!important;
+}
+body.home-active-v9019 .segment #tabVerses.active,
+body.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.active,
+body:not(.dark).home-active-v9019 .segment #tabVerses.active,
+body:not(.dark).home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.active{
+  background:linear-gradient(110deg,#eef8e5 0%,#d5eac2 56%,#acd48b 100%)!important;
+  border-color:rgba(79,125,69,.48)!important;
+  color:#243322!important;
+}
+body.dark.home-active-v9019 .segment #tabVerses,
+body.dark.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176,
+body.dark-mode.home-active-v9019 .segment #tabVerses,
+body.dark-mode.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176{
+  background:linear-gradient(110deg,#47653f,#385132 62%,#2a3d25)!important;
+  border-color:rgba(171,210,148,.26)!important;
+  color:#eef6e8!important;
+}
+body.dark.home-active-v9019 .segment #tabVerses.active,
+body.dark.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.active,
+body.dark-mode.home-active-v9019 .segment #tabVerses.active,
+body.dark-mode.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.active{
+  background:linear-gradient(110deg,#527347,#3f5d38 62%,#30462b)!important;
+  border-color:rgba(190,225,170,.40)!important;
+  color:#f4faef!important;
+}
