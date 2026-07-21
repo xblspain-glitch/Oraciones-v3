@@ -5060,3 +5060,31 @@ body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184
  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{width:45px!important;height:40px!important;flex-basis:45px!important;}
  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{width:42px!important;height:40px!important;flex-basis:42px!important;}
 }
+
+
+/* ===== V3.1.187 — iconos al máximo útil sin agrandar los botones ===== */
+body.home-active-v9019 .home-icon-button-v3184{
+  gap:3px!important;
+  overflow:hidden!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{
+  width:62px!important;
+  height:54px!important;
+  flex:0 0 62px!important;
+  object-fit:contain!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{
+  width:58px!important;
+  height:54px!important;
+  flex:0 0 58px!important;
+  object-fit:contain!important;
+}
+@media(max-width:420px){
+  body.home-active-v9019 .home-icon-button-v3184{gap:2px!important;}
+  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{
+    width:56px!important;height:49px!important;flex-basis:56px!important;
+  }
+  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{
+    width:52px!important;height:49px!important;flex-basis:52px!important;
+  }
+}
