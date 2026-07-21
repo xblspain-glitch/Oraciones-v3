@@ -5099,3 +5099,23 @@ body.view-switching-v3189 *::after{
 body.view-switching-v3189 #homeView{
   display:none!important;
 }
+
+
+/* ===== V3.1.190 — imágenes aprobadas para Mañana y Noche ===== */
+.routine-hub-image-wrap-v3190{
+  width:112px!important;
+  height:112px!important;
+  display:grid!important;
+  place-items:center!important;
+  line-height:1!important;
+}
+.routine-hub-image-v3190{
+  display:block!important;
+  width:112px!important;
+  height:112px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 5px 8px rgba(65,55,35,.18));
+}
+@media(max-width:420px){
+  .routine-hub-image-wrap-v3190,.routine-hub-image-v3190{width:104px!important;height:104px!important;}
+}
