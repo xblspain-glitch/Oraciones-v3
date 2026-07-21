@@ -4946,84 +4946,64 @@ body.dark-mode.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.acti
   color:#f4faef!important;
 }
 
-
-/* ===== V3.1.181 — Contadores inferiores con iconos propios ===== */
-body.home-active-v9019 .counter-v66{
-  display:flex!important;
-  justify-content:center!important;
-  align-items:center!important;
-  flex-wrap:wrap!important;
-  gap:4px!important;
-  white-space:normal!important;
-  text-align:center!important;
-  padding-right:0!important;
+/* ===== V3.1.182 — iconos propios en contadores, posición original ===== */
+#counterInfo.counter-v66{
+  text-align:right!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
 }
-.counter-inline-v3181{
+.counter-items-v3182{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:4px;
+  white-space:nowrap;
+}
+.counter-entry-v3182{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  flex-wrap:wrap;
-  gap:4px;
-  width:100%;
-}
-.counter-chip-v3181{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
+  gap:3px;
   min-width:0;
 }
-.counter-sep-v3181{
-  display:inline-block;
-  opacity:.46;
-  font-weight:700;
-  margin:0 1px;
+.counter-entry-v3182 b{font-weight:750;line-height:1}
+.counter-separator-v3182{opacity:.48;font-weight:700}
+.counter-entry-v3182 img{
+  display:block;
+  width:18px;
+  height:18px;
+  object-fit:contain;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.10));
 }
-.counter-icon-v3181{
+.counter-cross-v3182{
+  display:block;
+  width:17px;
+  height:18px;
+  background:linear-gradient(180deg,#6c8fca 0%,#4f74b7 100%);
+  -webkit-mask:url("cross-ethiopian-mask.png") center/contain no-repeat;
+  mask:url("cross-ethiopian-mask.png") center/contain no-repeat;
+  filter:drop-shadow(0 1px 1px rgba(73,103,156,.18));
+}
+.counter-symbol-v3182{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:16px;
-  height:16px;
-  flex:0 0 16px;
-}
-.counter-count-v3181{
-  font-weight:750;
-  font-size:.96em;
-  letter-spacing:.02em;
-}
-.counter-icon-cross-v3181{
-  background:linear-gradient(180deg,#6c8fca 0%, #4f74b7 100%);
-  -webkit-mask:url("cross-ethiopian-mask.png") center/contain no-repeat;
-  mask:url("cross-ethiopian-mask.png") center/contain no-repeat;
-  filter:drop-shadow(0 1px 1px rgba(255,255,255,.32)) drop-shadow(0 1px 2px rgba(73,103,156,.16));
-}
-.counter-icon-img-v3181{
-  width:16px;
-  height:16px;
-  object-fit:contain;
-  filter:drop-shadow(0 1px 1px rgba(255,255,255,.28)) drop-shadow(0 1px 2px rgba(0,0,0,.08));
-}
-.counter-icon-heart-v3181{
-  font-size:14px;
+  width:18px;
+  height:18px;
+  font-size:15px;
   line-height:1;
-  transform:translateY(-.2px);
 }
-.counter-icon-parables-v3181,
-.counter-icon-psalms-v3181{
-  font-size:13px;
-  line-height:1;
-  transform:translateY(-.1px);
+.counter-psalm-v3182{font-weight:900;color:#66805a;font-size:16px}
+.counter-heart-v3182{font-size:15px}
+body.dark .counter-cross-v3182,body.dark-mode .counter-cross-v3182{
+  background:linear-gradient(180deg,#9ab4e2 0%,#7898d0 100%);
 }
-body.dark .counter-icon-cross-v3181,
-body.dark-mode .counter-icon-cross-v3181{
-  background:linear-gradient(180deg,#8eaadd 0%, #7392cb 100%);
-}
-@media (max-width:430px){
-  .counter-inline-v3181{gap:3px;}
-  .counter-chip-v3181{gap:3px;}
-  .counter-sep-v3181{margin:0;}
-  .counter-icon-v3181,
-  .counter-icon-img-v3181{width:15px;height:15px;flex-basis:15px;}
-  .counter-count-v3181{font-size:.93em;}
+@media(max-width:430px){
+  .counter-items-v3182{gap:3px}
+  .counter-entry-v3182{gap:2px}
+  .counter-entry-v3182 img{width:17px;height:17px}
+  .counter-cross-v3182{width:16px;height:17px}
+  .counter-symbol-v3182{width:17px;height:17px;font-size:14px}
+  .counter-psalm-v3182{font-size:15px}
 }
