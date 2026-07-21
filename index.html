@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<link rel="stylesheet" href="styles.css?v=v3-1-175-despedida-cruz-etiope">
+<link rel="stylesheet" href="styles.css?v=v3-1-176-fila-superior-personalizada">
 <link rel="stylesheet" href="themes.css?v=v3-1-63-share-history-persist">
 
 <style>
@@ -28,6 +28,36 @@
  backface-visibility:hidden;
 }
 </style>
+
+
+<style id="v3176-top-tabs-style">
+#tabPrayers.tab-prayers-v3176{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;padding:6px 8px 8px!important;min-height:70px!important;line-height:1!important;text-align:center!important}
+#tabPrayers.tab-prayers-v3176 .prayer-cross-top-v3176{display:block!important;width:22px!important;height:24px!important;margin:0 auto!important;background:linear-gradient(180deg,#6c8fca 0%,#4f74b7 100%)!important;-webkit-mask:url("cross-ethiopian-mask.png") center/contain no-repeat;mask:url("cross-ethiopian-mask.png") center/contain no-repeat;filter:drop-shadow(0 1px 1px rgba(255,255,255,.35)) drop-shadow(0 1px 2px rgba(73,103,156,.18))!important;flex:none!important}
+#tabPrayers.tab-prayers-v3176.active .prayer-cross-top-v3176{background:linear-gradient(180deg,#5f83c4 0%,#426aa8 100%)!important}
+#tabPrayers.tab-prayers-v3176 .prayer-label-top-v3176{display:block!important;width:100%!important;text-align:center!important;white-space:nowrap!important;font-size:.95em!important}
+.top-tab-png-v3176{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:7px 7px 9px!important;min-height:68px!important;line-height:1!important;text-align:center!important}
+.top-tab-png-v3176 .top-tab-png-icon-v3176{display:block!important;width:27px!important;height:27px!important;object-fit:contain!important;margin:0 auto!important;filter:drop-shadow(0 1px 1px rgba(255,255,255,.22)) drop-shadow(0 2px 3px rgba(0,0,0,.12))}
+.top-tab-png-v3176 span{display:block!important;width:100%!important;text-align:center!important;white-space:nowrap!important;font-size:.95em!important}
+#tabNotes .top-tab-png-icon-v3176{width:29px!important;height:29px!important;filter:drop-shadow(0 1px 1px rgba(255,255,255,.25)) drop-shadow(0 2px 4px rgba(120,97,35,.18))!important;transform:translateY(-1px)!important}
+#tabGuides .top-tab-png-icon-v3176{width:30px!important;height:30px!important;filter:drop-shadow(0 1px 1px rgba(255,255,255,.25)) drop-shadow(0 2px 4px rgba(120,87,28,.20))!important;transform:translateY(-1px)!important}
+#tabVerses.tab-verses-heart-v3176{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:7px 7px 9px!important;min-height:68px!important;line-height:1!important;text-align:center!important}
+#tabVerses.tab-verses-heart-v3176::before{content:"💚"!important;display:block!important;width:24px!important;height:24px!important;line-height:24px!important;font-size:20px!important;text-align:center!important;margin:0 auto!important;filter:drop-shadow(0 1px 1px rgba(255,255,255,.25)) drop-shadow(0 2px 3px rgba(0,0,0,.10))}
+#tabVerses.tab-verses-heart-v3176 .tab-verses-label-v3176{display:block!important;width:100%!important;text-align:center!important;white-space:nowrap!important;font-size:.95em!important}
+@media(max-width:420px){
+#tabPrayers.tab-prayers-v3176{gap:2px!important;padding:5px 6px 7px!important;min-height:66px!important}
+#tabPrayers.tab-prayers-v3176 .prayer-cross-top-v3176{width:20px!important;height:22px!important}
+#tabPrayers.tab-prayers-v3176 .prayer-label-top-v3176{font-size:.92em!important}
+.top-tab-png-v3176{min-height:64px!important;padding:6px 5px 8px!important;gap:2px!important}
+.top-tab-png-v3176 .top-tab-png-icon-v3176{width:25px!important;height:25px!important}
+.top-tab-png-v3176 span{font-size:.92em!important}
+#tabNotes .top-tab-png-icon-v3176{width:27px!important;height:27px!important}
+#tabGuides .top-tab-png-icon-v3176{width:28px!important;height:28px!important}
+#tabVerses.tab-verses-heart-v3176{min-height:64px!important;padding:6px 5px 8px!important;gap:2px!important}
+#tabVerses.tab-verses-heart-v3176::before{width:23px!important;height:23px!important;line-height:23px!important;font-size:19px!important}
+#tabVerses.tab-verses-heart-v3176 .tab-verses-label-v3176{font-size:.92em!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -54,10 +84,10 @@
 <div class="topbar">
   <div class="topbar-row">
     <div class="segment">
-      <button id="tabPrayers" class="active" type="button" onclick="switchSectionAndReadV90187('prayers')">✝️ Oraciones</button>
-      <button id="tabNotes" type="button" onclick="switchSectionAndReadV90187('notes')">📝 Notas</button>
-      <button id="tabGuides" type="button" onclick="switchSectionAndReadV90187('guides')">📜 Guía</button>
-      <button id="tabVerses" type="button" onclick="switchSection('verses')">❤️ Versículos</button>
+      <button id="tabPrayers" class="active tab-prayers-v3176" type="button" onclick="switchSectionAndReadV90187('prayers')"><span class="prayer-cross-top-v3176" aria-hidden="true"></span><span class="prayer-label-top-v3176">Oraciones</span></button>
+      <button id="tabNotes" class="top-tab-png-v3176" type="button" onclick="switchSectionAndReadV90187('notes')"><img src="icon-notas-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Notas</span></button>
+      <button id="tabGuides" class="top-tab-png-v3176" type="button" onclick="switchSectionAndReadV90187('guides')"><img src="icon-guia-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Guía</span></button>
+      <button id="tabVerses" class="tab-verses-heart-v3176" type="button" onclick="switchSection('verses')"><span class="tab-verses-label-v3176">Versículos</span></button>
     </div>
     <button id="btnNew" data-view-btn="new" class="btn primary" type="button" onclick="newItem()">➕ Nueva</button>
     <button id="btnRead" data-view-btn="read" class="btn soft" type="button" onclick="enterFullscreenReading()">📖 Leer</button>
@@ -378,7 +408,7 @@
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=v3-1-175-despedida-cruz-etiope"></script>
+<script src="app.js?v=v3-1-176-fila-superior-personalizada"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
 <script src="routines.js?v=v3-1-137-ajustes-visuales-editor-grupo"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>
