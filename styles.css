@@ -5088,3 +5088,14 @@ body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184
     width:52px!important;height:49px!important;flex-basis:52px!important;
   }
 }
+
+/* ===== V3.1.189 — transición estable al salir de Inicio ===== */
+body.view-switching-v3189 *,
+body.view-switching-v3189 *::before,
+body.view-switching-v3189 *::after{
+  transition:none!important;
+  animation:none!important;
+}
+body.view-switching-v3189 #homeView{
+  display:none!important;
+}
