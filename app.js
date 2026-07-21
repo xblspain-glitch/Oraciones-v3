@@ -3935,7 +3935,7 @@ async function shareVerseCard(){
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src="card-header-sky-v3195.webp?v=v3-1-195";
+        im.src="card-header-sky-v3196.webp?v=v3-1-196";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){
