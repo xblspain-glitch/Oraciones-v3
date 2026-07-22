@@ -1816,19 +1816,7 @@ function renderVerseCategories(){
     const div = document.createElement("div");
 
     div.className = "category-card";
-    const customCategoryIconsV3199={
-      amor:'icon-cat-amor-v3199.png',
-      arrepentimiento:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_perdon:'icon-cat-arrepentimiento-v3199.png',
-      arrepentimiento_y_perdon:'icon-cat-arrepentimiento-v3199.png',
-      justicia:'icon-cat-justicia-v3199.png',
-      justicia_juicio:'icon-cat-justicia-v3199.png'
-    };
-    const customIconV3199=customCategoryIconsV3199[String(cat.id||'')];
-    const cleanCategoryLabelV3199=String(cat.label||'').replace(/^[^\p{L}\p{N}]+\s*/u,'');
-    div.innerHTML = customIconV3199
-      ? '<div class="category-title-v3199"><img class="category-icon-v3199" src="'+customIconV3199+'" alt=""><span>'+escapeHtml(cleanCategoryLabelV3199)+'</span></div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>'
-      : '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
+    div.innerHTML = '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
     div.onclick = ()=>openVerseCategory(cat.id);
 
     box.appendChild(div);
@@ -11772,12 +11760,10 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 /* ===== V3.1.193 — iconos ilustrados globales: Mañana, Noche y Cruz ===== */
 (function(){
   const ICONS={
-    '🌅':{kind:'img',src:'icon-manana-global-v3193.png?v=v3-1-193',cls:'inline-faith-icon-v3193 inline-faith-icon-morning-v3193',label:'Mañana'},
-    '🌙':{kind:'img',src:'icon-noche-global-v3193.png?v=v3-1-193',cls:'inline-faith-icon-v3193 inline-faith-icon-night-v3193',label:'Noche'},
     '✝️':{kind:'cross',cls:'inline-faith-cross-v3193',label:'Cruz'},
     '✝':{kind:'cross',cls:'inline-faith-cross-v3193',label:'Cruz'}
   };
-  const RX=/(🌅|🌙|✝️|✝)/g;
+  const RX=/(✝️|✝)/g;
   const SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','SELECT','OPTION','CANVAS','NOSCRIPT']);
   function makeIcon(token){
     const cfg=ICONS[token];
