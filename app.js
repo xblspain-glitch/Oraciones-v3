@@ -3818,16 +3818,17 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js")})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v2-225-categorias-cache-limpia",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;
-  if(n <= 150) return {font:50, line:72, max:7, y:1015};
-  if(n <= 240) return {font:46, line:66, max:9, y:1015};
-  if(n <= 340) return {font:42, line:60, max:11, y:1000};
-  if(n <= 480) return {font:38, line:54, max:13, y:985};
-  return {font:35, line:49, max:15, y:970};
+  // V2.218 — aumenta únicamente el cuerpo del versículo en la tarjeta Biblia.
+  if(n <= 150) return {font:54, line:77, max:7, y:1015};
+  if(n <= 240) return {font:50, line:71, max:9, y:1015};
+  if(n <= 340) return {font:45, line:64, max:11, y:1000};
+  if(n <= 480) return {font:41, line:58, max:13, y:985};
+  return {font:38, line:53, max:15, y:970};
 }
 
 function markCurrentVerseCardSentDirect(){
@@ -3859,8 +3860,62 @@ function markCurrentVerseCardSentDirect(){
   }
 }
 
-async function shareVerseCard(){
+function getThematicCardTextLayoutV2220(txt){
+  const n=String(txt||"").length;
+  // V2.220 — texto completamente debajo de la ilustración.
+  // Los pasajes largos se compactan y se limitan para conservar una tarjeta limpia.
+  if(n<=150) return {font:50,line:68,max:5,y:1285};
+  if(n<=240) return {font:44,line:60,max:6,y:1285};
+  if(n<=340) return {font:39,line:53,max:7,y:1275};
+  if(n<=480) return {font:35,line:47,max:8,y:1265};
+  return {font:31,line:41,max:9,y:1255};
+}
+
+function getNewJerusalemCardTextLayoutV2217(txt){
+  const n=String(txt||"").length;
+  // V2.218 — cuerpo del versículo algo mayor y comienzo más bajo
+  // para que respire respecto a la línea decorativa con la cruz.
+  if(n<=150) return {font:52,line:73,max:7,y:1190};
+  if(n<=240) return {font:48,line:67,max:9,y:1180};
+  if(n<=340) return {font:43,line:60,max:11,y:1170};
+  if(n<=480) return {font:39,line:54,max:13,y:1160};
+  return {font:34,line:47,max:15,y:1150};
+}
+
+function openCardStyleSelectorV2217(){
+  const modal=document.getElementById("cardStyleModalV2217");
+  if(modal) modal.classList.remove("hidden");
+}
+function closeCardStyleSelectorV2217(){
+  const modal=document.getElementById("cardStyleModalV2217");
+  if(modal) modal.classList.add("hidden");
+}
+async function chooseCardStyleV2217(style){
+  closeCardStyleSelectorV2217();
+  markCurrentVerseCardSentDirect();
+  await shareVerseCard(style);
+}
+
+async function shareVerseCard(cardStyle="classic"){
   try{
+    const cardBackgroundsV2219={
+      classic:"card-header-sky-v3197.webp",
+      jerusalem:"shared-card-new-jerusalem-v2217.png",
+      salvacion:"card-salvacion-v2219.jpg",
+      oracion:"card-oracion-v2219.jpg",
+      "espiritu-santo":"card-espiritu-santo-v2219.jpg",
+      misericordia:"card-misericordia-v2219.jpg",
+      alabanza:"card-alabanza-v2219.jpg",
+      fortaleza:"card-fortaleza-v2219.jpg",
+      amor:"card-amor-v2219.jpg",
+      esperanza:"card-esperanza-v2219.jpg",
+      juicio:"card-juicio-v2219.jpg",
+      fe:"card-fe-v2219.jpg",
+      "segunda-venida":"card-segunda-venida-v2219.jpg"
+    };
+    const isIllustratedV2219 = cardStyle !== "classic";
+    const isThematicV2220 = cardStyle !== "classic" && cardStyle !== "jerusalem";
+    const selectedBackgroundV2219 = cardBackgroundsV2219[cardStyle] || cardBackgroundsV2219.classic;
     const item = (typeof currentItem === "function") ? currentItem() : null;
 
     // Marcamos la tarjeta como enviada al pulsar el botón Tarjeta.
@@ -3958,7 +4013,7 @@ async function shareVerseCard(){
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src="card-header-sky-v3197.webp?v=v3-1-197";
+        im.src=selectedBackgroundV2219+"?v=v2-225-categorias-cache-limpia";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){
@@ -4038,7 +4093,7 @@ async function shareVerseCard(){
         ctx.restore();
       }
     }
-    await drawExactLogoWatermark(ctx,540,1168,780);
+    await drawExactLogoWatermark(ctx,540,isThematicV2220?1420:1168,isThematicV2220?650:780);
 
     ctx.textAlign="center";
     ctx.fillStyle="#ffffff";
@@ -4049,12 +4104,12 @@ async function shareVerseCard(){
     // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
     // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
     ctx.font="italic 56px Georgia, serif";
-    ctx.fillText("Versículo del día",540,590);
+    ctx.fillText("Versículo del día",540,isThematicV2220?900:(isIllustratedV2219?790:590));
     ctx.font="34px Georgia, serif";
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
-    ctx.fillText(fecha,540,655);
+    ctx.fillText(fecha,540,isThematicV2220?965:(isIllustratedV2219?855:655));
 
     // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
     const categoryTextV3200=String(category||"")
@@ -4062,10 +4117,10 @@ async function shareVerseCard(){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,742);
+    ctx.fillText(categoryTextV3200,540,isThematicV2220?1045:(isIllustratedV2219?935:742));
 
     ctx.font="bold 74px Georgia, serif";
-    ctx.fillText(ref,540,865);
+    ctx.fillText(ref,540,isThematicV2220?1145:(isIllustratedV2219?1040:865));
 
     // Línea decorativa azul tenue con cruz central
     ctx.save();
@@ -4074,14 +4129,14 @@ async function shareVerseCard(){
     ctx.shadowOffsetY=0;
     ctx.strokeStyle="rgba(190,238,248,0.58)";
     ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(180,925); ctx.lineTo(500,925); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(580,925); ctx.lineTo(900,925); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(180,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.lineTo(500,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(580,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.lineTo(900,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.stroke();
     ctx.fillStyle="rgba(214,249,255,0.78)";
     ctx.font="34px Georgia, serif";
-    ctx.fillText("✝",540,937);
+    ctx.fillText("✝",540,isThematicV2220?1212:(isIllustratedV2219?1104:937));
     ctx.restore();
 
-    const textLayout=getCardTextLayout(body);
+    const textLayout=isThematicV2220 ? getThematicCardTextLayoutV2220(body) : (isIllustratedV2219 ? getNewJerusalemCardTextLayoutV2217(body) : getCardTextLayout(body));
     ctx.font="italic "+textLayout.font+"px Georgia, serif";
     wrapText(ctx,body,540,textLayout.y,930,textLayout.line,textLayout.max);
 
@@ -5247,7 +5302,7 @@ setInterval(updateVersePositionCounter, 1000);
     head.innerHTML =
       '<button class="btn soft" type="button" onclick="restoreReaderHeadV75(); openVerseCategories()">← Volver</button>' +
       randomBtn +
-      '<button class="btn soft" type="button" onclick="markCurrentVerseCardSentDirect(); shareVerseCard()">🖼️ Tarjeta</button>' +
+      '<button class="btn soft" type="button" onclick="openCardStyleSelectorV2217()">🖼️ Tarjeta</button>' +
       '<button class="btn soft" type="button" onclick="copyCurrent()">📋 Copiar</button>' +
       '<button id="moveVerseBtn" class="btn soft" type="button" onclick="moveVerseToCategory(); setTimeout(function(){ if(typeof renderReader===\'function\') renderReader(); },80)">📂 Mover</button>';
   }
@@ -6004,7 +6059,7 @@ setInterval(updateVersePositionCounter, 1000);
       if(!head) return;
       head.innerHTML =
         '<button class="btn soft" type="button" onclick="restoreReaderHeadV75(); openVerseCategories()">← Volver</button>' +
-        '<button class="btn soft" type="button" onclick="markCurrentVerseCardSentDirect(); shareVerseCard()">🖼️ Tarjeta</button>' +
+        '<button class="btn soft" type="button" onclick="openCardStyleSelectorV2217()">🖼️ Tarjeta</button>' +
         '<button class="btn soft" type="button" onclick="copyCurrent()">📋 Copiar</button>' +
         '<button id="moveVerseBtn" class="btn soft" type="button" onclick="moveVerseToCategory(); setTimeout(function(){ if(typeof renderReader===\'function\') renderReader(); },80)">📂 Mover</button>' +
         '<button class="btn soft" type="button" onclick="openNeverSentStatsMenu()">📭 Nunca enviados</button>' +
@@ -6147,7 +6202,7 @@ setInterval(updateVersePositionCounter, 1000);
       if(head){
         head.innerHTML =
           '<button class="btn soft" type="button" onclick="backToSentListV903()">← Volver</button>'+
-          '<button class="btn soft" type="button" onclick="markCurrentVerseCardSentDirect(); shareVerseCard()">🖼️ Tarjeta</button>'+
+          '<button class="btn soft" type="button" onclick="openCardStyleSelectorV2217()">🖼️ Tarjeta</button>'+
           '<button class="btn soft" type="button" onclick="copyCurrent()">📋 Copiar</button>';
         head.style.display="flex";
       }
