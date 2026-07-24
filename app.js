@@ -4093,7 +4093,7 @@ async function shareVerseCard(cardStyle="classic"){
         ctx.restore();
       }
     }
-    await drawExactLogoWatermark(ctx,540,isThematicV2220?1285:1133,isThematicV2220?650:780);
+    await drawExactLogoWatermark(ctx,540,isThematicV2220?1270:1133,isThematicV2220?650:780);
 
     ctx.textAlign="center";
     ctx.fillStyle="#ffffff";
