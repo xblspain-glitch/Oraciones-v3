@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-220-marca-agua-alta-cache-limpia",
+  "start_url": "./?v=v3-1-221-marca-agua-mas-alta-cache-limpia",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -23,5 +23,5 @@
     }
   ],
   "version": "3.1.220",
-  "build": "v3-1-220-marca-agua-alta-cache-limpia"
+  "build": "v3-1-221-marca-agua-mas-alta-cache-limpia"
 }
