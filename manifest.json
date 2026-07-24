@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-231-marca-agua-grande-cache-totalmente-renovada",
+  "start_url": "./?v=v3-1-232-marca-agua-copiada-exacta-v2",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -23,5 +23,5 @@
     }
   ],
   "version": "3.1.224",
-  "build": "v3-1-231-marca-agua-grande-cache-totalmente-renovada"
+  "build": "v3-1-232-marca-agua-copiada-exacta-v2"
 }
